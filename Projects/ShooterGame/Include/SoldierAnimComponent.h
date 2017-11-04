@@ -8,21 +8,26 @@
 #include "Stateable.h"
 #include "AnimState.h"
 #include "Component.h"
-#include "Ogre.h"
+
+// ----------------------------- forward declaration -----------------------------
+
+namespace Ogre
+{
+class Entity;
+}
 
 
 using namespace Engine;
 
 // ========================= class SoldierAnimComponent =========================
 
-class SoldierAnimComponent : public Component, public Stateable
+class SoldierAnimComponent : public Stateable
 {
 public:
 	explicit SoldierAnimComponent (const std::string& name);
 	~SoldierAnimComponent ();
 
 	virtual void Start () override;
-	virtual void PostUpdate (float t, float dt) override;
 
 private:
 
@@ -31,12 +36,17 @@ private:
 	class IdleState final : public AnimState
 	{
 	public:
-		IdleState (SoldierAnimComponent* parent);
-
-		void Execute (Stateable* stateable, float t, float dt) override;
+		static const SPtr&	GetInstance (SoldierAnimComponent* parent);
+		static void			DeleteInstance ();
+		static bool			HasInstance ();
+		
+		void PostExecute (Stateable* stateable, float t, float dt) override;
 
 	private:
+		static SPtr s_pInstance;
 		SoldierAnimComponent* m_pParent;
+
+		IdleState (SoldierAnimComponent* parent);
 	};
 
 // ================================ class RunState ================================
@@ -44,13 +54,18 @@ private:
 	class RunState final : public AnimState
 	{
 	public:
-		RunState (SoldierAnimComponent* parent);
+		static const SPtr&	GetInstance (SoldierAnimComponent* parent);
+		static void			DeleteInstance ();
+		static bool			HasInstance ();
 
-		void Enter (Stateable* stateable) override;
-		void Execute (Stateable* stateable, float t, float dt) override;
+		void PostEnter (Stateable* stateable) override;
+		void PostExecute (Stateable* stateable, float t, float dt) override;
 
 	private:
+		static SPtr s_pInstance;
 		SoldierAnimComponent* m_pParent;
+
+		RunState (SoldierAnimComponent* parent);
 	};
 
 // =============================== class ShootState ===============================
@@ -58,14 +73,20 @@ private:
 	class ShootState final : public AnimState
 	{
 	public:
-		ShootState (SoldierAnimComponent* parent);
+		static const SPtr&	GetInstance (SoldierAnimComponent* parent);
+		static void			DeleteInstance ();
+		static bool			HasInstance ();
 
-		void Enter (Stateable* stateable) override;
-		void Execute (Stateable* stateable, float t, float dt) override;
+		void PostEnter (Stateable* stateable) override;
+		void PostExecute (Stateable* stateable, float t, float dt) override;
 
 	private:
+		static SPtr s_pInstance;
 		SoldierAnimComponent* m_pParent;
+
+		ShootState (SoldierAnimComponent* parent);
 	};
+
 
 	Ogre::Entity* m_entity;	// ennek engine oldalon kellene lennie
 };

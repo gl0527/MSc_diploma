@@ -1,5 +1,6 @@
 #include "RenderSystem.h"
 
+
 namespace Engine
 {
 	RenderSystem::RenderSystem(const char* wName, size_t w, size_t h)
@@ -17,34 +18,50 @@ namespace Engine
 
 	bool RenderSystem::init()
 	{
-		ogreRoot = new Ogre::Root;
 #ifdef _DEBUG
-		Ogre::String plugins[] = { "RenderSystem_GL_d", "Plugin_ParticleFX_d" };
+		m_resConfig = "resources_d.cfg";
+		m_plugConfig = "plugins_d.cfg";
 #else
-		Ogre::String plugins[] = { "RenderSystem_GL", "Plugin_ParticleFX" };
+		m_resConfig = "resources.cfg";
+		m_plugConfig = "plugins.cfg";
 #endif
-		for (const Ogre::String& plugin : plugins)
-			ogreRoot->loadPlugin (plugin);
 
-		const Ogre::RenderSystemList& list = ogreRoot->getAvailableRenderers();
-		
-		if (!ogreRoot->showConfigDialog())
-		{
+		ogreRoot = new Ogre::Root (m_plugConfig);
+
+		Ogre::ConfigFile configFile;
+		configFile.load (m_resConfig);
+
+		Ogre::ResourceGroupManager* resGroupManager = Ogre::ResourceGroupManager::getSingletonPtr ();
+
+		Ogre::String name, locType;
+		for (auto it = configFile.getSectionIterator (); it.hasMoreElements (); ) {
+			auto* settings = it.getNext ();
+
+			for (auto setIt = settings->begin (); setIt != settings->end (); ++setIt) {
+				locType = setIt->first;
+				name = setIt->second;
+
+				resGroupManager->addResourceLocation (name, locType);
+				//resGroupManager->removeResourceLocation (name);
+			}
+		}
+
+		if (!ogreRoot->restoreConfig () && !ogreRoot->showConfigDialog ()) {
 			delete ogreRoot;
 			return false;
 		}
-		ogreRoot->initialise(false);
 
-		renderWindow = ogreRoot->createRenderWindow(windowName, windowWidth, windowHeight, false);
-		sceneManager = ogreRoot->createSceneManager(Ogre::ST_GENERIC); 
-		
+		ogreRoot->initialise (false);
+
+		renderWindow = ogreRoot->createRenderWindow (windowName, windowWidth, windowHeight, false);
+		sceneManager = ogreRoot->createSceneManager (Ogre::ST_GENERIC);
+
 		overlaySystem = new Ogre::OverlaySystem;
-		sceneManager->addRenderQueueListener(overlaySystem);
-		overlayManager = Ogre::OverlayManager::getSingletonPtr();
+		sceneManager->addRenderQueueListener (overlaySystem);
+		overlayManager = Ogre::OverlayManager::getSingletonPtr ();
 
-		Ogre::ResourceGroupManager::getSingleton().addResourceLocation("Media", "FileSystem", "General", false);
-		Ogre::ResourceGroupManager::getSingleton().initialiseAllResourceGroups();
-		
+		resGroupManager->initialiseAllResourceGroups ();
+
 		return true;
 	}
 
@@ -88,6 +105,10 @@ namespace Engine
 			delete ogreRoot;
 			ogreRoot = nullptr;
 		}
+
+		// TODO hogyan kell helyesen eltavolitani a resource group-okat?
+
+		// Ogre::ResourceGroupManager::getSingleton().destroyResourceGroup ("Media");
 	}
 
 

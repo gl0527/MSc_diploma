@@ -1,6 +1,8 @@
 #include "WeaponComponent.h"
 #include "GameObject.h"
 #include "TransformComponent.h"
+#include "MeshComponent.h"
+
 
 WeaponComponent::WeaponComponent(const std::string& name)
 	: Component(name)

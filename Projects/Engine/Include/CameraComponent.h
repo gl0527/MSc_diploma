@@ -8,12 +8,24 @@
 #include "RenderComponent.h"
 
 
+// ----------------------------- forward declaration -----------------------------
+
+namespace Ogre
+{
+class Camera;
+class Viewport;
+class Ray;
+class RenderWindow;
+class RenderTexture;
+class Vector3;
+}
+
 namespace Engine
 {
 
 // =========================== class CameraComponent ============================
 
-class DLL_SPEC CameraComponent : public RenderComponent
+class DLL_EXPORT CameraComponent : public RenderComponent
 {
 public:
 	CameraComponent (const std::string& name, int zDepth);
@@ -22,14 +34,14 @@ public:
 	virtual void Init (GameObject* obj) override;
 	virtual void Destroy () override;
 
-	Ogre::Camera* getCamera () const { return camera; }
-	Ogre::Viewport* getViewPort () const { return viewport; }
+	Ogre::Camera* getCamera () const;
+	Ogre::Viewport* getViewPort () const;
 	Ogre::Ray getRay (float screenX, float screenY) const;
 
-	void setLookAt (const Ogre::Vector3& newLookAt) { camera->lookAt (newLookAt); }
-	void setNearClip (float nclip) { camera->setNearClipDistance (nclip); }
-	void setFarClip (float fclip) { camera->setFarClipDistance (fclip); }
-	void setRenderDist (float dist) { camera->setRenderingDistance (dist); }
+	void setLookAt (const Ogre::Vector3& newLookAt);
+	void setNearClip (float nclip);
+	void setFarClip (float fclip);
+	void setRenderDist (float dist);
 	void setRenderTexture (Ogre::RenderTexture* rt);
 
 protected:

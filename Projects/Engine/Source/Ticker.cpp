@@ -1,5 +1,3 @@
-// ---------------------------------- includes ----------------------------------
-
 #include "Ticker.h"
 
 #ifdef _WIN32
@@ -7,6 +5,7 @@
 #else
 #error Platform not supported!
 #endif
+
 
 namespace Engine
 {

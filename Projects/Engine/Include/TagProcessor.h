@@ -27,7 +27,7 @@ class Component;
 
 // ============================= class TagProcessor =============================
 
-class DLL_SPEC TagProcessor
+class DLL_EXPORT TagProcessor
 {
 public:
 	explicit TagProcessor (const std::string& tagName);

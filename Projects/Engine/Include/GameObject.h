@@ -5,7 +5,7 @@
 
 // ---------------------------------- includes ----------------------------------
 
-#include "Component.h"
+#include "stdafx.h"
 #include <string>
 #include <memory>
 #include <vector>
@@ -15,11 +15,14 @@
 namespace Engine
 {
 
+// ----------------------------- forward declaration -----------------------------
+
+class Component;
 class TransformComponent;
 
 // =============================== class GameObject ===============================
 
-class DLL_SPEC GameObject
+class DLL_EXPORT GameObject
 {
 public:
 	using SPtr = std::shared_ptr<GameObject>;
@@ -29,9 +32,9 @@ public:
 	explicit GameObject (const std::string& id);
 	~GameObject ();
 
-	void AddComponent (const Component::SPtr& comp);
+	void AddComponent (const std::shared_ptr<Component>& comp);
 	void removeComponent (const std::string& compName);
-	void removeComponent (const Component::SPtr& comp);
+	void removeComponent (const std::shared_ptr<Component>& comp);
 	void removeComponent ();
 
 	void addTag (const std::string& tag);
@@ -50,7 +53,7 @@ public:
 
 	const std::string&			GetName () const;
 	TransformComponent*			Transform () const;
-	Component::WPtr				GetComponent (const std::string& cID) const;
+	std::weak_ptr<Component>	GetComponent (const std::string& cID) const;
 	WPtr						GetParent () const;
 	std::vector<std::string>	getChildrenNames () const;
 
@@ -64,12 +67,12 @@ public:
 	bool	isDestroyed () const;
 
 private:
-	const std::string				m_Name;
-	bool							m_isDestroyed;
-	SPtr							m_pParent;
-	std::vector<WPtr>				m_children;
-	std::vector<Component::SPtr>	m_components;
-	std::unordered_set<std::string>	m_tags;
+	const std::string						m_Name;
+	bool									m_isDestroyed;
+	SPtr									m_pParent;
+	std::vector<WPtr>						m_children;
+	std::vector<std::shared_ptr<Component>>	m_components;
+	std::unordered_set<std::string>			m_tags;
 };
 
 

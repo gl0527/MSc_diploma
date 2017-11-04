@@ -1,4 +1,4 @@
-// Engine
+// include from Engine
 #include "AudioComponent.h"
 #include "Game.h"
 #include "GameObject.h"
@@ -6,17 +6,16 @@
 #include "PhysicsComponent.h"
 #include "XMLParser.h"
 
+#include "DynamicMovementProcessor.h"
 #include "InputComponent.h"
 #include "FPSComponent.h"
 #include "InputProcessor.h"
-#include "DynamicMovementComponent.h"
-#include "SoldierComponent.h"
-#include "DynamicMovementProcessor.h"
 #include "CameraControlComponent.h"
 #include "WeaponComponent.h"
 #include "SoldierAnimComponent.h"
 
 using namespace Engine;
+
 
 int main(int argc, char** argv)
 {
@@ -33,7 +32,6 @@ int main(int argc, char** argv)
 	auto& objectMgr = ObjectManager::GetSingletonInstance ();
 
 	renderSys->createPlaneMeshXZ("ground", 0, 10, 10);
-	auto rtt = renderSys->createTexture("sepia", 100, 100)->getBuffer()->getRenderTarget();
 
 	/*const auto& tree = objectMgr.createGameObject("tree");
 	tree->transform()->setPosition(Ogre::Vector3(-30.0f, 0.0f, -900.0f));
@@ -72,16 +70,7 @@ int main(int argc, char** argv)
 			});
 	}
 
-	if (auto& sld = objectMgr.GetGameObjectByName("gijoe").lock())
-	{
-		std::shared_ptr<AnimationComponent> anim(new AnimationComponent("soldierAnimation", Ogre::ANIMBLEND_CUMULATIVE));
-		std::shared_ptr<SoldierComponent> data(new SoldierComponent("soldierComp"));
-
-		sld->AddComponent(anim);
-		sld->AddComponent(data);
-	}
-	
-	if (auto& soldierGO = objectMgr.GetGameObjectByName ("soldier").lock ()) {
+	if (auto& soldierGO = objectMgr.GetGameObjectByName ("gijoe").lock ()) {
 		std::shared_ptr<SoldierAnimComponent> soldierAnimComp (new SoldierAnimComponent ("soldierAnimComp"));
 
 		soldierGO->AddComponent (soldierAnimComp);
@@ -116,7 +105,7 @@ int main(int argc, char** argv)
 	sceneMgr->setAmbientLight(Ogre::ColourValue(0.3f, 0.3f, 0.3f, 1.0f)); // ez is kellene az xml-be
 	//sceneMgr->setShadowTechnique(Ogre::SHADOWTYPE_STENCIL_MODULATIVE);
 	//sceneMgr->setShadowColour(Ogre::ColourValue(0.3f, 0.3f, 0.3f));
-	sceneMgr->setSkyBox(true, "Sky");
+	sceneMgr->setSkyBox(true, "Stormy");
 
 	game.Start();
 	game.DeleteInstance();

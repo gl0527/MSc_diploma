@@ -21,7 +21,7 @@ namespace Engine
 
 // ============================ class AudioComponent ============================
 
-class DLL_SPEC AudioComponent : public Component
+class DLL_EXPORT AudioComponent : public Component
 {
 public:
 	AudioComponent (const std::string& fileName, const std::string& listenerName);

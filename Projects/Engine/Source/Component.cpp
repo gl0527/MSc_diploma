@@ -1,5 +1,6 @@
 #include "Component.h"
 
+
 namespace Engine
 {
 
@@ -37,17 +38,17 @@ void Component::Start ()
 }
 
 
-void Component::PreUpdate (float t, float dt)
+void Component::PreUpdate (float /*t*/, float /*dt*/)
 {
 }
 
 
-void Component::Update (float t, float dt)
+void Component::Update (float /*t*/, float /*dt*/)
 {
 }
 
 
-void Component::PostUpdate (float t, float dt)
+void Component::PostUpdate (float /*t*/, float /*dt*/)
 {
 }
 

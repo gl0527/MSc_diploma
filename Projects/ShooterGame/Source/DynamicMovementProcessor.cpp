@@ -1,6 +1,7 @@
 #include "DynamicMovementProcessor.h"
 #include "DynamicMovementComponent.h"
 #include "XMLParser.h"
+#include <iostream>
 
 
 bool DynamicMovementProcessor::ProcessXMLTag(TiXmlElement* elem)

@@ -6,15 +6,22 @@
 // ---------------------------------- includes ----------------------------------
 
 #include "Component.h"
-#include <Ogre.h>
+//#include <Ogre.h>
 
+
+namespace Ogre
+{
+class MovableObject;
+class SceneManager;
+class SceneNode;
+}
 
 namespace Engine
 {
 
 // ============================ class RenderComponent ============================
 
-class DLL_SPEC RenderComponent : public Component
+class DLL_EXPORT RenderComponent : public Component
 {
 public:
 	RenderComponent (const std::string& name);

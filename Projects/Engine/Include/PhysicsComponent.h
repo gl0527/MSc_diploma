@@ -26,7 +26,7 @@ namespace Engine
 
 // ============================ class PhysicsComponent ============================
 
-class DLL_SPEC PhysicsComponent : public Component
+class DLL_EXPORT PhysicsComponent : public Component
 {
 public:
 	PhysicsComponent (const std::string& name, float m);

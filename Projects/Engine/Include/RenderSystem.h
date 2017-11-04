@@ -7,8 +7,8 @@
 
 #include "System.h"
 #include "Ogre.h"
-#include "OGRE\Overlay\OgreOverlayManager.h"
-#include "OGRE\Overlay\OgreOverlaySystem.h"
+#include "Overlay\OgreOverlayManager.h"
+#include "Overlay\OgreOverlaySystem.h"
 #include "stdafx.h"
 
 
@@ -17,7 +17,7 @@ namespace Engine
 
 // ============================= class RenderSystem =============================
 
-class DLL_SPEC RenderSystem : public System
+class DLL_EXPORT RenderSystem : public System
 {
 public:
 	RenderSystem (const char* wName, size_t w = 800, size_t h = 600);
@@ -57,6 +57,9 @@ private:
 	std::string windowName;
 	size_t windowWidth;
 	size_t windowHeight;
+
+	std::string m_resConfig;
+	std::string m_plugConfig;
 };
 
 }	// namespace Engine

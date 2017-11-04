@@ -19,7 +19,7 @@ class GameObject;
 
 // =============================== class Component ===============================
 
-class DLL_SPEC Component
+class DLL_EXPORT Component
 {
 public:
 	using SPtr = std::shared_ptr<Component>;

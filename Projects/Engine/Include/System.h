@@ -7,7 +7,7 @@
 namespace Engine
 {
 
-// ============================ class RenderComponent ============================
+// ================================ class System =================================
 
 class System
 {
@@ -15,7 +15,7 @@ public:
 	virtual ~System () {}
 	
 	virtual bool init () { return true; }
-	virtual bool update (float t, float dt) { return true; }
+	virtual bool update (float /*t*/, float /*dt*/) { return true; }
 	virtual void destroy () {}
 };
 

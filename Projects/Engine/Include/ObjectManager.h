@@ -19,7 +19,7 @@ class GameObject;
 
 // ============================= class ObjectManager =============================
 
-class DLL_SPEC ObjectManager
+class DLL_EXPORT ObjectManager
 {
 public:
 	~ObjectManager ();

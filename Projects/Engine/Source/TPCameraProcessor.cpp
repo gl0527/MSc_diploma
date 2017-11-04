@@ -1,6 +1,7 @@
 #include "TPCameraProcessor.h"
 #include "TPCameraComponent.h"
 #include "XMLParser.h"
+#include "Ogre.h"
 
 
 namespace Engine

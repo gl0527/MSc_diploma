@@ -2,9 +2,26 @@ cmake_minimum_required (VERSION 3.5.1 FATAL_ERROR)
 
 project (MSC_diploma C CXX)
 
-set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /MP2 /EHc")
+if (MSVC)
+	set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /MP /W4 /EHc")
+endif (MSVC)
 
-# add preprocessor definitions
+if (WIN32)
+	set (STATIC_LIB_EXTENSION "lib")
+	set (DYNAMIC_LIB_EXTENSION "dll")
+else ()
+	set (STATIC_LIB_EXTENSION "a")
+	set (DYNAMIC_LIB_EXTENSION "so")
+endif (WIN32)
+
+# todo ezzel is baj van, mert lehet olyan eset, hogy itt Debug-gal generalok, de a VS-ben Release-zel build-elek
+set (CONFIG_SUFFIX "")
+# if (CMAKE_BUILD_TYPE MATCHES "Debug")
+
+set (CMAKE_BUILD_TYPE Debug)
+set (CONFIG_SUFFIX "_d")
+# endif ()
+
 add_definitions (-DEXPMODULE)
 if (WIN32)
 	add_definitions (-D_WINDLL)
@@ -12,71 +29,61 @@ else ()
 	add_definitions (-DLINUX)
 endif ()
 
-find_package (OGRE REQUIRED)
-if (OGRE_FOUND)
-	include_directories ("${OGRE_INCLUDE_DIRS}")
-	link_directories ("${OGRE_LIBRARY_DIRS}")
-	message (STATUS "================== OGRE found ==================")
-else ()
-	message (FATAL_ERROR "OGRE not found!")
-endif (OGRE_FOUND)
-
-find_package (OIS REQUIRED)
-if (OIS_FOUND)
-	include_directories ("${OIS_INCLUDE_DIRS}")
-	message (STATUS "================== OIS found =================== ")
-else ()
-	message (FATAL_ERROR "OIS not found!")
-endif (OIS_FOUND)
-
-set (BOOST_ROOT "e:/dev/tools/OGRE-SDK-1.9.0-vc140-x86-12.03.2016/boost/")
-find_package (Boost REQUIRED)
-if (Boost_FOUND)
-	include_directories ("${Boost_INCLUDE_DIRS}")
-	link_directories ("${Boost_LIBRARY_DIRS}")
-	message (STATUS "================= Boost found ================== ")
-else ()
-	message (FATAL_ERROR "Boost not found!")
-endif (Boost_FOUND)
-
-set (BULLET_ROOT "e:/dev/tools/bullet-2.82-r2704/")
-find_package (BULLET REQUIRED)
-if (BULLET_FOUND)
-	include_directories ("${BULLET_INCLUDE_DIRS}")
-	message (STATUS "================= Bullet found =================")
-else ()
-	message (FATAL_ERROR "Bullet not found!")
-endif (BULLET_FOUND)
-
-set (OPENAL_INCLUDE_DIR "e:/dev/tools/OpenAL/include/")
-set (OPENAL_LIBRARY "e:/dev/tools/OpenAL/lib/")
-find_package (OPENAL REQUIRED)
-if (OPENAL_FOUND)
-	include_directories ("${OPENAL_INCLUDE_DIR}")
-	link_directories ("${OPENAL_LIBRARY}")
-	message (STATUS "================= OpenAL found ================= ")
-else ()
-	message (FATAL_ERROR "OpenAL not found!")
-endif (OPENAL_FOUND)
-
-set (TINYXML_INCLUDE_DIR "e:/dev/tools/tinyxml/")
-include_directories ("${TINYXML_INCLUDE_DIR}")
-set (TINYXML_LIB_DEBUG "e:/dev/tools/tinyxml/Debugtinyxml/tinyxml.lib")
-set (TINYXMLSTL_LIB_DEBUG "e:/dev/tools/tinyxml/DebugtinyxmlSTL/tinyxmlSTL.lib")
-
-set (ADDITIONAL_LIBS_DEBUG "")
-if (WIN32)
-	set (ADDITIONAL_LIBS_DEBUG "winmm.lib")
+if (NOT WIN32)
+	find_program (CCACHE_FOUND ccache)
+	if (CCACHE_FOUND)
+		set_property (GLOBAL PROPERTY RULE_LAUNCH_COMPILE ccache)
+	endif (CCACHE_FOUND)
 endif ()
 
-set (LIBRARIES_DEBUG 	"OgreMain_d.lib"
-						"OgreOverlay_d.lib"
-						"alut.lib"
-						"OpenAL32.lib"
-						"${OIS_LIBRARIES}"
-						"${BULLET_LIBRARIES}"
-						"${TINYXML_LIB_DEBUG}"
-						"${TINYXMLSTL_LIB_DEBUG}"
+# setting up package variables
+set (3RDPARTY_DIR 			"${PROJECT_SOURCE_DIR}/../Bin/3rdparty" 		CACHE FILEPATH "")
+set (CMAKE_MODULE_PATH 		"${3RDPARTY_DIR}/OGRE-1.9.0-vc140-x86/CMake" 	CACHE FILEPATH "")
+set (BOOST_ROOT 			"${3RDPARTY_DIR}/boost-1.61-vc140-x86" 			CACHE FILEPATH "")
+set (BULLET_ROOT 			"${3RDPARTY_DIR}/bullet-2.82-r2704" 			CACHE FILEPATH "")
+set (OGRE_ROOT 				"${3RDPARTY_DIR}/OGRE-1.9.0-vc140-x86" 			CACHE FILEPATH "")
+set (OPENAL_INCLUDE_DIR 	"${3RDPARTY_DIR}/OpenAL/include" 				CACHE FILEPATH "OPENAL_INCLUDE_DIR" FORCE)
+set (OPENAL_LIBRARY 		"${3RDPARTY_DIR}/OpenAL/lib" 					CACHE FILEPATH "")
+set (TINYXML_INCLUDE_DIR 	"${3RDPARTY_DIR}/tinyxml" 						CACHE FILEPATH "")
+set (TINYXML_LIBRARY 		"${TINYXML_INCLUDE_DIR}/Debugtinyxml"			CACHE FILEPATH "")
+set (TINYXMLSTL_LIBRARY 	"${TINYXML_INCLUDE_DIR}/DebugtinyxmlSTL"		CACHE FILEPATH "")
+
+# set include and library directory
+include_directories (${OGRE_ROOT}/include/OGRE)
+link_directories (${OGRE_ROOT}/lib/${CMAKE_BUILD_TYPE})
+
+include_directories (${OGRE_ROOT}/include/OIS)
+
+include_directories (${BOOST_ROOT})
+link_directories (${BOOST_ROOT}/lib)
+
+include_directories (${BULLET_ROOT}/src)
+link_directories (${BULLET_ROOT}/lib/${CMAKE_BUILD_TYPE})
+
+include_directories (${OPENAL_INCLUDE_DIR})
+link_directories (${OPENAL_LIBRARY})
+
+include_directories (${TINYXML_INCLUDE_DIR})
+link_directories (${TINYXML_LIBRARY})
+link_directories (${TINYXMLSTL_LIBRARY})
+
+if (WIN32)
+	set (ADDITIONAL_LIBS_DEBUG "winmm.${STATIC_LIB_EXTENSION}")
+endif ()
+
+set (BULLET_LIB_SUFFIX _Debug)
+
+set (LIBRARIES_DEBUG	"OgreMain${CONFIG_SUFFIX}.${STATIC_LIB_EXTENSION}"
+						"OIS${CONFIG_SUFFIX}.${STATIC_LIB_EXTENSION}"
+						"OgreOverlay${CONFIG_SUFFIX}.${STATIC_LIB_EXTENSION}"
+						"BulletCollision${BULLET_LIB_SUFFIX}.${STATIC_LIB_EXTENSION}"
+						"BulletDynamics${BULLET_LIB_SUFFIX}.${STATIC_LIB_EXTENSION}"
+						"BulletSoftBody${BULLET_LIB_SUFFIX}.${STATIC_LIB_EXTENSION}"
+						"LinearMath${BULLET_LIB_SUFFIX}.${STATIC_LIB_EXTENSION}"
+						"alut.${STATIC_LIB_EXTENSION}"
+						"OpenAL32.${STATIC_LIB_EXTENSION}"
+						"tinyxml.${STATIC_LIB_EXTENSION}"
+						"tinyxmlSTL.${STATIC_LIB_EXTENSION}"
 						"${ADDITIONAL_LIBS_DEBUG}")
 
 add_subdirectory (Engine)

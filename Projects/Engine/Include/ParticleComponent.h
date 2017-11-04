@@ -8,12 +8,19 @@
 #include "RenderComponent.h"
 
 
+// ----------------------------- forward declaration -----------------------------
+
+namespace Ogre
+{
+class ParticleSystem;
+}
+
 namespace Engine
 {
 
 // ========================== class ParticleComponent ===========================
 
-	class DLL_SPEC ParticleComponent : public RenderComponent
+	class DLL_EXPORT ParticleComponent : public RenderComponent
 	{
 	public:
 		ParticleComponent(const std::string& name, const std::string& partName);

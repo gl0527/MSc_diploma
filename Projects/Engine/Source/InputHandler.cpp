@@ -34,21 +34,26 @@ bool InputHandler::init ()
 	windowHndStr << windowHnd;
 
 	pl.insert (std::make_pair (std::string ("WINDOW"), windowHndStr.str ()));
-	// kurzor megjelenítése
-//#if defined OIS_WIN32_PLATFORM
-//		pl.insert(std::make_pair(std::string("w32_mouse"), std::string("DISCL_FOREGROUND")));
-//		pl.insert(std::make_pair(std::string("w32_mouse"), std::string("DISCL_NONEXCLUSIVE")));
-//		pl.insert(std::make_pair(std::string("w32_keyboard"), std::string("DISCL_FOREGROUND")));
-//		pl.insert(std::make_pair(std::string("w32_keyboard"), std::string("DISCL_NONEXCLUSIVE")));
-//#elif defined OIS_LINUX_PLATFORM
-//		pl.insert(std::make_pair(std::string("x11_mouse_grab"), std::string("false")));
-//		pl.insert(std::make_pair(std::string("x11_mouse_hide"), std::string("false")));
-//		pl.insert(std::make_pair(std::string("x11_keyboard_grab"), std::string("false")));
-//		pl.insert(std::make_pair(std::string("XAutoRepeatOn"), std::string("true")));
-//#endif
+
+#if defined (CURSOR_VISIBLE)
+#if defined (OIS_WIN32_PLATFORM)
+	pl.insert (std::make_pair (std::string ("w32_mouse"), std::string ("DISCL_FOREGROUND")));
+	pl.insert (std::make_pair (std::string ("w32_mouse"), std::string ("DISCL_NONEXCLUSIVE")));
+	pl.insert (std::make_pair (std::string ("w32_keyboard"), std::string ("DISCL_FOREGROUND")));
+	pl.insert (std::make_pair (std::string ("w32_keyboard"), std::string ("DISCL_NONEXCLUSIVE")));
+#elif defined (OIS_LINUX_PLATFORM)
+	pl.insert (std::make_pair (std::string ("x11_mouse_grab"), std::string ("false")));
+	pl.insert (std::make_pair (std::string ("x11_mouse_hide"), std::string ("false")));
+	pl.insert (std::make_pair (std::string ("x11_keyboard_grab"), std::string ("false")));
+	pl.insert (std::make_pair (std::string ("XAutoRepeatOn"), std::string ("true")));
+#endif	// #if defined OIS_WIN32_PLATFORM
+#endif	// #ifdef CURSOR_VISIBLE
+
 	m_pInputManager = OIS::InputManager::createInputSystem (pl);
-	m_pKeyboard = static_cast<OIS::Keyboard*>(m_pInputManager->createInputObject (OIS::OISKeyboard, false)); // unbuffered keyboard
-	m_pMouse = static_cast<OIS::Mouse*>(m_pInputManager->createInputObject (OIS::OISMouse, false)); // unbuffered mouse
+	m_pKeyboard = 
+		static_cast<OIS::Keyboard*> (m_pInputManager->createInputObject (OIS::OISKeyboard, false)); // unbuffered keyboard
+	m_pMouse =
+		static_cast<OIS::Mouse*>(m_pInputManager->createInputObject (OIS::OISMouse, false)); // unbuffered mouse
 
 	return true;
 }

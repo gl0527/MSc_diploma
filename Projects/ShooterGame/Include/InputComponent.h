@@ -1,8 +1,16 @@
+#ifndef INPUT_COMPONENT_H
+#define INPUT_COMPONENT_H
+
 #pragma once
+
+// ---------------------------------- includes ----------------------------------
+
 #include "Component.h"
 #include "InputHandler.h"
 
 using namespace Engine;
+
+// ============================ class InputComponent =============================
 
 class InputComponent : public Component
 {
@@ -24,3 +32,4 @@ public:
 	~InputComponent();
 };
 
+#endif	// #ifndef INPUT_COMPONENT_H

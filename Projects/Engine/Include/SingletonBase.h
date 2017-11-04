@@ -24,9 +24,9 @@ public:
 protected:
 	struct Deleter;
 
-	using SelfUPtr = std::unique_ptr<T, Deleter>;
+	using UPtr = std::unique_ptr<T, Deleter>;
 
-	static SelfUPtr			s_pInstance;
+	static UPtr				s_pInstance;
 	static std::once_flag	s_onceFlag;
 
 	SingletonBase () = default;
@@ -37,7 +37,7 @@ protected:
 
 
 template<typename T>
-typename SingletonBase<T>::SelfUPtr SingletonBase<T>::s_pInstance = nullptr;
+typename SingletonBase<T>::UPtr SingletonBase<T>::s_pInstance = nullptr;
 
 template<typename T>
 std::once_flag	SingletonBase<T>::s_onceFlag;

@@ -4,6 +4,7 @@
 #include <Ogre.h>
 #include "TransformComponent.h"
 
+
 InputComponent::InputComponent(const std::string& ident) :
 	Component(ident),
 	moveSpeed(50.0f),

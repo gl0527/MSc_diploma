@@ -8,12 +8,19 @@
 #include "RenderComponent.h"
 
 
+// ----------------------------- forward declaration -----------------------------
+
+namespace Ogre
+{
+class BillboardSet;
+}
+
 namespace Engine
 {
 
 // ========================== class BillboardComponent ==========================
 
-class DLL_SPEC BillboardComponent : public RenderComponent
+class DLL_EXPORT BillboardComponent : public RenderComponent
 {
 public:
 	BillboardComponent (const std::string& bbName);

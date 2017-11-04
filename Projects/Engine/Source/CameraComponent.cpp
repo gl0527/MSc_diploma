@@ -2,6 +2,7 @@
 #include "GameObject.h"
 #include "Game.h"
 #include "RenderSystem.h"
+#include "Ogre.h"
 
 
 namespace Engine
@@ -15,7 +16,6 @@ CameraComponent::CameraComponent (const std::string& name, int zDepth)
 	renderWnd (Game::GetInstance ().GetRenderSystem ()->getRenderWindow ()),
 	renderTexture (nullptr)
 {
-
 }
 
 
@@ -54,9 +54,45 @@ void CameraComponent::Destroy ()
 }
 
 
+Ogre::Camera* CameraComponent::getCamera () const
+{ 
+	return camera; 
+}
+
+
+Ogre::Viewport* CameraComponent::getViewPort () const 
+{
+	return viewport; 
+}
+
+
 Ogre::Ray CameraComponent::getRay (float screenX, float screenY) const
 {
 	return camera->getCameraToViewportRay (screenX, screenY);
+}
+
+
+void CameraComponent::setLookAt (const Ogre::Vector3& newLookAt)
+{
+	camera->lookAt (newLookAt);
+}
+
+
+void CameraComponent::setNearClip (float nclip)
+{
+	camera->setNearClipDistance (nclip);
+}
+
+
+void CameraComponent::setFarClip (float fclip)
+{
+	camera->setFarClipDistance (fclip);
+}
+
+
+void CameraComponent::setRenderDist (float dist)
+{
+	camera->setRenderingDistance (dist);
 }
 
 

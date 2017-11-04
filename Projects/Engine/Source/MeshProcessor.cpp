@@ -1,6 +1,7 @@
 #include "MeshProcessor.h"
 #include "MeshComponent.h"
 #include "XMLParser.h"
+#include "Ogre.h"
 
 
 namespace Engine

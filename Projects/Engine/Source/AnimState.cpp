@@ -1,4 +1,5 @@
 #include "AnimState.h"
+#include <Ogre.h>
 
 
 namespace Engine
@@ -68,18 +69,36 @@ bool AnimState::HasEnded (const std::string& animName)
 void AnimState::Enter (Stateable* stateable)
 {
 	EnableAll ();
+	PostEnter (stateable);
 }
 
 
 void AnimState::Execute (Stateable* stateable, float t, float dt)
 {
 	StepAll (dt);
+	PostExecute (stateable, t, dt);
 }
 
 
 void AnimState::Exit (Stateable* stateable)
 {
 	DisableAll ();
+	PostExit (stateable);
+}
+
+
+void AnimState::PostEnter (Stateable* stateable)
+{
+}
+
+
+void AnimState::PostExecute (Stateable* stateable, float t, float dt)
+{
+}
+
+
+void AnimState::PostExit (Stateable* stateable)
+{
 }
 
 
@@ -96,6 +115,66 @@ std::weak_ptr<Ogre::AnimationState> AnimState::GetAnimState (const std::string& 
 		return m_animMap[name];
 
 	return std::shared_ptr<Ogre::AnimationState> (nullptr);
+}
+
+
+void AnimState::SetWeightAll (float weight)
+{
+	for (const auto& elem : m_animMap)
+		elem.second->setWeight (weight);
+}
+
+
+float AnimState::GetProgression ()
+{
+	float elapsedTime = m_animMap.begin ()->second->getTimePosition ();
+	float totalTime = m_animMap.begin ()->second->getLength ();
+
+	return elapsedTime / totalTime;
+}
+
+
+float AnimState::GetWeight ()
+{
+	return m_animMap.begin ()->second->getWeight ();
+}
+
+
+void AnimState::IncreaseWeightAll (float weight)
+{
+	for (const auto& elem : m_animMap) {
+		Ogre::Real newWeght (elem.second->getWeight () + weight);
+		elem.second->setWeight (newWeght);
+	}
+}
+
+
+void AnimState::DecreaseWeightAll (float weight)
+{
+	for (const auto& elem : m_animMap)
+		elem.second->setWeight (elem.second->getWeight () - weight);
+}
+
+
+bool AnimState::Blend (	const AnimState::SPtr& destAnim,
+						float srcMinProgression /*= 0.0f*/,
+						float srcEndWeight /*= 0.0f*/,
+						float destEndWeight /*= 1.0f*/,
+						float dWeight /*= 0.015f*/)
+{
+	if (GetProgression () < srcMinProgression)
+		return false;
+	
+	if (destAnim->GetWeight () > destEndWeight - dWeight &&
+		GetWeight () < srcEndWeight + dWeight)
+	{
+		return true;
+	} else {
+		destAnim->IncreaseWeightAll (dWeight);
+		DecreaseWeightAll (dWeight);
+
+		return false;
+	}
 }
 
 }	// namespace Engine

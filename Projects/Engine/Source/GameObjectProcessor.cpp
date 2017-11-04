@@ -23,7 +23,7 @@ bool GameObjectProcessor::ProcessXMLTag (TiXmlElement* elem)
 
 	const auto& object = ObjectManager::GetSingletonInstance ().CreateGameObject (name);
 
-	if (auto& obj = object.lock ()) {
+	if (auto obj = object.lock ()) {
 		auto parent = (TiXmlElement*)elem->Parent ();
 		std::string parentTag (parent->Value ());
 

@@ -8,12 +8,19 @@
 #include "RenderComponent.h"
 
 
+// ----------------------------- forward declaration -----------------------------
+
+namespace Ogre
+{
+class Entity;
+}
+
 namespace Engine
 {
 
 // ============================= class MeshComponent =============================
 
-	class DLL_SPEC MeshComponent : public RenderComponent
+	class DLL_EXPORT MeshComponent : public RenderComponent
 	{
 	public:
 		MeshComponent(const std::string& eName, const std::string& mName);

@@ -12,9 +12,9 @@ FPSComponent::FPSComponent(const std::string& name)
 	renderWnd = renderSys->getRenderWindow();
 
 	text = renderSys->createOverlayElement<Ogre::TextAreaOverlayElement>("TextArea", name.c_str());
-	text->setFontName("TrebuchetMSBold");
+	text->setFontName("SdkTrays/Value");
 	text->setMetricsMode(Ogre::GMM_PIXELS);
-	text->setCharHeight(20);
+	text->setCharHeight(24);
 
 	Ogre::OverlayContainer* panel = renderSys->createOverlayElement<Ogre::OverlayContainer>("Panel", "PanelName");
 	panel->setMetricsMode(Ogre::GMM_PIXELS);
@@ -38,7 +38,7 @@ FPSComponent::~FPSComponent()
 void FPSComponent::PostUpdate(float t, float dt)
 {
 	float fps = renderWnd->getLastFPS();
-	unsigned int triCount = renderWnd->getTriangleCount();
+	size_t triCount = renderWnd->getTriangleCount();
 	text->setCaption(Ogre::String("Frames/sec: ") + Ogre::StringConverter::toString(fps) + "\n" 
 		+ Ogre::String("Triangles: ") + Ogre::StringConverter::toString(triCount));
 }

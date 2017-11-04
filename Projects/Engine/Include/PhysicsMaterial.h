@@ -13,7 +13,7 @@ namespace Engine
 
 // ============================ class PhysicsMaterial ============================
 
-class DLL_SPEC PhysicsMaterial
+class DLL_EXPORT PhysicsMaterial
 {
 public:
 	PhysicsMaterial ();

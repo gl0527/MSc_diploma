@@ -14,7 +14,7 @@ namespace Engine
 
 // ============================ class LightComponent ============================
 
-class DLL_SPEC LightComponent : public Component
+class DLL_EXPORT LightComponent : public Component
 {
 public:
 	LightComponent (const std::string& name, const Ogre::Light::LightTypes& t);

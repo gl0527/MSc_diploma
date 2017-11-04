@@ -18,7 +18,7 @@ class PhysicsSystem;
 
 // ========================== class TPCameraComponent ==========================
 
-class DLL_SPEC TPCameraComponent : public CameraComponent
+class DLL_EXPORT TPCameraComponent : public CameraComponent
 {
 public:
 	TPCameraComponent (const std::string& name, int zDepth);

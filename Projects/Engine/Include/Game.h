@@ -20,7 +20,7 @@ class Ticker;
 
 // ================================== class Game ==================================
 
-class DLL_SPEC Game
+class DLL_EXPORT Game
 {
 public:
 	static Game&	GetInstance ();

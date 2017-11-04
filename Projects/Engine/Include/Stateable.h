@@ -7,6 +7,7 @@
 
 #include "stdafx.h"
 #include <memory>
+#include "Component.h"
 
 
 namespace Engine
@@ -18,14 +19,14 @@ class IState;
 
 // ============================== class Stateable ===============================
 
-class DLL_SPEC Stateable
+class Stateable : public Component
 {
 public:
-	Stateable ();
-	virtual ~Stateable ();
+	using Component::Component;
+	virtual DLL_EXPORT ~Stateable ();
 
-	void SetCurrentState (IState* newState);
-	void MakeStep (float t, float dt);
+	void DLL_EXPORT SetCurrentState (std::shared_ptr<IState> newState);
+	void DLL_EXPORT PreUpdate (float t, float dt) override;
 
 protected:
 	std::shared_ptr<IState> m_pCurrentState;

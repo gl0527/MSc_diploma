@@ -29,7 +29,7 @@ void LightComponent::Init (GameObject* object)
 }
 
 
-void LightComponent::PostUpdate (float t, float dt)
+inline void LightComponent::PostUpdate (float t, float dt)
 {
 	auto ownerTransform = m_owner->Transform ();
 

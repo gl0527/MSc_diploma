@@ -18,18 +18,18 @@ class Stateable;
 
 // ================================ class IState ================================
 
-class DLL_SPEC IState
+class IState
 {
 public:
-	explicit IState (const std::string& name);
+	explicit DLL_EXPORT IState (const std::string& name);
 	IState (const IState&) = delete;
-	virtual ~IState ();
+	virtual DLL_EXPORT ~IState ();
 
 	IState* operator= (const IState&) = delete;
 
-	virtual void Enter (Stateable* stateable) = 0;
-	virtual void Execute (Stateable* stateable, float t, float dt) = 0;
-	virtual void Exit (Stateable* stateable) = 0;
+	virtual DLL_EXPORT void Enter (Stateable* stateable) = 0;
+	virtual DLL_EXPORT void Execute (Stateable* stateable, float t, float dt) = 0;
+	virtual DLL_EXPORT void Exit (Stateable* stateable) = 0;
 
 	void Enable ();
 	void Disable ();

@@ -2,6 +2,7 @@
 #include "ObjectManager.h"
 #include "TransformComponent.h"
 
+
 namespace Engine
 {
 
@@ -145,7 +146,7 @@ inline const std::string& GameObject::GetName () const
 }
 
 
-TransformComponent* GameObject::Transform () const
+inline TransformComponent* GameObject::Transform () const
 {
 	return (TransformComponent*)m_components[0].get ();
 }

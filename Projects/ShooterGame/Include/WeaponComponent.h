@@ -1,5 +1,5 @@
 #pragma once
-#include "MeshComponent.h"
+#include "Component.h"
 
 using namespace Engine;
 

@@ -6,8 +6,7 @@
 // ---------------------------------- includes ----------------------------------
 
 #include "SingletonBase.h"
-#include <OIS\OIS.h>
-#include "System.h"
+#include <OIS.h>
 #include "stdafx.h"
 
 
@@ -24,12 +23,12 @@ namespace Engine
 
 // ============================= class InputHandler =============================
 
-class DLL_SPEC InputHandler final : public System, public SingletonBase<InputHandler>
+class DLL_EXPORT InputHandler final : public SingletonBase<InputHandler>
 {
 public:
-	bool init () override;
-	bool update (float t, float dt) override;
-	void destroy () override;
+	bool init ();
+	bool update (float t, float dt);
+	void destroy ();
 
 	static InputHandler& GetInstance ();
 

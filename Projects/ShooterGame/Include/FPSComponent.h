@@ -1,8 +1,16 @@
+#ifndef FPS_COMPONENT_H
+#define FPS_COMPONENT_H
+
 #pragma once
+
+// ---------------------------------- includes ----------------------------------
+
 #include "Component.h"
 #include "RenderSystem.h"
 
 using namespace Engine;
+
+// ============================= class FPSComponent ==============================
 
 class FPSComponent : public Component
 {
@@ -16,3 +24,4 @@ public:
 	virtual void PostUpdate(float t, float dt) override;
 };
 
+#endif	// #ifndef FPS_COMPONENT_H

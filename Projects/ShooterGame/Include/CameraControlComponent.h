@@ -1,5 +1,12 @@
+#ifndef CAMERA_CONTROL_COMPONENT_H
+#define CAMERA_CONTROL_COMPONENT_H
+
 #pragma once
+
+// ---------------------------------- includes ----------------------------------
+
 #include "CameraComponent.h"
+
 
 using namespace Engine;
 
@@ -8,6 +15,7 @@ namespace Engine
 class PhysicsSystem;
 }
 
+// ======================== class CameraControlComponent ========================
 
 class CameraControlComponent : public Component
 {
@@ -25,3 +33,5 @@ public:
 	virtual void Start() override;
 	virtual void PostUpdate(float t, float dt) override;
 };
+
+#endif	// #ifndef CAMERA_CONTROL_COMPONENT_H
