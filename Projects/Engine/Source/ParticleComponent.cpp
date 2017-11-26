@@ -3,8 +3,7 @@
 #include "Ogre.h"
 
 
-namespace Engine
-{
+namespace Engine {
 
 unsigned int ParticleComponent::instanceCount = 0;
 
@@ -13,7 +12,6 @@ ParticleComponent::ParticleComponent (const std::string& name, const std::string
 	partSys (nullptr),
 	particle (partName)
 {
-
 }
 
 
@@ -22,11 +20,11 @@ ParticleComponent::~ParticleComponent ()
 }
 
 
-void ParticleComponent::Init (GameObject* obj)
+void ParticleComponent::PostInit (GameObject* obj)
 {
 	partSys = m_pSceneManager->createParticleSystem (obj->GetName () + Ogre::StringConverter::toString (instanceCount++), particle);
 	m_pObject = partSys;
-	RenderComponent::Init (obj);
+	RenderComponent::PostInit (obj);
 }
 
 

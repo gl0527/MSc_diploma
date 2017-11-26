@@ -10,8 +10,7 @@
 #include "stdafx.h"
 
 
-namespace Engine
-{
+namespace Engine {
 
 // ----------------------------- forward declaration-----------------------------
 
@@ -19,17 +18,17 @@ class GameObject;
 
 // ============================= class ObjectManager =============================
 
-class DLL_EXPORT ObjectManager
+class ObjectManager
 {
 public:
 	~ObjectManager ();
 
-	static ObjectManager&	GetSingletonInstance ();
+	static DLL_EXPORT ObjectManager&	GetSingletonInstance ();
 	static void				DeleteSingletonInstance ();
 	static bool				IsExist ();
 
-	std::weak_ptr<GameObject>	CreateGameObject (const std::string& id);
-	void						RemoveGameObject (const std::string& id);
+	DLL_EXPORT std::weak_ptr<GameObject>	CreateGameObject (const std::string& id);
+	DLL_EXPORT void						RemoveGameObject (const std::string& id);
 
 	void	Start ();
 	void	PreUpdate (float t, float dt);
@@ -37,7 +36,7 @@ public:
 	void	PostUpdate (float t, float dt);
 	void	Destroy ();
 
-	std::weak_ptr<GameObject> GetGameObjectByName (const std::string& objName) const;
+	DLL_EXPORT std::weak_ptr<GameObject> GetGameObjectByName (const std::string& objName) const;
 
 private:
 	using GameObjectMap = std::map<std::string, std::shared_ptr<GameObject>>;

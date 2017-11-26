@@ -33,9 +33,9 @@ void CameraControlComponent::Start()
 
 void CameraControlComponent::PostUpdate(float t, float dt)
 {
-	if (auto& cam = ownerCam.lock())
+	if (auto cam = ownerCam.lock())
 	{
-		if (auto& parent = m_owner->GetParent().lock())
+		if (auto parent = m_owner->GetParent().lock())
 		{
 			const auto& ownerPos = m_owner->Transform()->worldPosition();
 			const auto& parentPos = parent->Transform()->worldPosition();

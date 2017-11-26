@@ -2,8 +2,7 @@
 #include "IState.h"
 
 
-namespace Engine
-{
+namespace Engine {
 
 Stateable::~Stateable ()
 {
@@ -15,10 +14,10 @@ void Stateable::SetCurrentState (std::shared_ptr<IState> newState)
 {
 	if (m_pCurrentState != nullptr)
 		m_pCurrentState->Exit (this);
-	
+
 	if (newState != nullptr)
 		m_pCurrentState = newState;
-	
+
 	if (m_pCurrentState != nullptr)
 		m_pCurrentState->Enter (this);
 }

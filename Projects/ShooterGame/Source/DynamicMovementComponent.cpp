@@ -38,30 +38,30 @@ void DynamicMovementComponent::PreUpdate(float t, float dt)
 	if (inputHandler.IsButtonDown(OIS::KC_D))
 	{
 		force += Ogre::Vector3(1.0f, 0.0f, 0.0f);
-		if (auto& soldierComp = ownerSoldierComp.lock());
+		if (auto soldierComp = ownerSoldierComp.lock());
 			//soldierComp->setAction(SoldierComponent::PlayerAction::PA_RUN);
 	}
 	if (inputHandler.IsButtonDown(OIS::KC_A))
 	{
 		force += Ogre::Vector3(-1.0f, 0.0f, 0.0f);
-		if (auto& soldierComp = ownerSoldierComp.lock());
+		if (auto soldierComp = ownerSoldierComp.lock());
 			//soldierComp->setAction(SoldierComponent::PlayerAction::PA_RUN);
 	}
 	if (inputHandler.IsButtonDown(OIS::KC_W))
 	{
 		force += Ogre::Vector3(0.0f, 0.0f, -1.0f);
-		if (auto& soldierComp = ownerSoldierComp.lock());
+		if (auto soldierComp = ownerSoldierComp.lock());
 			//soldierComp->setAction(SoldierComponent::PlayerAction::PA_RUN);
 	}
 	if (inputHandler.IsButtonDown(OIS::KC_S))
 	{
 		force += Ogre::Vector3(0.0f, 0.0f, 1.0f);
-		if (auto& soldierComp = ownerSoldierComp.lock());
+		if (auto soldierComp = ownerSoldierComp.lock());
 			//soldierComp->setAction(SoldierComponent::PlayerAction::PA_RUN);
 	}
 
 	if (inputHandler.IsLeftMouseButtonDown ())
-		if (auto& soldierComp = ownerSoldierComp.lock());
+		if (auto soldierComp = ownerSoldierComp.lock());
 			//soldierComp->setAction(SoldierComponent::PlayerAction::PA_SHOOT);
 
 	/*Ogre::Radian yaw(-0.003 * ms.X.rel);
@@ -76,7 +76,7 @@ void DynamicMovementComponent::PreUpdate(float t, float dt)
 	force.normalise();
 	force = m_owner->Transform()->worldRotation() * force; // azert, hogy a movedir az ownerObject koordinata-rendszereben legyen ertve
 
-	if (auto& phy = ownerPhysics.lock())
+	if (auto phy = ownerPhysics.lock())
 	{
 		phy->SetLinearVelocity(0.0f, 0.0f, 0.0f);
 		phy->ActivateRigidBody();

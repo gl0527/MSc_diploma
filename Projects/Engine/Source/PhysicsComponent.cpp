@@ -6,8 +6,7 @@
 #include "TransformComponent.h"
 
 
-namespace Engine
-{
+namespace Engine {
 
 PhysicsComponent::PhysicsComponent (const std::string& name, float m)
 	: Component (name),
@@ -19,8 +18,7 @@ PhysicsComponent::PhysicsComponent (const std::string& name, float m)
 	triggerEnter (defaultTriggerEnter),
 	collision (defaultCollision)
 {
-	if (m_mass < 1e-4)
-	{
+	if (m_mass < 1e-4) {
 		m_mass = 0.0f;
 		m_rigidBodyType = RigidBodyType::Static;
 	}
@@ -44,8 +42,7 @@ void PhysicsComponent::RemoveCollisionShape (btCollisionShape* collShape)
 
 void PhysicsComponent::CreateRigidBody ()
 {
-	if (m_pRigidBody)
-	{
+	if (m_pRigidBody) {
 		m_pWorld->removeRigidBody (m_pRigidBody);
 		m_pRigidBody->setUserPointer (nullptr);
 		delete m_pRigidBody;
@@ -68,8 +65,7 @@ void PhysicsComponent::CreateRigidBody ()
 	m_pRigidBody = new btRigidBody (rigidBodyCI);
 	m_pRigidBody->setMassProps (m_mass, inertia);
 
-	if (m_rigidBodyType == RigidBodyType::Kinematic)
-	{
+	if (m_rigidBodyType == RigidBodyType::Kinematic) {
 		m_pRigidBody->setCollisionFlags (m_pRigidBody->getCollisionFlags () | btCollisionObject::CF_KINEMATIC_OBJECT);
 		m_pRigidBody->setActivationState (DISABLE_DEACTIVATION);
 	}
@@ -78,9 +74,8 @@ void PhysicsComponent::CreateRigidBody ()
 }
 
 
-void PhysicsComponent::Init (GameObject* object)
+void PhysicsComponent::PostInit (GameObject* object)
 {
-	m_owner = object;
 	SetMass ();
 	CreateRigidBody ();
 }
@@ -88,13 +83,11 @@ void PhysicsComponent::Init (GameObject* object)
 
 void PhysicsComponent::Update (float t, float dt)
 {
-	if (m_rigidBodyType == RigidBodyType::Dynamic)
-	{
+	if (m_rigidBodyType == RigidBodyType::Dynamic) {
 		m_owner->Transform ()->setPosition (GetPosition ());
 		m_owner->Transform ()->setRotation (GetOrientation ());
 	}
-	else if (m_rigidBodyType == RigidBodyType::Kinematic)
-	{
+	else if (m_rigidBodyType == RigidBodyType::Kinematic) {
 		SetPosition (m_owner->Transform ()->worldPosition ());
 		SetOrientation (m_owner->Transform ()->worldRotation ());
 
@@ -111,8 +104,7 @@ void PhysicsComponent::Update (float t, float dt)
 
 void PhysicsComponent::Destroy ()
 {
-	for (int i = 0; i < m_pCompoundShape->getNumChildShapes (); ++i)
-	{
+	for (int i = 0; i < m_pCompoundShape->getNumChildShapes (); ++i) {
 		btCollisionShape* s = m_pCompoundShape->getChildShape (i);
 		m_pCompoundShape->removeChildShape (s);
 	}
@@ -120,18 +112,15 @@ void PhysicsComponent::Destroy ()
 	m_pWorld->removeCollisionObject (obj);
 	m_pWorld->removeRigidBody (m_pRigidBody);
 
-	if (m_pCompoundShape)
-	{
+	if (m_pCompoundShape) {
 		delete m_pCompoundShape;
 		m_pCompoundShape = nullptr;
 	}
-	if (m_pMotionState)
-	{
+	if (m_pMotionState) {
 		delete m_pMotionState;
 		m_pMotionState = nullptr;
 	}
-	if (m_pRigidBody)
-	{
+	if (m_pRigidBody) {
 		delete m_pRigidBody;
 		m_pRigidBody = nullptr;
 	}
@@ -175,9 +164,8 @@ void PhysicsComponent::SetOrientation (const Ogre::Quaternion& q)
 void PhysicsComponent::SetPhysicsMaterial (const PhysicsMaterial& phyMat)
 {
 	m_physicsMaterial = phyMat;
-	
-	if (m_pRigidBody)
-	{
+
+	if (m_pRigidBody) {
 		m_pRigidBody->setFriction (m_physicsMaterial.GetFriction ());
 		m_pRigidBody->setDamping (m_physicsMaterial.GetLinearDamping (), m_physicsMaterial.GetAngularDamping ());
 		m_pRigidBody->setRestitution (m_physicsMaterial.GetBounciness ());
@@ -187,8 +175,7 @@ void PhysicsComponent::SetPhysicsMaterial (const PhysicsMaterial& phyMat)
 
 void PhysicsComponent::AddForce (float fx, float fy, float fz)
 {
-	if (m_rigidBodyType == RigidBodyType::Dynamic && m_pRigidBody)
-	{
+	if (m_rigidBodyType == RigidBodyType::Dynamic && m_pRigidBody) {
 		btVector3 centralForce (fx, fy, fz);
 		m_pRigidBody->applyCentralForce (centralForce);
 	}
@@ -225,25 +212,25 @@ void PhysicsComponent::DisableRotationXYZ ()
 
 inline bool PhysicsComponent::IsTrigger () const
 {
-	return m_isTrigger; 
+	return m_isTrigger;
 }
 
 
 inline bool PhysicsComponent::IsDynamic () const
 {
-	return m_rigidBodyType == RigidBodyType::Dynamic; 
+	return m_rigidBodyType == RigidBodyType::Dynamic;
 }
 
 
-inline bool PhysicsComponent::IsKinematic () const 
+inline bool PhysicsComponent::IsKinematic () const
 {
-	return m_rigidBodyType == RigidBodyType::Kinematic; 
+	return m_rigidBodyType == RigidBodyType::Kinematic;
 }
 
 
-inline bool PhysicsComponent::IsStatic () const 
-{ 
-	return m_rigidBodyType == RigidBodyType::Static; 
+inline bool PhysicsComponent::IsStatic () const
+{
+	return m_rigidBodyType == RigidBodyType::Static;
 }
 
 
@@ -252,8 +239,7 @@ void PhysicsComponent::SetMass ()
 	if (m_mass == 0 && m_rigidBodyType != RigidBodyType::Static)
 		SetTypeToStatic ();
 
-	if (m_mass > 0)
-	{
+	if (m_mass > 0) {
 		btVector3 inertia (0, 0, 0);
 		m_pCompoundShape->calculateLocalInertia (m_mass, inertia);
 	}
@@ -263,13 +249,11 @@ void PhysicsComponent::SetMass ()
 void PhysicsComponent::SetTrigger (bool t)
 {
 	m_isTrigger = t;
-	if (m_isTrigger)
-	{
+	if (m_isTrigger) {
 		if (m_pRigidBody)
 			m_pRigidBody->setCollisionFlags (m_pRigidBody->getCollisionFlags () | btCollisionObject::CF_NO_CONTACT_RESPONSE);
 	}
-	else
-	{
+	else {
 		if (m_pRigidBody)
 			m_pRigidBody->setCollisionFlags (m_pRigidBody->getCollisionFlags () & !btCollisionObject::CF_NO_CONTACT_RESPONSE);
 	}

@@ -5,8 +5,7 @@
 #include "Ogre.h"
 
 
-namespace Engine
-{
+namespace Engine {
 
 InputHandler::InputHandler ()
 	: m_pInputManager (nullptr),
@@ -50,7 +49,7 @@ bool InputHandler::init ()
 #endif	// #ifdef CURSOR_VISIBLE
 
 	m_pInputManager = OIS::InputManager::createInputSystem (pl);
-	m_pKeyboard = 
+	m_pKeyboard =
 		static_cast<OIS::Keyboard*> (m_pInputManager->createInputObject (OIS::OISKeyboard, false)); // unbuffered keyboard
 	m_pMouse =
 		static_cast<OIS::Mouse*>(m_pInputManager->createInputObject (OIS::OISMouse, false)); // unbuffered mouse
@@ -112,30 +111,50 @@ bool InputHandler::IsMiddleMouseButtonDown () const
 }
 
 
-int InputHandler::GetAbsoluteMouseX () const
+bool InputHandler::GetAbsoluteMouseX (int* outAbsoluteMouseX) const
 {
-	if (m_pMouse)
-		return m_pMouse->getMouseState ().X.abs;
+	if (m_pMouse) {
+		*outAbsoluteMouseX = m_pMouse->getMouseState ().X.abs;
+
+		return true;
+	}
+
+	return false;
 }
 
 
-int InputHandler::GetAbsoluteMouseY () const
+bool InputHandler::GetAbsoluteMouseY (int* outAbsoluteMouseY) const
 {
-	if (m_pMouse)
-		return m_pMouse->getMouseState ().Y.abs;
+	if (m_pMouse) {
+		*outAbsoluteMouseY = m_pMouse->getMouseState ().Y.abs;
+
+		return true;
+	}
+
+	return false;
 }
 
-int InputHandler::GetRelativeMouseX () const
+bool InputHandler::GetRelativeMouseX (int* outRelativeMouseX) const
 {
-	if (m_pMouse)
-		return m_pMouse->getMouseState ().X.rel;
+	if (m_pMouse) {
+		*outRelativeMouseX = m_pMouse->getMouseState ().X.rel;
+
+		return true;
+	}
+
+	return false;
 }
 
 
-int InputHandler::GetRelativeMouseY () const
+bool InputHandler::GetRelativeMouseY (int* outRelativeMouseY) const
 {
-	if (m_pMouse)
-		return m_pMouse->getMouseState ().Y.rel;
+	if (m_pMouse) {
+		*outRelativeMouseY = m_pMouse->getMouseState ().Y.rel;;
+
+		return true;
+	}
+
+	return false;
 }
 
 

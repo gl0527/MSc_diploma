@@ -37,7 +37,7 @@ if (NOT WIN32)
 endif ()
 
 # setting up package variables
-set (3RDPARTY_DIR 			"${PROJECT_SOURCE_DIR}/../Bin/3rdparty" 		CACHE FILEPATH "")
+set (3RDPARTY_DIR 			"${PROJECT_SOURCE_DIR}/../3rdparty" 			CACHE FILEPATH "")
 set (CMAKE_MODULE_PATH 		"${3RDPARTY_DIR}/OGRE-1.9.0-vc140-x86/CMake" 	CACHE FILEPATH "")
 set (BOOST_ROOT 			"${3RDPARTY_DIR}/boost-1.61-vc140-x86" 			CACHE FILEPATH "")
 set (BULLET_ROOT 			"${3RDPARTY_DIR}/bullet-2.82-r2704" 			CACHE FILEPATH "")

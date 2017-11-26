@@ -1,11 +1,11 @@
-#include "ParticleProcessor.h"
+#include "XML/ParticleProcessor.h"
 #include "ParticleComponent.h"
-#include "XMLParser.h"
+#include "XML/XMLParser.h"
 #include "Ogre.h"
 
 
-namespace Engine
-{
+namespace Engine {
+namespace XML {
 
 bool ParticleProcessor::ProcessXMLTag (TiXmlElement* elem)
 {
@@ -27,4 +27,5 @@ bool ParticleProcessor::ProcessXMLTag (TiXmlElement* elem)
 	return true;
 }
 
+}	// namespace XML
 }	// namespace Engine

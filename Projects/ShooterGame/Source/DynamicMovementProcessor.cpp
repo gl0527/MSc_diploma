@@ -1,6 +1,6 @@
 #include "DynamicMovementProcessor.h"
 #include "DynamicMovementComponent.h"
-#include "XMLParser.h"
+#include "XML/XMLParser.h"
 #include <iostream>
 
 
@@ -8,7 +8,7 @@ bool DynamicMovementProcessor::ProcessXMLTag(TiXmlElement* elem)
 {
 	const char* name;
 	try {
-		XMLParser::ParsePrimitive (elem, "name", &name);
+		XML::XMLParser::ParsePrimitive (elem, "name", &name);
 	} catch (const std::runtime_error& re) {
 		std::cout << re.what () << std::endl;
 
@@ -28,7 +28,7 @@ bool DynamicMovementProcessor::ProcessXMLTag(TiXmlElement* elem)
 			float speed;
 			
 			try {
-				XMLParser::ParsePrimitive (child, "value", &speed);
+				XML::XMLParser::ParsePrimitive (child, "value", &speed);
 			} catch (const std::runtime_error& re) {
 				std::cout << re.what () << std::endl;
 

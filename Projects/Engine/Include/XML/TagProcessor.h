@@ -18,29 +18,34 @@
 class TiXmlElement;
 
 
-namespace Engine
-{
+namespace Engine {
 
 // ----------------------------- forward declaration -----------------------------
 
 class Component;
+class PrefabBase;
+
+namespace XML {
 
 // ============================= class TagProcessor =============================
 
-class DLL_EXPORT TagProcessor
+class TagProcessor
 {
 public:
-	explicit TagProcessor (const std::string& tagName);
+	explicit DLL_EXPORT TagProcessor (const std::string& tagName);
+	virtual ~TagProcessor () {}
 
 	virtual bool		ProcessXMLTag (TiXmlElement* elem) = 0;
-	const std::string&	GetTagName () const;
+	DLL_EXPORT const std::string&	GetTagName () const;
 
 protected:
 	std::string m_tagName;
 
-	virtual void AddToParentObject (TiXmlElement* elem, const std::shared_ptr<Component>& component);
+	virtual DLL_EXPORT void AddToParentObject (TiXmlElement* elem, const std::shared_ptr<Component>& component);
+	virtual DLL_EXPORT void AddPrefabToParentObject (TiXmlElement* elem, std::shared_ptr<PrefabBase> pPrefab);
 };
 
+}	// namespace XML
 }	// namespace Engine
 
 #endif	// #ifndef TAG_PROCESSOR_H

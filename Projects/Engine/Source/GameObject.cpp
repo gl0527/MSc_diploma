@@ -1,10 +1,10 @@
 #include "GameObject.h"
 #include "ObjectManager.h"
 #include "TransformComponent.h"
+#include "PrefabBase.h"
 
 
-namespace Engine
-{
+namespace Engine {
 
 GameObject::GameObject (const std::string& id)
 	: m_Name (id),
@@ -19,8 +19,7 @@ GameObject::GameObject (const std::string& id)
 void GameObject::AddComponent (const Component::SPtr& comp)
 {
 	// TODO: unicitást ellenorizni kellene!
-	if (comp)
-	{
+	if (comp) {
 		m_components.push_back (comp);
 		comp->Init (this);
 	}
@@ -46,6 +45,13 @@ void GameObject::removeComponent ()
 }
 
 
+void GameObject::AddComponentPrefab (std::shared_ptr<PrefabBase> pPrefab)
+{
+	m_pPrefabs.push_back (pPrefab);	// TODO leszarmazott objektumok itt nem jelennek meg, szoval ez nem heterogen kollekcio
+	pPrefab->Init (this);
+}
+
+
 void GameObject::addTag (const std::string& tag)
 {
 	m_tags.insert (tag);
@@ -66,8 +72,7 @@ void GameObject::removeTag ()
 
 void GameObject::addChild (const std::string& childName)
 {
-	if (const auto& child = ObjectManager::GetSingletonInstance ().GetGameObjectByName (childName).lock ())
-	{
+	if (const auto& child = ObjectManager::GetSingletonInstance ().GetGameObjectByName (childName).lock ()) {
 		m_children.push_back (child);
 	}
 
@@ -79,12 +84,9 @@ void GameObject::addChild (const std::string& childName)
 
 void GameObject::removeChild (const std::string& childName)
 {
-	auto predicate = [&childName] (WPtr elem) -> bool
-	{
-		if (auto& child = elem.lock ())
-		{
-			if (child->GetName () == childName)
-			{
+	auto predicate = [&childName] (WPtr elem) -> bool {
+		if (auto child = elem.lock ()) {
+			if (child->GetName () == childName) {
 				child->Destroy ();
 				return true;
 			}
@@ -103,6 +105,13 @@ void GameObject::removeChildren ()
 
 void GameObject::Start ()
 {
+	for (auto prefab : m_pPrefabs) {
+		if (prefab->IsCreationImmediate ()) {
+			prefab->ApplyPrimaryParams ();
+			prefab->ApplySecondaryParams ();
+		}
+	}
+
 	for (const auto& component : m_components)
 		component->Start ();
 }
@@ -163,15 +172,14 @@ std::weak_ptr<Component> GameObject::GetComponent (const std::string& cID) const
 
 inline GameObject::WPtr GameObject::GetParent () const
 {
-	return m_pParent; 
+	return m_pParent;
 }
 
 
 std::vector<std::string> GameObject::getChildrenNames () const
 {
 	std::vector<std::string> childrenNames;
-	for (auto child = m_children.begin (), end = m_children.end (); child != end; ++child)
-	{
+	for (auto child = m_children.begin (), end = m_children.end (); child != end; ++child) {
 		childrenNames.push_back (child->lock ()->GetName ());
 	}
 	return childrenNames;
@@ -192,8 +200,7 @@ inline bool GameObject::hasParent () const
 
 void GameObject::setParent (const std::string& parentName)
 {
-	if (auto& ancestor = ObjectManager::GetSingletonInstance ().GetGameObjectByName (parentName).lock ())
-	{
+	if (auto ancestor = ObjectManager::GetSingletonInstance ().GetGameObjectByName (parentName).lock ()) {
 		m_pParent = ancestor;
 		ancestor->addChild (m_Name);
 	}
@@ -202,8 +209,7 @@ void GameObject::setParent (const std::string& parentName)
 
 bool GameObject::hasTag (const std::string& t)
 {
-	for (auto it = m_tags.cbegin (), end = m_tags.cend (); it != end; ++it)
-	{
+	for (auto it = m_tags.cbegin (), end = m_tags.cend (); it != end; ++it) {
 		if (*it == t)
 			return true;
 	}
@@ -213,7 +219,7 @@ bool GameObject::hasTag (const std::string& t)
 
 inline bool GameObject::isDestroyed () const
 {
-	return m_isDestroyed; 
+	return m_isDestroyed;
 }
 
 

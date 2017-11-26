@@ -14,39 +14,37 @@
 
 // ----------------------------- forward declaration -----------------------------
 
-namespace Ogre
-{
-	class Vector3;
-	class Quaternion;
+namespace Ogre {
+class Vector3;
+class Quaternion;
 }
 
 
-namespace Engine
-{
+namespace Engine {
 
 // ============================ class PhysicsComponent ============================
 
-class DLL_EXPORT PhysicsComponent : public Component
+class PhysicsComponent : public Component
 {
 public:
 	PhysicsComponent (const std::string& name, float m);
 	virtual ~PhysicsComponent ();
-	
-	virtual void Init (GameObject* object) override;
+
+	virtual void PostInit (GameObject* object) override;
 	virtual void Update (float t, float dt) override;
 	virtual void Destroy () override;
-	
+
 	void AddCollisionShape (btCollisionShape* collShape, const Ogre::Vector3& p, const Ogre::Quaternion& q);
 	void RemoveCollisionShape (btCollisionShape* collShape);
 	void CreateRigidBody ();
 
-	void AddForce (float fx, float fy, float fz);
+	DLL_EXPORT void AddForce (float fx, float fy, float fz);
 	void SetAngularFactor (float x, float y, float z);
-	void SetLinearVelocity (float x, float y, float z);
-	void ActivateRigidBody ();
+	DLL_EXPORT void SetLinearVelocity (float x, float y, float z);
+	DLL_EXPORT void ActivateRigidBody ();
 	void DisableRotationXYZ ();
 
-	bool IsTrigger () const;
+	DLL_EXPORT bool IsTrigger () const;
 	bool IsDynamic () const;
 	bool IsKinematic () const;
 	bool IsStatic () const;
@@ -60,11 +58,11 @@ public:
 
 	void SetPhysicsMaterial (const PhysicsMaterial& phyMat);
 
-	void setOnTriggerEnter (std::function<void (PhysicsComponent*)>&& f)	{ triggerEnter = f; }
-	void setOnCollision (std::function<void (PhysicsComponent*)>&& f)		{ collision = f; }
+	void setOnTriggerEnter (std::function<void (PhysicsComponent*)>&& f) { triggerEnter = f; }
+	void setOnCollision (std::function<void (PhysicsComponent*)>&& f) { collision = f; }
 
-	void onTriggerEnter (PhysicsComponent* other)	{ triggerEnter (other); }
-	void onCollision (PhysicsComponent* other)		{ collision (other); }
+	void onTriggerEnter (PhysicsComponent* other) { triggerEnter (other); }
+	void onCollision (PhysicsComponent* other) { collision (other); }
 
 private:
 	enum class RigidBodyType : unsigned char
@@ -84,7 +82,7 @@ private:
 	btDynamicsWorld*		m_pWorld;
 	PhysicsMaterial			m_physicsMaterial;
 
-	
+
 	Ogre::Vector3		GetPosition ()		const;
 	Ogre::Quaternion	GetOrientation ()	const;
 
@@ -94,8 +92,8 @@ private:
 	std::function<void (PhysicsComponent*)> triggerEnter;
 	std::function<void (PhysicsComponent*)> collision;
 
-	static void defaultTriggerEnter (PhysicsComponent* other) {}
-	static void defaultCollision (PhysicsComponent* other) {}
+	static void defaultTriggerEnter (PhysicsComponent* /*other*/) {}
+	static void defaultCollision (PhysicsComponent* /*other*/) {}
 };
 
 }	// namespace Engine

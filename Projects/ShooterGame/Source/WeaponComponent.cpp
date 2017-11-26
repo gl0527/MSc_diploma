@@ -19,7 +19,7 @@ void WeaponComponent::Start()
 
 void WeaponComponent::PreUpdate(float t, float dt)
 {
-	if (auto& parent = m_owner->GetParent().lock())
+	if (auto parent = m_owner->GetParent().lock())
 	{
 		if (auto parentMesh = parent->getFirstComponentByType<MeshComponent>().lock())
 		{

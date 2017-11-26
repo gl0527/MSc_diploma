@@ -5,11 +5,11 @@
 
 // ---------------------------------- includes ----------------------------------
 
-#include "TagProcessor.h"
+#include "XML/TagProcessor.h"
 
 
-namespace Engine
-{
+namespace Engine {
+namespace XML {
 
 // ============================ class AudioProcessor ============================
 
@@ -20,6 +20,7 @@ public:
 	virtual bool ProcessXMLTag (TiXmlElement* elem) override;
 };
 
+}	// namespace XML
 }	// namespace Engine
 
 #endif	// #ifndef AUDIO_PROCESSOR_H

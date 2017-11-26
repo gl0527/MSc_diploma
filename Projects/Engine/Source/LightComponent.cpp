@@ -5,8 +5,7 @@
 #include "TransformComponent.h"
 
 
-namespace Engine
-{
+namespace Engine {
 
 unsigned int LightComponent::instanceCount = 0;
 
@@ -16,13 +15,20 @@ LightComponent::LightComponent (const std::string& name, const Ogre::Light::Ligh
 	light (nullptr),
 	type (t)
 {
-
 }
 
 
-void LightComponent::Init (GameObject* object)
+LightComponent::LightComponent (std::tuple<std::string, Ogre::Light::LightTypes> tup)
+	: Component (std::get<0> (tup)),
+	sceneMgr (Game::GetInstance ().GetRenderSystem ()->getSceneManager ()),
+	light (nullptr),
+	type (std::get<1> (tup))
 {
-	m_owner = object;
+}
+
+
+void LightComponent::PostInit (GameObject* object)
+{
 	light = sceneMgr->createLight (object->GetName () + Ogre::StringConverter::toString (instanceCount++));
 	if (light)
 		light->setType (type);
@@ -124,6 +130,32 @@ void LightComponent::setSpotRange (Ogre::Degree innerAngle, Ogre::Degree outerAn
 {
 	if (type == Ogre::Light::LT_SPOTLIGHT)
 		light->setSpotlightRange (innerAngle, outerAngle);
+}
+
+
+LightComponent::Tuple& LightComponent::GetAttributes ()
+{
+	return m_attributes;
+}
+
+
+void LightComponent::ApplyAttributes ()
+{
+	setDiffuseColor (std::get<0> (m_attributes));
+	setSpecularColor (std::get<1> (m_attributes));
+	setIntensity (std::get<2> (m_attributes));
+	setAttenuation (std::get<3> (m_attributes), std::get<4> (m_attributes), std::get<5> (m_attributes), std::get<6> (m_attributes));
+	setSpotRange (Ogre::Degree (std::get<7> (m_attributes)), Ogre::Degree (std::get<8> (m_attributes)));
+}
+
+
+void LightComponent::ApplyCreationData (const InitData& creationData)
+{
+	setDiffuseColor (creationData.diffuseColor);
+	setSpecularColor (creationData.specularColor);
+	setIntensity (creationData.intensity);
+	setAttenuation (creationData.range, creationData.constantAttenuation, creationData.linearAttenuation, creationData.quadricAttenuation);
+	setSpotRange (Ogre::Degree (creationData.innerAngle), Ogre::Degree (creationData.outerAngle));
 }
 
 }	// namespace Engine

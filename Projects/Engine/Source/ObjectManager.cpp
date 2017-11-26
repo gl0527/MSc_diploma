@@ -3,8 +3,7 @@
 #include <iostream>
 
 
-namespace Engine
-{
+namespace Engine {
 
 ObjectManager* ObjectManager::s_pInstance = nullptr;
 
@@ -25,8 +24,7 @@ ObjectManager& ObjectManager::GetSingletonInstance ()
 
 void ObjectManager::DeleteSingletonInstance ()
 {
-	if (s_pInstance)
-	{
+	if (s_pInstance) {
 		delete s_pInstance;
 		s_pInstance = nullptr;
 	}
@@ -41,13 +39,11 @@ bool ObjectManager::IsExist ()
 
 std::weak_ptr<GameObject> ObjectManager::CreateGameObject (const std::string& id)
 {
-	if (m_gameObjectMap.find (id) == m_gameObjectMap.end ())
-	{
+	if (m_gameObjectMap.find (id) == m_gameObjectMap.end ()) {
 		m_gameObjectMap[id] = std::shared_ptr<GameObject> (new GameObject (id));
 		return m_gameObjectMap[id];
 	}
-	else
-	{
+	else {
 		std::cout << "Gameobject creation failed: Gameobject with name \"" << id << "\" already existing.\n";
 		return std::shared_ptr<GameObject> (nullptr);
 	}
@@ -57,11 +53,9 @@ std::weak_ptr<GameObject> ObjectManager::CreateGameObject (const std::string& id
 void ObjectManager::RemoveGameObject (const std::string& id)
 {
 	auto& removableObject = m_gameObjectMap[id];
-	if (removableObject)
-	{
+	if (removableObject) {
 		const auto& removableChildren = removableObject->getChildrenNames ();
-		for (auto it = removableChildren.begin (); it != removableChildren.end (); ++it)
-		{
+		for (auto it = removableChildren.begin (); it != removableChildren.end (); ++it) {
 			RemoveGameObject (*it);
 		}
 		removableObject->Destroy ();
@@ -109,8 +103,7 @@ std::weak_ptr<GameObject> ObjectManager::GetGameObjectByName (const std::string&
 {
 	if (m_gameObjectMap.find (objName) != m_gameObjectMap.end ())
 		return m_gameObjectMap.at (objName);
-	else
-	{
+	else {
 		std::cout << "Gameobject with name \"" << objName << "\" not found.\n";
 		return std::shared_ptr<GameObject> (nullptr);
 	}

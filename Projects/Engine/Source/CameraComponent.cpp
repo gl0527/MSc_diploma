@@ -5,8 +5,7 @@
 #include "Ogre.h"
 
 
-namespace Engine
-{
+namespace Engine {
 
 CameraComponent::CameraComponent (const std::string& name, int zDepth)
 	: RenderComponent (name),
@@ -24,13 +23,12 @@ CameraComponent::~CameraComponent ()
 }
 
 
-void CameraComponent::Init (GameObject* obj)
+void CameraComponent::PostInit (GameObject* obj)
 {
-	m_owner = obj;
-	camera = m_pSceneManager->createCamera (obj->GetName () + Ogre::StringConverter::toString (zOrder));
-
 	while (renderWnd->hasViewportWithZOrder (zOrder))
 		++zOrder;
+
+	camera = m_pSceneManager->createCamera (obj->GetName () + Ogre::StringConverter::toString (zOrder));
 
 	viewport = renderWnd->addViewport (camera, zOrder);
 	camera->setAspectRatio (Ogre::Real (viewport->getActualWidth ()) / Ogre::Real (viewport->getActualHeight ()));
@@ -55,14 +53,14 @@ void CameraComponent::Destroy ()
 
 
 Ogre::Camera* CameraComponent::getCamera () const
-{ 
-	return camera; 
+{
+	return camera;
 }
 
 
-Ogre::Viewport* CameraComponent::getViewPort () const 
+Ogre::Viewport* CameraComponent::getViewPort () const
 {
-	return viewport; 
+	return viewport;
 }
 
 

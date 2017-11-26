@@ -10,30 +10,28 @@
 
 // ----------------------------- forward declaration -----------------------------
 
-namespace Ogre
-{
+namespace Ogre {
 class ParticleSystem;
 }
 
-namespace Engine
-{
+namespace Engine {
 
 // ========================== class ParticleComponent ===========================
 
-	class DLL_EXPORT ParticleComponent : public RenderComponent
-	{
-	public:
-		ParticleComponent(const std::string& name, const std::string& partName);
-		virtual ~ParticleComponent();
+class ParticleComponent : public RenderComponent
+{
+public:
+	ParticleComponent (const std::string& name, const std::string& partName);
+	virtual ~ParticleComponent ();
 
-		virtual void Init(GameObject* obj) override;
-		virtual void Destroy() override;
+	virtual void PostInit (GameObject* obj) override;
+	virtual void Destroy () override;
 
-	private:
-		static unsigned int instanceCount;
-		Ogre::ParticleSystem* partSys;
-		std::string particle;
-	};
+private:
+	static unsigned int instanceCount;
+	Ogre::ParticleSystem* partSys;
+	std::string particle;
+};
 
 }	// namespace Engine
 

@@ -31,7 +31,7 @@ SoldierAnimComponent::~SoldierAnimComponent ()
 
 void SoldierAnimComponent::Start ()
 {
-	if (auto& ownerMesh = m_owner->getFirstComponentByType<MeshComponent> ().lock ()) {
+	if (auto ownerMesh = m_owner->getFirstComponentByType<MeshComponent> ().lock ()) {
 		m_entity = ownerMesh->getEntity ();
 
 		if (auto skeleton = m_entity->getSkeleton ()) {

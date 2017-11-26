@@ -10,8 +10,7 @@
 #include "Component.h"
 
 
-namespace Engine
-{
+namespace Engine {
 
 // ----------------------------- forward declaration -----------------------------
 
@@ -25,8 +24,8 @@ public:
 	using Component::Component;
 	virtual DLL_EXPORT ~Stateable ();
 
-	void DLL_EXPORT SetCurrentState (std::shared_ptr<IState> newState);
-	void DLL_EXPORT PreUpdate (float t, float dt) override;
+	DLL_EXPORT void SetCurrentState (std::shared_ptr<IState> newState);
+	DLL_EXPORT void PreUpdate (float t, float dt) override;
 
 protected:
 	std::shared_ptr<IState> m_pCurrentState;

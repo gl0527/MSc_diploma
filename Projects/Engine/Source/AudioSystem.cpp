@@ -2,8 +2,7 @@
 #include <iostream>
 
 
-namespace Engine
-{
+namespace Engine {
 
 AudioSystem::AudioSystem ()
 	: audioDevice (nullptr),
@@ -22,10 +21,8 @@ AudioSystem::~AudioSystem ()
 
 bool AudioSystem::init ()
 {
-	if (!alutInitWithoutContext (0, 0)) {
-		exit (EXIT_FAILURE);
+	if (!alutInitWithoutContext (0, 0))
 		return false;
-	}
 
 	audioDevice = alcOpenDevice (NULL);
 	if (!audioDevice)

@@ -12,35 +12,33 @@
 
 // ----------------------------- forward declaration-----------------------------
 
-namespace Ogre
-{
+namespace Ogre {
 class RenderWindow;
 }
 
 
-namespace Engine
-{
+namespace Engine {
 
 // ============================= class InputHandler =============================
 
-class DLL_EXPORT InputHandler final : public SingletonBase<InputHandler>
+class InputHandler final : public SingletonBase<InputHandler>
 {
 public:
 	bool init ();
 	bool update (float t, float dt);
 	void destroy ();
 
-	static InputHandler& GetInstance ();
+	static DLL_EXPORT InputHandler& GetInstance ();
 
-	bool IsButtonDown (OIS::KeyCode key) const;
-	bool IsLeftMouseButtonDown () const;
+	DLL_EXPORT bool IsButtonDown (OIS::KeyCode key) const;
+	DLL_EXPORT bool IsLeftMouseButtonDown () const;
 	bool IsRightMouseButtonDown () const;
 	bool IsMiddleMouseButtonDown () const;
 
-	int GetAbsoluteMouseX () const;
-	int GetAbsoluteMouseY () const;
-	int GetRelativeMouseX () const;
-	int GetRelativeMouseY () const;
+	bool GetAbsoluteMouseX (int* outAbsoluteMouseX) const;
+	bool GetAbsoluteMouseY (int* outAbsoluteMouseY) const;
+	DLL_EXPORT bool GetRelativeMouseX (int* outRelativeMouseX) const;
+	DLL_EXPORT bool GetRelativeMouseY (int* outRelativeMouseY) const;
 
 private:
 	friend class SingletonBase<InputHandler>;

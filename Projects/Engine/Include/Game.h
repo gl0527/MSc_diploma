@@ -8,8 +8,7 @@
 #include "stdafx.h"
 
 
-namespace Engine
-{
+namespace Engine {
 
 // ----------------------------- forward declaration -----------------------------
 
@@ -20,22 +19,22 @@ class Ticker;
 
 // ================================== class Game ==================================
 
-class DLL_EXPORT Game
+class Game
 {
 public:
-	static Game&	GetInstance ();
-	static void		DeleteInstance ();
+	static DLL_EXPORT Game&	GetInstance ();
+	static DLL_EXPORT void		DeleteInstance ();
 	static bool		IsExist ();
 
-	bool	Init ();
-	void	Start ();
+	DLL_EXPORT bool	Init ();
+	DLL_EXPORT void	Start ();
 	void	Pause ();
-	void	Destroy ();
+	DLL_EXPORT void	Destroy ();
 
 	// TODO ezeket nem lenne szabad hasznalni, helyettuk wrapper fuggvenyek
-	RenderSystem*	GetRenderSystem ()	const { return m_pRenderSystem; }
-	PhysicsSystem*	getPhysicsSystem () const { return m_pPhysicsSystem; }
-	
+	DLL_EXPORT RenderSystem*	GetRenderSystem ()	const { return m_pRenderSystem; }
+	DLL_EXPORT PhysicsSystem*	getPhysicsSystem () const { return m_pPhysicsSystem; }
+
 private:
 	enum class State : unsigned char
 	{
@@ -57,7 +56,7 @@ private:
 
 
 	Game (const char* title);
-	
+
 	void MainLoop ();
 	bool Update (float t, float dt);
 };

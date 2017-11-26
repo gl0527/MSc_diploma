@@ -9,8 +9,7 @@
 #include <mutex>
 
 
-namespace Engine
-{
+namespace Engine {
 
 // ============================ class SingletonBase =============================
 
@@ -65,7 +64,7 @@ inline void SingletonBase<T>::DeleteInstance ()
 template<typename T>
 inline bool SingletonBase<T>::IsExist ()
 {
-	return (s_pInstance != nullptr); 
+	return (s_pInstance != nullptr);
 }
 
 }	// namespace Engine

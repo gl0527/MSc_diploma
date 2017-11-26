@@ -1,8 +1,7 @@
 #include "Component.h"
 
 
-namespace Engine
-{
+namespace Engine {
 
 Component::Component (const std::string& ident, bool uniq)
 	: m_name (ident),
@@ -30,6 +29,12 @@ Component::~Component ()
 void Component::Init (GameObject* object)
 {
 	m_owner = object;
+	PostInit (object);
+}
+
+
+void Component::PostInit (GameObject* /*object*/)
+{
 }
 
 
@@ -60,25 +65,25 @@ void Component::Destroy ()
 
 inline const std::string& Component::GetName () const
 {
-	return m_name; 
+	return m_name;
 }
 
 
 inline const bool Component::IsUnique () const
 {
-	return m_isUnique; 
+	return m_isUnique;
 }
 
 
 inline bool Component::IsEnabled () const
-{ 
-	return m_isEnabled; 
+{
+	return m_isEnabled;
 }
 
 
-inline void Component::Enable () 
+inline void Component::Enable ()
 {
-	m_isEnabled = true; 
+	m_isEnabled = true;
 }
 
 

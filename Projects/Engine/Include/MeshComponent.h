@@ -10,33 +10,31 @@
 
 // ----------------------------- forward declaration -----------------------------
 
-namespace Ogre
-{
+namespace Ogre {
 class Entity;
 }
 
-namespace Engine
-{
+namespace Engine {
 
 // ============================= class MeshComponent =============================
 
-	class DLL_EXPORT MeshComponent : public RenderComponent
-	{
-	public:
-		MeshComponent(const std::string& eName, const std::string& mName);
-		virtual ~MeshComponent();
+class MeshComponent : public RenderComponent
+{
+public:
+	MeshComponent (const std::string& eName, const std::string& mName);
+	virtual ~MeshComponent ();
 
-		virtual void Init(GameObject* obj) override;
-		virtual void Destroy() override;
-		
-		void setMaterial(const std::string& matName);
-		Ogre::Entity* getEntity() const { return entity; }
+	virtual void PostInit (GameObject* obj) override;
+	virtual void Destroy () override;
 
-	private:
-		static unsigned int instanceCount;
-		Ogre::Entity* entity;
-		std::string mesh;
-	};
+	void setMaterial (const std::string& matName);
+	Ogre::Entity* getEntity () const { return entity; }
+
+private:
+	static unsigned int instanceCount;
+	Ogre::Entity* entity;
+	std::string mesh;
+};
 
 }	// namespace Engine
 

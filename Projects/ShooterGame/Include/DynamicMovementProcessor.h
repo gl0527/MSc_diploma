@@ -5,17 +5,17 @@
 
 // ---------------------------------- includes ----------------------------------
 
-#include "TagProcessor.h"
+#include "XML/TagProcessor.h"
 
 
 using namespace Engine;
 
 // ======================= class DynamicMovementProcessor =======================
 
-class DynamicMovementProcessor : public TagProcessor
+class DynamicMovementProcessor : public XML::TagProcessor
 {
 public:
-	DynamicMovementProcessor() : TagProcessor("dynamicmovementcomponent") {}
+	DynamicMovementProcessor() : XML::TagProcessor("dynamicmovementcomponent") {}
 	virtual bool ProcessXMLTag(TiXmlElement* elem) override;
 };
 

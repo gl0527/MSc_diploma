@@ -6,8 +6,7 @@
 #include "TransformComponent.h"
 
 
-namespace Engine
-{
+namespace Engine {
 
 AudioComponent::AudioComponent (const std::string& fileName, const std::string& listenerName)
 	: Component (fileName),
@@ -44,7 +43,7 @@ void AudioComponent::PreUpdate (float t, float dt)
 {
 	if (m_owner)
 		updatePose (m_owner->Transform ()->worldPosition (), m_owner->Transform ()->forward ());
-	if (auto& listenerObj = listener.lock ())
+	if (auto listenerObj = listener.lock ())
 		updatePose (listenerObj->Transform ()->worldPosition (), listenerObj->Transform ()->forward ());
 }
 
@@ -113,6 +112,20 @@ void AudioComponent::setLooping (bool loop)
 		alSourcei (source, AL_LOOPING, AL_FALSE);
 	if (alGetError () != AL_NO_ERROR)
 		std::cout << "AudioComponent::setVolume: Error occured during setting looping.\n";
+}
+
+
+AudioComponent::Tuple& AudioComponent::GetAttributes ()
+{
+	return m_attributes;
+}
+
+
+void AudioComponent::ApplyAttributes ()
+{
+	setVolume (std::get<0> (m_attributes));
+	setSpeed (std::get<1> (m_attributes));
+	setLooping (std::get<2> (m_attributes));
 }
 
 }	// namespace Engine

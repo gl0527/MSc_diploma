@@ -12,12 +12,11 @@
 #include "stdafx.h"
 
 
-namespace Engine
-{
+namespace Engine {
 
 // ============================= class RenderSystem =============================
 
-class DLL_EXPORT RenderSystem : public System
+class RenderSystem : public System
 {
 public:
 	RenderSystem (const char* wName, size_t w = 800, size_t h = 600);
@@ -29,10 +28,10 @@ public:
 	static Ogre::MeshPtr	createPlaneMeshXZ (const char* planeMeshName, float y, unsigned int u = 1, unsigned int v = 1);
 	static Ogre::TexturePtr createTexture (const char* texName, unsigned int w, unsigned int h);
 
-	Ogre::Root*			getRoot () const			{ return ogreRoot; }
-	Ogre::SceneNode*	getRootNode () const		{ return sceneManager->getRootSceneNode (); }
-	Ogre::SceneManager* getSceneManager () const	{ return sceneManager; }
-	Ogre::RenderWindow* getRenderWindow () const	{ return renderWindow; }
+	Ogre::Root*			getRoot () const { return ogreRoot; }
+	Ogre::SceneNode*	getRootNode () const { return sceneManager->getRootSceneNode (); }
+	Ogre::SceneManager* getSceneManager () const { return sceneManager; }
+	Ogre::RenderWindow* getRenderWindow () const { return renderWindow; }
 
 	Ogre::OverlayElement*	getOverlayElement (const char* elementName) const;
 	Ogre::Overlay*			getOverlay (const char* overlayName) const;
@@ -53,7 +52,7 @@ private:
 	Ogre::RenderWindow* renderWindow;
 	Ogre::OverlaySystem* overlaySystem;
 	Ogre::OverlayManager* overlayManager;
-	
+
 	std::string windowName;
 	size_t windowWidth;
 	size_t windowHeight;

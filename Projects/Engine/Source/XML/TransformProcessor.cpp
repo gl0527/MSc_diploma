@@ -1,13 +1,13 @@
-#include "TransformProcessor.h"
+#include "XML/TransformProcessor.h"
 #include "TransformComponent.h"
 
 #include "GameObject.h"
 #include "ObjectManager.h"
-#include "XMLParser.h"
+#include "XML/XMLParser.h"
 
 
-namespace Engine
-{
+namespace Engine {
+namespace XML {
 
 void TransformProcessor::AddToParentObject (TiXmlElement* elem, const std::shared_ptr<Component>& component)
 {
@@ -23,7 +23,7 @@ void TransformProcessor::AddToParentObject (TiXmlElement* elem, const std::share
 
 	const auto& object = ObjectManager::GetSingletonInstance ().GetGameObjectByName (objectName);
 
-	if (auto& obj = object.lock ()) {
+	if (auto obj = object.lock ()) {
 		obj->removeComponent (obj->GetName ()); // a régi transform kitörlése
 		obj->AddComponent (component);
 	}
@@ -94,4 +94,5 @@ bool TransformProcessor::ProcessXMLTag (TiXmlElement* elem)
 	return true;
 }
 
+}	// namespace XML
 }	// namespace Engine

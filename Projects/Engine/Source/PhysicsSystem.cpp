@@ -2,8 +2,7 @@
 #include "PhysicsComponent.h"
 
 
-namespace Engine
-{
+namespace Engine {
 
 PhysicsSystem::PhysicsSystem ()
 	: gravity (btVector3 (0.0f, -100.0f, 0.0f)),
@@ -31,7 +30,7 @@ bool PhysicsSystem::init ()
 }
 
 
-bool PhysicsSystem::onContactProcessed (btManifoldPoint& cp, void* body0, void* body1)
+bool PhysicsSystem::onContactProcessed (btManifoldPoint& /*cp*/, void* body0, void* body1)
 {
 	btRigidBody* rigidbody0 = (btRigidBody*)body0;
 	btRigidBody* rigidbody1 = (btRigidBody*)body1;
@@ -56,7 +55,7 @@ bool PhysicsSystem::onContactProcessed (btManifoldPoint& cp, void* body0, void* 
 }
 
 
-bool PhysicsSystem::update (float t, float dt)
+bool PhysicsSystem::update (float /*t*/, float dt)
 {
 	if (world) {
 		world->stepSimulation (dt);

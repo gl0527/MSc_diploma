@@ -5,21 +5,22 @@
 
 // ---------------------------------- includes ----------------------------------
 
-#include "TagProcessor.h"
+#include "XML/TagProcessor.h"
 
 
-namespace Engine
-{
+namespace Engine {
+namespace XML {
 
 // ========================== class ParticleProcessor ===========================
 
-	class ParticleProcessor : public TagProcessor
-	{
-	public:
-		ParticleProcessor() : TagProcessor("particlecomponent") {}
-		virtual bool ProcessXMLTag(TiXmlElement* elem) override;
-	};
+class ParticleProcessor : public TagProcessor
+{
+public:
+	ParticleProcessor () : TagProcessor ("particlecomponent") {}
+	virtual bool ProcessXMLTag (TiXmlElement* elem) override;
+};
 
+}	// namespace XML
 }	// namespace Engine
 
 #endif	// #ifndef PARTICLE_PROCESSOR_H

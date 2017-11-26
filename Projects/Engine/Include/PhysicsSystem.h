@@ -9,8 +9,7 @@
 #include "System.h"
 
 
-namespace Engine
-{
+namespace Engine {
 
 // ============================ class PhysicsSystem =============================
 

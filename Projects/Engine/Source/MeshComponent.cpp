@@ -3,8 +3,7 @@
 #include "Ogre.h"
 
 
-namespace Engine
-{
+namespace Engine {
 
 unsigned int MeshComponent::instanceCount = 0;
 
@@ -22,11 +21,11 @@ MeshComponent::~MeshComponent ()
 }
 
 
-void MeshComponent::Init (GameObject* obj)
+void MeshComponent::PostInit (GameObject* obj)
 {
 	entity = m_pSceneManager->createEntity (obj->GetName () + Ogre::StringConverter::toString (instanceCount++), mesh);
 	m_pObject = entity;
-	RenderComponent::Init (obj);
+	RenderComponent::PostInit (obj);
 }
 
 

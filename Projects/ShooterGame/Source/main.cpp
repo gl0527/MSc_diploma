@@ -4,7 +4,7 @@
 #include "GameObject.h"
 #include "ObjectManager.h"
 #include "PhysicsComponent.h"
-#include "XMLParser.h"
+#include "XML/XMLParser.h"
 
 #include "DynamicMovementProcessor.h"
 #include "InputComponent.h"
@@ -13,6 +13,7 @@
 #include "CameraControlComponent.h"
 #include "WeaponComponent.h"
 #include "SoldierAnimComponent.h"
+
 
 using namespace Engine;
 
@@ -28,75 +29,55 @@ int main(int argc, char** argv)
 	new DynamicMovementProcessor;
 
 	auto renderSys = game.GetRenderSystem();
-	auto& xmlParser = XMLParser::GetInstance();
+	auto& xmlParser = XML::XMLParser::GetInstance();
 	auto& objectMgr = ObjectManager::GetSingletonInstance ();
-
-	renderSys->createPlaneMeshXZ("ground", 0, 10, 10);
-
-	/*const auto& tree = objectMgr.createGameObject("tree");
-	tree->transform()->setPosition(Ogre::Vector3(-30.0f, 0.0f, -900.0f));
-	tree->transform()->setScale(Ogre::Vector3(5, 5, 5));
-	std::shared_ptr<MeshComponent> ball2Renderer(new MeshComponent("treeTrunk", "treetrunk.mesh"));
-	std::shared_ptr<BillboardComponent> ball2bb(new BillboardComponent("bboard"));
-	ball2bb->getBillboardSet()->setBillboardType(Ogre::BBT_PERPENDICULAR_SELF);
-	ball2bb->getBillboardSet()->setMaterialName("TreeLeaves");
-	ball2bb->getBillboardSet()->setSortingEnabled(true);
-	ball2bb->getBillboardSet()->setCastShadows(true);
-
-	for (int i = 0; i < 10; i++)
-	{
-		float h = Ogre::Math::RangeRandom(30, 60);
-		Ogre::Vector3 pos(0, h, 0);
-		Ogre::Vector3 dir(Ogre::Math::RangeRandom(-0.6f, 0.6f), 1, Ogre::Math::RangeRandom(-0.6f, 0.6f));
-		dir.normalise();
-		auto bb = ball2bb->getBillboardSet()->createBillboard(pos);
-		bb->setDimensions(90.0f - h, 90.0f - h);
-		bb->mDirection = dir;
-	}
-
-	tree->addComponent(ball2Renderer);
-	tree->addComponent(ball2bb);*/
 
 	if (!xmlParser.LoadXMLFromFile ("Media\\map\\test.xml"))
 		return -1;
 
-	if (auto& exp = objectMgr.GetGameObjectByName("explosive").lock())
+	if (auto exp = objectMgr.GetGameObjectByName("explosive").lock())
 	{
-		if(auto& explosivePhysx = exp->getFirstComponentByType<PhysicsComponent>().lock())
-			explosivePhysx->setOnTriggerEnter([&objectMgr, &exp](PhysicsComponent* other) { 
+		if(auto explosivePhysx = exp->getFirstComponentByType<PhysicsComponent>().lock())
+			explosivePhysx->setOnTriggerEnter ([&objectMgr, &exp] (PhysicsComponent* other) { 
 				if(const auto& explosiveAudio = exp->getFirstComponentByType<AudioComponent>().lock())
 					explosiveAudio->play();
 				objectMgr.RemoveGameObject(other->GetOwner()->GetName());
 			});
 	}
 
-	if (auto& soldierGO = objectMgr.GetGameObjectByName ("gijoe").lock ()) {
+	if (auto soldierGO = objectMgr.GetGameObjectByName ("gijoe").lock ()) {
 		std::shared_ptr<SoldierAnimComponent> soldierAnimComp (new SoldierAnimComponent ("soldierAnimComp"));
 
 		soldierGO->AddComponent (soldierAnimComp);
 	}
 
-	if (auto& lvl = objectMgr.GetGameObjectByName("level").lock())
+	if (auto lvl = objectMgr.GetGameObjectByName("level").lock())
 	{
-		if(auto& levelSound = lvl->getFirstComponentByType<AudioComponent>().lock())
+		if(auto levelSound = lvl->getFirstComponentByType<AudioComponent>().lock())
 			levelSound->play();
 	}
 
-	if (auto& frames = objectMgr.CreateGameObject("fps").lock())
+	if (auto frames = objectMgr.CreateGameObject("fps").lock())
 	{
 		std::shared_ptr<FPSComponent> fpsc(new FPSComponent("FPS"));
 		frames->AddComponent(fpsc);
 	}
 
-	if (auto& gijoecam = objectMgr.GetGameObjectByName("gijoecamera").lock())
+	if (auto gijoecam = objectMgr.GetGameObjectByName("gijoecamera").lock())
 	{
 		std::shared_ptr<CameraControlComponent> camControl(new CameraControlComponent("camc"));
 		gijoecam->AddComponent(camControl);
 	}
-	if (auto& weapon = objectMgr.GetGameObjectByName("weapon").lock())
+	if (auto weapon = objectMgr.GetGameObjectByName("weapon").lock())
 	{
-		std::shared_ptr<WeaponComponent> weap(new WeaponComponent("weap"));
-		weapon->AddComponent(weap);
+		//Factory<WeaponComponent> weaponFactory;
+
+		//weaponFactory.SetCtorParams ("weap");
+		//weaponFactory.SetAllNonCtorParams ();
+
+		//Factory<WeaponComponent>::SPtr weaponComponent = weaponFactory.Create ();
+		
+		//weapon->AddComponent (weaponComponent);
 	}
 	
 	// setting up environment

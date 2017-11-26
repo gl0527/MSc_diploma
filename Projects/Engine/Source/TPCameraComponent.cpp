@@ -5,8 +5,7 @@
 #include "TransformComponent.h"
 
 
-namespace Engine
-{
+namespace Engine {
 
 TPCameraComponent::TPCameraComponent (const std::string& name, int zDepth)
 	: CameraComponent (name, zDepth),
@@ -24,10 +23,10 @@ TPCameraComponent::~TPCameraComponent ()
 {}
 
 
-void TPCameraComponent::Init (GameObject* object)
+void TPCameraComponent::PostInit (GameObject* object)
 {
-	CameraComponent::Init (object);
-	auto& dir = m_owner->Transform ()->forward ();
+	CameraComponent::PostInit (object);
+	auto dir = m_owner->Transform ()->forward ();
 	dir.normalise ();
 	const auto& ownerPos = m_owner->Transform ()->worldPosition ();
 
@@ -39,7 +38,7 @@ void TPCameraComponent::Init (GameObject* object)
 void TPCameraComponent::PostUpdate (float t, float dt)
 {
 	const auto& ownerPos = m_owner->Transform ()->worldPosition () + Ogre::Vector3 (0, targetHeight, 0);
-	auto& dir = m_owner->Transform ()->forward ();
+	auto dir = m_owner->Transform ()->forward ();
 	dir.normalise ();
 	auto newPos = ownerPos - dir*camDist + Ogre::Vector3 (0, camHeight, 0);
 
@@ -47,7 +46,7 @@ void TPCameraComponent::PostUpdate (float t, float dt)
 
 	btVector3 btCamPos (camera->getPosition ().x, camera->getPosition ().y, camera->getPosition ().z);
 	btVector3 btOwnerPos (ownerPos.x, ownerPos.y, ownerPos.z);
-	auto& ray = physicsSys->rayTest (btOwnerPos, btCamPos);
+	auto ray = physicsSys->rayTest (btOwnerPos, btCamPos);
 
 	if (ray.hasHit ()) {
 		//auto& hitPoint = ray.m_hitPointWorld;

@@ -8,25 +8,24 @@
 #include "stdafx.h"
 
 
-namespace Engine
-{
+namespace Engine {
 
 // ============================ class PhysicsMaterial ============================
 
-class DLL_EXPORT PhysicsMaterial
+class PhysicsMaterial
 {
 public:
 	PhysicsMaterial ();
 
-	float	GetAngularDamping () const;
-	float	GetBounciness () const;
-	float	GetFriction () const;
-	float	GetLinearDamping () const;
+	DLL_EXPORT float	GetAngularDamping () const;
+	DLL_EXPORT float	GetBounciness () const;
+	DLL_EXPORT float	GetFriction () const;
+	DLL_EXPORT float	GetLinearDamping () const;
 
-	void	SetAngularDamping (float newAngularDamping);
-	void	SetBounciness (float newBounciness);
-	void	SetFriction (float newFriction);
-	void	SetLinearDamping (float newLinearDamping);
+	DLL_EXPORT void	SetAngularDamping (float newAngularDamping);
+	DLL_EXPORT void	SetBounciness (float newBounciness);
+	DLL_EXPORT void	SetFriction (float newFriction);
+	DLL_EXPORT void	SetLinearDamping (float newLinearDamping);
 
 private:
 	float m_angularDamping; // perdulet csillapitas

@@ -1,20 +1,20 @@
-#include "XMLParser.h"
+#include "XML/XMLParser.h"
 
 #include "Ogre.h"
 
-#include "TransformProcessor.h"
-#include "CameraProcessor.h"
-#include "MeshProcessor.h"
-#include "TPCameraProcessor.h"
-#include "PhysicsProcessor.h"
-#include "GameObjectProcessor.h"
-#include "AudioProcessor.h"
-#include "ParticleProcessor.h"
-#include "LightProcessor.h"
+#include "XML/TransformProcessor.h"
+#include "XML/CameraProcessor.h"
+#include "XML/MeshProcessor.h"
+#include "XML/TPCameraProcessor.h"
+#include "XML/PhysicsProcessor.h"
+#include "XML/GameObjectProcessor.h"
+#include "XML/AudioProcessor.h"
+#include "XML/ParticleProcessor.h"
+#include "XML/LightProcessor.h"
 
 
-namespace Engine
-{
+namespace Engine {
+namespace XML {
 
 XMLParser* XMLParser::s_pInstance = nullptr;
 
@@ -34,8 +34,7 @@ XMLParser& XMLParser::GetInstance ()
 
 void XMLParser::DeleteInstance ()
 {
-	if (s_pInstance)
-	{
+	if (s_pInstance) {
 		delete s_pInstance;
 		s_pInstance = nullptr;
 	}
@@ -75,10 +74,9 @@ bool XMLParser::LoadXMLFromFile (const char* fileName)
 {
 	if (!m_xmlDocument.LoadFile (fileName))
 		throw std::runtime_error ("The XML document does not exist or invalid.\n");
-	
+
 	m_pDocumentRoot = m_xmlDocument.FirstChildElement ();
-	if (m_pDocumentRoot == nullptr)
-	{
+	if (m_pDocumentRoot == nullptr) {
 		throw std::runtime_error ("XML document root not found.\n");
 	}
 	TraverseXMLTree (m_pDocumentRoot);
@@ -97,8 +95,7 @@ void XMLParser::Destroy ()
 
 void XMLParser::TraverseXMLTree (TiXmlElement* elem)
 {
-	for (auto child = elem->FirstChildElement (); child != nullptr; child = child->NextSiblingElement ())
-	{
+	for (auto child = elem->FirstChildElement (); child != nullptr; child = child->NextSiblingElement ()) {
 		std::string tagName (child->Value ());
 
 		if (m_xmlProcessorMap[tagName])
@@ -111,8 +108,7 @@ void XMLParser::TraverseXMLTree (TiXmlElement* elem)
 
 void XMLParser::ParsePrimitive (TiXmlElement* tag, const char* attrName, float* outResult)
 {
-	if (tag->QueryFloatAttribute (attrName, outResult) != 0)
-	{
+	if (tag->QueryFloatAttribute (attrName, outResult) != 0) {
 		std::string errorMsg ("Float parsing error: " + std::string (attrName) +
 			" attribute of " + std::string (tag->Value ()) + " tag not found.");
 
@@ -123,11 +119,10 @@ void XMLParser::ParsePrimitive (TiXmlElement* tag, const char* attrName, float* 
 
 void XMLParser::ParsePrimitive (TiXmlElement* tag, const char* attrName, int* outResult)
 {
-	if (tag->QueryIntAttribute (attrName, outResult) != 0)
-	{
-		std::string errorMsg ("Int parsing error: " + std::string (attrName) + 
+	if (tag->QueryIntAttribute (attrName, outResult) != 0) {
+		std::string errorMsg ("Int parsing error: " + std::string (attrName) +
 			" attribute of " + std::string (tag->Value ()) + " tag not found.");
-		
+
 		throw std::runtime_error (errorMsg.c_str ());
 	}
 }
@@ -136,11 +131,10 @@ void XMLParser::ParsePrimitive (TiXmlElement* tag, const char* attrName, int* ou
 void XMLParser::ParsePrimitive (TiXmlElement* tag, const char* attrName, const char** outResult)
 {
 	*outResult = tag->Attribute (attrName);
-	if (*outResult == nullptr)
-	{
+	if (*outResult == nullptr) {
 		std::string errorMsg ("String parsing error: " + std::string (attrName) +
 			" attribute of " + std::string (tag->Value ()) + " tag not found.");
-		
+
 		throw std::runtime_error (errorMsg.c_str ());
 	}
 }
@@ -148,11 +142,10 @@ void XMLParser::ParsePrimitive (TiXmlElement* tag, const char* attrName, const c
 
 void XMLParser::ParsePrimitive (TiXmlElement* tag, const char* attrName, bool* outResult)
 {
-	if (tag->QueryBoolAttribute (attrName, outResult) != 0)
-	{
+	if (tag->QueryBoolAttribute (attrName, outResult) != 0) {
 		std::string errorMsg ("Boolean parsing error: " + std::string (attrName) +
 			" attribute of " + std::string (tag->Value ()) + " tag not found.");
-		
+
 		throw std::runtime_error (errorMsg.c_str ());
 	}
 }
@@ -165,7 +158,7 @@ void XMLParser::ParseFloat3_XYZ (TiXmlElement* tag, Ogre::Vector3& outResult)
 	ParsePrimitive (tag, "x", &x);
 	ParsePrimitive (tag, "y", &y);
 	ParsePrimitive (tag, "z", &z);
-	
+
 	outResult = { x, y, z };
 }
 
@@ -187,12 +180,12 @@ void XMLParser::ParseFloat3_RGB (TiXmlElement* tag, Ogre::ColourValue& outResult
 void XMLParser::ParseFloat3_RGBA (TiXmlElement* tag, Ogre::ColourValue& outResult)
 {
 	float r, g, b, a;
-	
+
 	ParsePrimitive (tag, "r", &r);
 	ParsePrimitive (tag, "g", &g);
 	ParsePrimitive (tag, "b", &b);
 	ParsePrimitive (tag, "a", &a);
-	
+
 	outResult.r = r;
 	outResult.g = g;
 	outResult.b = b;
@@ -208,8 +201,9 @@ void XMLParser::ParseFloat4_WXYZ (TiXmlElement* tag, Ogre::Quaternion& outResult
 	ParsePrimitive (tag, "qx", &qx);
 	ParsePrimitive (tag, "qy", &qy);
 	ParsePrimitive (tag, "qz", &qz);
-	
-	outResult = {qw, qx, qy, qz};
+
+	outResult = { qw, qx, qy, qz };
 }
 
+}	// namespace XML
 }	// namespace Engine

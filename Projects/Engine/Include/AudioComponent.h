@@ -9,27 +9,30 @@
 
 #include <AL\alut.h>
 #include <memory>
+#include <tuple>
 
-namespace Ogre
-{
-	class Vector3;
+
+namespace Ogre {
+class Vector3;
 }
 
 
-namespace Engine
-{
+namespace Engine {
 
 // ============================ class AudioComponent ============================
 
-class DLL_EXPORT AudioComponent : public Component
+class AudioComponent : public Component
 {
+private:
+	using Tuple = std::tuple<float, float, bool>;
+
 public:
 	AudioComponent (const std::string& fileName, const std::string& listenerName);
 	virtual ~AudioComponent ();
 
 	virtual void PreUpdate (float t, float dt) override;
 
-	void play ();
+	DLL_EXPORT void play ();
 	void pause ();
 	void stop ();
 	bool isPlaying ();
@@ -38,6 +41,9 @@ public:
 	void setSpeed (float spd);
 	void setLooping (bool loop);
 
+	Tuple& GetAttributes ();
+	void ApplyAttributes ();
+
 private:
 	float volume;
 	float speed;
@@ -45,6 +51,9 @@ private:
 	ALuint buffer;
 	ALuint source;
 	std::weak_ptr<GameObject> listener;
+
+	Tuple m_attributes;
+
 	void updatePose (const Ogre::Vector3& pos, const Ogre::Vector3& dir);
 };
 

@@ -9,8 +9,7 @@
 #include <string>
 
 
-namespace Engine
-{
+namespace Engine {
 
 // ----------------------------- forward declaration -----------------------------
 

@@ -5,11 +5,11 @@
 
 // ---------------------------------- includes ----------------------------------
 
-#include "TagProcessor.h"
+#include "XML/TagProcessor.h"
 
 
-namespace Engine
-{
+namespace Engine {
+namespace XML {
 
 // =========================== class CameraProcessor ============================
 
@@ -20,6 +20,7 @@ public:
 	virtual bool ProcessXMLTag (TiXmlElement* elem) override;
 };
 
+}	// namespace XML
 }	// namespace Engine
 
 #endif	// #ifndef CAMERA_PROCESSOR_H

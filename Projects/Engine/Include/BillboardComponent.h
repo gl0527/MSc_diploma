@@ -10,23 +10,21 @@
 
 // ----------------------------- forward declaration -----------------------------
 
-namespace Ogre
-{
+namespace Ogre {
 class BillboardSet;
 }
 
-namespace Engine
-{
+namespace Engine {
 
 // ========================== class BillboardComponent ==========================
 
-class DLL_EXPORT BillboardComponent : public RenderComponent
+class BillboardComponent : public RenderComponent
 {
 public:
 	BillboardComponent (const std::string& bbName);
 	virtual ~BillboardComponent ();
 
-	virtual void Init (GameObject* obj) override;
+	virtual void PostInit (GameObject* obj) override;
 	virtual void Destroy () override;
 
 	Ogre::BillboardSet* getBillboardSet () const { return billboardSet; }

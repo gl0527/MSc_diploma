@@ -6,28 +6,25 @@
 // ---------------------------------- includes ----------------------------------
 
 #include "Component.h"
-//#include <Ogre.h>
 
 
-namespace Ogre
-{
+namespace Ogre {
 class MovableObject;
 class SceneManager;
 class SceneNode;
 }
 
-namespace Engine
-{
+namespace Engine {
 
 // ============================ class RenderComponent ============================
 
-class DLL_EXPORT RenderComponent : public Component
+class RenderComponent : public Component
 {
 public:
 	RenderComponent (const std::string& name);
 	virtual ~RenderComponent ();
 
-	virtual void Init (GameObject* obj) override;
+	virtual void PostInit (GameObject* obj) override;
 	virtual void PostUpdate (float t, float dt) override;
 	virtual void Destroy () override;
 

@@ -8,12 +8,13 @@
 #include "TagProcessor.h"
 
 
-namespace Engine
-{
+namespace Engine {
 
 // ----------------------------- forward declaration -----------------------------
 
 class PhysicsComponent;
+
+namespace XML {
 
 // =========================== class PhysicsProcessor ===========================
 
@@ -27,6 +28,7 @@ private:
 	bool ProcessCollisionShape (PhysicsComponent* comp, TiXmlElement* child);
 };
 
+}	// namespace XML
 }	// namespace Engine
 
 #endif	// #ifndef PHYSICS_PROCESSOR_H

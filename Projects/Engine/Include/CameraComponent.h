@@ -10,8 +10,7 @@
 
 // ----------------------------- forward declaration -----------------------------
 
-namespace Ogre
-{
+namespace Ogre {
 class Camera;
 class Viewport;
 class Ray;
@@ -20,18 +19,17 @@ class RenderTexture;
 class Vector3;
 }
 
-namespace Engine
-{
+namespace Engine {
 
 // =========================== class CameraComponent ============================
 
-class DLL_EXPORT CameraComponent : public RenderComponent
+class CameraComponent : public RenderComponent
 {
 public:
 	CameraComponent (const std::string& name, int zDepth);
 	virtual ~CameraComponent ();
 
-	virtual void Init (GameObject* obj) override;
+	virtual void PostInit (GameObject* obj) override;
 	virtual void Destroy () override;
 
 	Ogre::Camera* getCamera () const;

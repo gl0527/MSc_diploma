@@ -1,11 +1,11 @@
-#include "TPCameraProcessor.h"
+#include "XML/TPCameraProcessor.h"
 #include "TPCameraComponent.h"
-#include "XMLParser.h"
+#include "XML/XMLParser.h"
 #include "Ogre.h"
 
 
-namespace Engine
-{
+namespace Engine {
+namespace XML {
 
 bool TPCameraProcessor::ProcessXMLTag (TiXmlElement* elem)
 {
@@ -114,4 +114,5 @@ bool TPCameraProcessor::ProcessXMLTag (TiXmlElement* elem)
 	return true;
 }
 
+}	// namespace XML
 }	// namespace Engine

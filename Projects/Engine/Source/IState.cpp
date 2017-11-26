@@ -1,8 +1,7 @@
 #include "IState.h"
 
 
-namespace Engine
-{
+namespace Engine {
 
 IState::IState (const std::string& name)
 	: m_name (name),
@@ -18,13 +17,13 @@ IState::~IState ()
 
 inline void IState::Enable ()
 {
-	m_isEnabled = true; 
+	m_isEnabled = true;
 }
 
 
 inline void IState::Disable ()
 {
-	m_isEnabled = false; 
+	m_isEnabled = false;
 }
 
 }	// namespace Engine

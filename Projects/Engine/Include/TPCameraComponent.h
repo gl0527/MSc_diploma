@@ -8,8 +8,7 @@
 #include "CameraComponent.h"
 
 
-namespace Engine
-{
+namespace Engine {
 
 // ----------------------------- forward declaration-----------------------------
 
@@ -18,13 +17,13 @@ class PhysicsSystem;
 
 // ========================== class TPCameraComponent ==========================
 
-class DLL_EXPORT TPCameraComponent : public CameraComponent
+class TPCameraComponent : public CameraComponent
 {
 public:
 	TPCameraComponent (const std::string& name, int zDepth);
 	~TPCameraComponent ();
 
-	virtual void Init (GameObject* object) override;
+	virtual void PostInit (GameObject* object) override;
 	virtual void PostUpdate (float t, float dt) override;
 
 	bool isFixed () const { return fixed; }

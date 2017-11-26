@@ -9,8 +9,7 @@
 #include "Ogre.h"
 
 
-namespace Engine
-{
+namespace Engine {
 
 // ========================== class TransformComponent ==========================
 

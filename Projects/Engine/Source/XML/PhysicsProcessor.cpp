@@ -1,11 +1,11 @@
-#include "PhysicsProcessor.h"
+#include "XML/PhysicsProcessor.h"
 #include "PhysicsComponent.h"
 #include "Ogre.h"
-#include "XMLParser.h"
+#include "XML/XMLParser.h"
 
 
-namespace Engine
-{
+namespace Engine {
+namespace XML {
 
 bool PhysicsProcessor::ProcessCollisionShape (PhysicsComponent* comp, TiXmlElement* child)
 {
@@ -140,15 +140,14 @@ bool PhysicsProcessor::ProcessXMLTag (TiXmlElement* elem)
 
 	unsigned int shapeCount = 0;
 
-	for (TiXmlElement* child = elem->FirstChildElement (); child != nullptr; child = child->NextSiblingElement ())
-	{
+	for (TiXmlElement* child = elem->FirstChildElement (); child != nullptr; child = child->NextSiblingElement ()) {
 		std::string childName (child->Value ());
 
 		if (childName == "shape") {
 			shapeCount++;
-			
+
 			ProcessCollisionShape (comp.get (), child);
-			
+
 			if (shapeCount == 1)
 				AddToParentObject (elem, comp);
 		}
@@ -220,4 +219,5 @@ bool PhysicsProcessor::ProcessXMLTag (TiXmlElement* elem)
 	return true;
 }
 
+}	// namespace XML
 }	// namespace Engine

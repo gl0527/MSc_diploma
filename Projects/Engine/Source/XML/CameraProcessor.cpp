@@ -1,11 +1,11 @@
-#include "CameraProcessor.h"
+#include "XML/CameraProcessor.h"
 #include "CameraComponent.h"
-#include "XMLParser.h"
+#include "XML/XMLParser.h"
 #include "Ogre.h"
 
 
-namespace Engine
-{
+namespace Engine {
+namespace XML {
 
 bool CameraProcessor::ProcessXMLTag (TiXmlElement* elem)
 {
@@ -88,4 +88,5 @@ bool CameraProcessor::ProcessXMLTag (TiXmlElement* elem)
 	return true;
 }
 
+}	// namespace XML
 }	// namespace Engine

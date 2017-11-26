@@ -2,12 +2,11 @@
 #include "GameObject.h"
 
 
-namespace Engine
-{
+namespace Engine {
 
 void TransformComponent::Start ()
 {
-	if (auto& parent = m_owner->GetParent ().lock ()) {
+	if (auto parent = m_owner->GetParent ().lock ()) {
 		auto parentTrans = parent->Transform ();
 		auto parentPos = parentTrans->worldPosition ();
 		localPos = globalPos * parentPos;

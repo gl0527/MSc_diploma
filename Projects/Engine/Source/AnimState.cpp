@@ -2,8 +2,7 @@
 #include <Ogre.h>
 
 
-namespace Engine
-{
+namespace Engine {
 
 void AnimState::Enable (const std::string& animName)
 {
@@ -156,20 +155,20 @@ void AnimState::DecreaseWeightAll (float weight)
 }
 
 
-bool AnimState::Blend (	const AnimState::SPtr& destAnim,
-						float srcMinProgression /*= 0.0f*/,
-						float srcEndWeight /*= 0.0f*/,
-						float destEndWeight /*= 1.0f*/,
-						float dWeight /*= 0.015f*/)
+bool AnimState::Blend (const AnimState::SPtr& destAnim,
+	float srcMinProgression /*= 0.0f*/,
+	float srcEndWeight /*= 0.0f*/,
+	float destEndWeight /*= 1.0f*/,
+	float dWeight /*= 0.015f*/)
 {
 	if (GetProgression () < srcMinProgression)
 		return false;
-	
+
 	if (destAnim->GetWeight () > destEndWeight - dWeight &&
-		GetWeight () < srcEndWeight + dWeight)
-	{
+		GetWeight () < srcEndWeight + dWeight) {
 		return true;
-	} else {
+	}
+	else {
 		destAnim->IncreaseWeightAll (dWeight);
 		DecreaseWeightAll (dWeight);
 

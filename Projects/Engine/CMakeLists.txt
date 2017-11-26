@@ -1,4 +1,13 @@
-#Force static runtime libraries - egyelore csak igy mukodik, de ennek nem kene a kodban szerepelnie
+macro (create_vs_filters file_list)
+	foreach(_header IN ITEMS ${ARGV})
+		get_filename_component(_header_path "${_header}" PATH)
+		file(RELATIVE_PATH _header_path_rel "${PROJECT_SOURCE_DIR}/Engine" "${_header_path}")
+		string(REPLACE "/" "\\" _group_path "${_header_path_rel}")
+		source_group("${_group_path}" FILES "${_header}")
+	endforeach()
+endmacro ()
+
+#Force static runtime libraries
 FOREACH (flag
  CMAKE_C_FLAGS_RELEASE CMAKE_C_FLAGS_RELWITHDEBINFO
  CMAKE_C_FLAGS_DEBUG CMAKE_C_FLAGS_DEBUG_INIT
@@ -16,10 +25,13 @@ set (EXTENDED_TARGET_NAME ${TARGET_NAME}${CONFIG_SUFFIX})
 
 include_directories ("Include")
 						
-FILE (GLOB_RECURSE HEADER_FILES "Include/*.h")
-FILE (GLOB_RECURSE SOURCE_FILES "Source/*.cpp")
+FILE (GLOB_RECURSE HEADER_FILES LIST_DIRECTORIES false "Include/*.h")
+FILE (GLOB_RECURSE SOURCE_FILES LIST_DIRECTORIES false "Source/*.cpp")
 
 add_library (${EXTENDED_TARGET_NAME} SHARED ${SOURCE_FILES} ${HEADER_FILES})
+
+create_vs_filters (${HEADER_FILES})
+create_vs_filters (${SOURCE_FILES})
 
 set_target_properties (${EXTENDED_TARGET_NAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${PROJECT_SOURCE_DIR}/../Bin/${TARGET_NAME}")
 set_target_properties (${EXTENDED_TARGET_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY "${PROJECT_SOURCE_DIR}/../Lib/${TARGET_NAME}")

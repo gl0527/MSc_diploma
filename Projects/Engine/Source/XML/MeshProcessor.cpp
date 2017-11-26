@@ -1,13 +1,13 @@
-#include "MeshProcessor.h"
+#include "XML/MeshProcessor.h"
 #include "MeshComponent.h"
-#include "XMLParser.h"
+#include "XML/XMLParser.h"
 #include "Ogre.h"
 
 
-namespace Engine
-{
+namespace Engine {
+namespace XML {
 
-bool Engine::MeshProcessor::ProcessXMLTag (TiXmlElement* elem)
+bool MeshProcessor::ProcessXMLTag (TiXmlElement* elem)
 {
 	const char* entityName;
 	const char* meshName;
@@ -60,4 +60,5 @@ bool Engine::MeshProcessor::ProcessXMLTag (TiXmlElement* elem)
 	return true;
 }
 
+}	// namespace XML
 }	// namespace Engine

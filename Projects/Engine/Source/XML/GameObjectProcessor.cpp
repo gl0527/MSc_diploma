@@ -1,13 +1,13 @@
 #include <iostream>
 
-#include "GameObjectProcessor.h"
-#include "XMLParser.h"
+#include "XML/GameObjectProcessor.h"
+#include "XML/XMLParser.h"
 #include "ObjectManager.h"
 #include "GameObject.h"
 
 
-namespace Engine
-{
+namespace Engine {
+namespace XML {
 
 bool GameObjectProcessor::ProcessXMLTag (TiXmlElement* elem)
 {
@@ -45,4 +45,5 @@ bool GameObjectProcessor::ProcessXMLTag (TiXmlElement* elem)
 	return true;
 }
 
+}	// namespace XML
 }	// namespace Engine

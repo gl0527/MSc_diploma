@@ -5,11 +5,11 @@
 
 // ---------------------------------- includes ----------------------------------
 
-#include "TagProcessor.h"
+#include "XML/TagProcessor.h"
 
 
-namespace Engine
-{
+namespace Engine {
+namespace XML {
 
 // ========================== class TransformProcessor ==========================
 
@@ -23,6 +23,7 @@ private:
 	virtual void AddToParentObject (TiXmlElement* elem, const std::shared_ptr<Component>& component) override;
 };
 
+}	// namespace XML
 }	// namespace Engine
 
 #endif	// #ifndef TRANSFORM_PROCESSOR_H

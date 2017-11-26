@@ -2,7 +2,7 @@
 
 #include "InputProcessor.h"
 #include "InputComponent.h"
-#include "XMLParser.h"
+#include "XML/XMLParser.h"
 
 
 bool InputProcessor::ProcessXMLTag(TiXmlElement* elem)
@@ -10,7 +10,7 @@ bool InputProcessor::ProcessXMLTag(TiXmlElement* elem)
 	const char* name;
 	
 	try {
-		XMLParser::ParsePrimitive (elem, "name", &name);
+		XML::XMLParser::ParsePrimitive (elem, "name", &name);
 	} catch (const std::runtime_error& re) {
 		std::cout << re.what () << std::endl;
 
@@ -30,7 +30,7 @@ bool InputProcessor::ProcessXMLTag(TiXmlElement* elem)
 			float value;
 			
 			try {
-				XMLParser::ParsePrimitive (child, "value", &value);
+				XML::XMLParser::ParsePrimitive (child, "value", &value);
 			} catch (const std::runtime_error& re) {
 				std::cout << re.what () << std::endl;
 
@@ -44,7 +44,7 @@ bool InputProcessor::ProcessXMLTag(TiXmlElement* elem)
 			float value;
 			
 			try {
-				XMLParser::ParsePrimitive (child, "value", &value);
+				XML::XMLParser::ParsePrimitive (child, "value", &value);
 			} catch (const std::runtime_error& re) {
 				std::cout << re.what () << std::endl;
 
@@ -58,7 +58,7 @@ bool InputProcessor::ProcessXMLTag(TiXmlElement* elem)
 			float value;
 			
 			try {
-				XMLParser::ParsePrimitive (child, "value", &value);
+				XML::XMLParser::ParsePrimitive (child, "value", &value);
 			} catch (const std::runtime_error& re) {
 				std::cout << re.what () << std::endl;
 
@@ -72,7 +72,7 @@ bool InputProcessor::ProcessXMLTag(TiXmlElement* elem)
 			int value;
 
 			try {
-				XMLParser::ParsePrimitive (child, "value", &value);
+				XML::XMLParser::ParsePrimitive (child, "value", &value);
 			} catch (const std::runtime_error& re) {
 				std::cout << re.what () << std::endl;
 

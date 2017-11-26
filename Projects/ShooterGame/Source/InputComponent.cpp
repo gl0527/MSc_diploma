@@ -48,14 +48,21 @@ void InputComponent::PreUpdate(float t, float dt)
 	if (ms.buttonDown(OIS::MB_Right))
 		std::cout << "rmb: " << ms.X.rel << ", " << ms.Y.rel << std::endl;*/
 	
-	Ogre::Radian yaw(-turnSpeed * InputHandler::GetInstance ().GetRelativeMouseX ());
-	Ogre::Quaternion Qyaw(yaw, Ogre::Vector3::UNIT_Y);
-	m_owner->Transform()->setRotation(Qyaw * m_owner->Transform()->worldRotation());
+	int mouseRelX, mouseRelY;
+
+	if (InputHandler::GetInstance ().GetRelativeMouseX (&mouseRelX)) {
+		Ogre::Radian yaw (-turnSpeed * mouseRelX);
+		Ogre::Quaternion Qyaw (yaw, Ogre::Vector3::UNIT_Y);
+		m_owner->Transform ()->setRotation (Qyaw * m_owner->Transform ()->worldRotation ());
+	}
 
 	const Ogre::Vector3& right = m_owner->Transform()->right();
-	Ogre::Radian pitch(-turnSpeed * InputHandler::GetInstance ().GetRelativeMouseY ());
-	Ogre::Quaternion Qpitch(pitch, right);
-	m_owner->Transform()->setRotation(Qpitch * m_owner->Transform()->worldRotation());
+	
+	if (InputHandler::GetInstance ().GetRelativeMouseY (&mouseRelY)) {
+		Ogre::Radian pitch (-turnSpeed * mouseRelY);
+		Ogre::Quaternion Qpitch (pitch, right);
+		m_owner->Transform ()->setRotation (Qpitch * m_owner->Transform ()->worldRotation ());
+	}
 
 	/*moveDir.normalise();
 	moveDir = m_owner->transform()->rotation() * moveDir; // azert, hogy a movedir az m_owner koordinata-rendszereben legyen ertve

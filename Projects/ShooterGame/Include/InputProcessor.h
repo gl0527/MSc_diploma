@@ -5,16 +5,16 @@
 
 // ---------------------------------- includes ----------------------------------
 
-#include "TagProcessor.h"
+#include "XML/TagProcessor.h"
 
 using namespace Engine;
 
 // ============================ class InputProcessor =============================
 
-class InputProcessor : public TagProcessor
+class InputProcessor : public XML::TagProcessor
 {
 public:
-	InputProcessor() : TagProcessor("inputcomponent") {}
+	InputProcessor() : XML::TagProcessor("inputcomponent") {}
 	virtual bool ProcessXMLTag(TiXmlElement* elem) override;
 };
 

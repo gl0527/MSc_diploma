@@ -5,8 +5,7 @@
 #include "TransformComponent.h"
 
 
-namespace Engine
-{
+namespace Engine {
 
 RenderComponent::RenderComponent (const std::string& name)
 	: Component (name),
@@ -15,13 +14,11 @@ RenderComponent::RenderComponent (const std::string& name)
 	m_pObject (nullptr),
 	m_pSceneManager (Game::GetInstance ().GetRenderSystem ()->getSceneManager ())
 {
-
 }
 
 
-void RenderComponent::Init (GameObject* obj)
+void RenderComponent::PostInit (GameObject* obj)
 {
-	m_owner = obj;
 	CreateNode ();
 	m_pCurrentNode->attachObject (m_pObject);
 }
@@ -44,10 +41,8 @@ void RenderComponent::Destroy ()
 
 void RenderComponent::CreateNode ()
 {
-	if (const auto& ownerParent = m_owner->GetParent ().lock ())
-	{
-		if (const auto& ownerRenderer = ownerParent->getFirstComponentByType<RenderComponent> ().lock ())
-		{
+	if (const auto& ownerParent = m_owner->GetParent ().lock ()) {
+		if (const auto& ownerRenderer = ownerParent->getFirstComponentByType<RenderComponent> ().lock ()) {
 			if (auto pNode = ownerRenderer->GetOgreNode ())
 				m_pParentNode = pNode;
 		}

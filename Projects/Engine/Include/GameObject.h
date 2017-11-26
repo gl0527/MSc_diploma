@@ -12,17 +12,17 @@
 #include <unordered_set>
 
 
-namespace Engine
-{
+namespace Engine {
 
 // ----------------------------- forward declaration -----------------------------
 
 class Component;
+class PrefabBase;
 class TransformComponent;
 
 // =============================== class GameObject ===============================
 
-class DLL_EXPORT GameObject
+class GameObject
 {
 public:
 	using SPtr = std::shared_ptr<GameObject>;
@@ -32,10 +32,12 @@ public:
 	explicit GameObject (const std::string& id);
 	~GameObject ();
 
-	void AddComponent (const std::shared_ptr<Component>& comp);
-	void removeComponent (const std::string& compName);
+	DLL_EXPORT void AddComponent (const std::shared_ptr<Component>& comp);
+	DLL_EXPORT void removeComponent (const std::string& compName);
 	void removeComponent (const std::shared_ptr<Component>& comp);
 	void removeComponent ();
+
+	void AddComponentPrefab (std::shared_ptr<PrefabBase> pPrefab);
 
 	void addTag (const std::string& tag);
 	void removeTag (const std::string& tag);
@@ -51,10 +53,10 @@ public:
 	void PostUpdate (float t, float dt);
 	void Destroy ();
 
-	const std::string&			GetName () const;
-	TransformComponent*			Transform () const;
+	DLL_EXPORT const std::string&			GetName () const;
+	DLL_EXPORT TransformComponent*			Transform () const;
 	std::weak_ptr<Component>	GetComponent (const std::string& cID) const;
-	WPtr						GetParent () const;
+	DLL_EXPORT WPtr						GetParent () const;
 	std::vector<std::string>	getChildrenNames () const;
 
 	template<typename T>
@@ -73,6 +75,8 @@ private:
 	std::vector<WPtr>						m_children;
 	std::vector<std::shared_ptr<Component>>	m_components;
 	std::unordered_set<std::string>			m_tags;
+
+	std::vector<std::shared_ptr<PrefabBase>> m_pPrefabs;
 };
 
 

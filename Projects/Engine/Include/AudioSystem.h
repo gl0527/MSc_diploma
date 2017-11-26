@@ -9,8 +9,7 @@
 #include "AL\alut.h"
 
 
-namespace Engine
-{
+namespace Engine {
 
 // ============================ class AudioProcessor ============================
 

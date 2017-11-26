@@ -3,8 +3,7 @@
 
 #pragma once
 
-namespace Engine
-{
+namespace Engine {
 
 // ================================ class Ticker ================================
 
@@ -12,11 +11,11 @@ class Ticker
 {
 public:
 	Ticker ();
-	
+
 	void	Tick ();
 	void	Pause ();
-	float	GetTimeFromStart ()	const		{ return m_timeFromStart; }
-	float	GetTimeFromLastFrame ()	const	{ return m_timeFromLastFrame; }
+	float	GetTimeFromStart ()	const { return m_timeFromStart; }
+	float	GetTimeFromLastFrame ()	const { return m_timeFromLastFrame; }
 
 private:
 	unsigned int	m_lastTimeFromStart;

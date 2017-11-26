@@ -1,8 +1,7 @@
 #include "PhysicsMaterial.h"
 
 
-namespace Engine
-{
+namespace Engine {
 
 PhysicsMaterial::PhysicsMaterial ()
 	: m_angularDamping (0.0f),
@@ -15,49 +14,49 @@ PhysicsMaterial::PhysicsMaterial ()
 
 inline float PhysicsMaterial::GetAngularDamping () const
 {
-	return m_angularDamping; 
+	return m_angularDamping;
 }
 
 
-inline float PhysicsMaterial::GetBounciness () const 
+inline float PhysicsMaterial::GetBounciness () const
 {
-	return m_bounciness; 
+	return m_bounciness;
 }
 
 
-inline float PhysicsMaterial::GetFriction () const 
+inline float PhysicsMaterial::GetFriction () const
 {
-	return m_friction; 
+	return m_friction;
 }
 
 
-inline float PhysicsMaterial::GetLinearDamping () const 
-{ 
-	return m_linearDamping; 
+inline float PhysicsMaterial::GetLinearDamping () const
+{
+	return m_linearDamping;
 }
 
 
 inline void PhysicsMaterial::SetAngularDamping (float newAngularDamping)
 {
-	m_angularDamping = newAngularDamping; 
+	m_angularDamping = newAngularDamping;
 }
 
 
 inline void PhysicsMaterial::SetBounciness (float newBounciness)
 {
-	m_bounciness = newBounciness; 
+	m_bounciness = newBounciness;
 }
 
 
-inline void PhysicsMaterial::SetFriction (float newFriction) 
+inline void PhysicsMaterial::SetFriction (float newFriction)
 {
-	m_friction = newFriction; 
+	m_friction = newFriction;
 }
 
 
-inline void PhysicsMaterial::SetLinearDamping (float newLinearDamping) 
+inline void PhysicsMaterial::SetLinearDamping (float newLinearDamping)
 {
-	m_linearDamping = newLinearDamping; 
+	m_linearDamping = newLinearDamping;
 }
 
 }	// namespace Engine
