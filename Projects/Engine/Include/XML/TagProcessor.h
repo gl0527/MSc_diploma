@@ -42,7 +42,7 @@ protected:
 	std::string m_tagName;
 
 	virtual DLL_EXPORT void AddToParentObject (TiXmlElement* elem, const std::shared_ptr<Component>& component);
-	virtual DLL_EXPORT void AddPrefabToParentObject (TiXmlElement* elem, std::shared_ptr<PrefabBase> pPrefab);
+	bool GetParentName (TiXmlElement* elem, std::string& outName);
 };
 
 }	// namespace XML

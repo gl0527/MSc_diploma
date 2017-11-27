@@ -5,36 +5,29 @@
 
 // ---------------------------------- includes ----------------------------------
 
+#include "ComponentCreator.h"
 #include "LightComponent.h"
 #include <memory>
+
 
 namespace Engine {
 
 // ============================= class LightCreator =============================
 
-class LightCreator
+class LightCreator : public ComponentCreator
 {
 public:
-	void							SetCreationData (const LightComponent::InitData& creationData);
-	void							SetCreationData (LightComponent::InitData&& creationData);
-	LightComponent::InitData&		GetCreationData ();
+	void Create (GameObject* gameObject) override;
+	void ApplyInitData () override;
 
-	template<typename... Args>
-	void							Create (Args&&... args);
-
-	void							ApplyCreationData ();
+	void						SetInitData (const LightComponent::InitData& initData);
+	void						SetInitData (LightComponent::InitData&& initData);
+	LightComponent::InitData&	GetInitData ();
 
 private:
-	LightComponent::InitData		m_creationData;
+	LightComponent::InitData		m_initData;
 	std::shared_ptr<LightComponent> m_managedComponent;
 };
-
-
-template<typename... Args>
-void LightCreator::Create (Args&&... args)
-{
-	m_managedComponent.reset (new LightComponent (std::forward (args)...));
-}
 
 }	// namespace Engine 
 

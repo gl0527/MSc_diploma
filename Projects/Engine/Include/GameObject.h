@@ -17,7 +17,6 @@ namespace Engine {
 // ----------------------------- forward declaration -----------------------------
 
 class Component;
-class PrefabBase;
 class TransformComponent;
 
 // =============================== class GameObject ===============================
@@ -36,8 +35,6 @@ public:
 	DLL_EXPORT void removeComponent (const std::string& compName);
 	void removeComponent (const std::shared_ptr<Component>& comp);
 	void removeComponent ();
-
-	void AddComponentPrefab (std::shared_ptr<PrefabBase> pPrefab);
 
 	void addTag (const std::string& tag);
 	void removeTag (const std::string& tag);
@@ -75,8 +72,6 @@ private:
 	std::vector<WPtr>						m_children;
 	std::vector<std::shared_ptr<Component>>	m_components;
 	std::unordered_set<std::string>			m_tags;
-
-	std::vector<std::shared_ptr<PrefabBase>> m_pPrefabs;
 };
 
 

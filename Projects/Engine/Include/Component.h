@@ -21,9 +21,6 @@ class GameObject;
 class Component
 {
 public:
-	struct ConstrData {};	// konstruktor parameterek tarolasa
-	struct InitData {};		// nem konstruktor parameterek tarolasa
-
 	using SPtr = std::shared_ptr<Component>;
 	using WPtr = std::weak_ptr<Component>;
 	using UPtr = std::unique_ptr<Component>;
@@ -50,8 +47,6 @@ public:
 	void				Enable ();
 	void				Disable ();
 	DLL_EXPORT GameObject*			GetOwner () const;
-
-	virtual void ApplyInitData (std::shared_ptr<InitData> initData) {}	// TODO ebbol majd pure virtual function kene
 
 protected:
 	const std::string	m_name;

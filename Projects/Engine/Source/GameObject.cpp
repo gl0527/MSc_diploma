@@ -1,7 +1,6 @@
 #include "GameObject.h"
 #include "ObjectManager.h"
 #include "TransformComponent.h"
-#include "PrefabBase.h"
 
 
 namespace Engine {
@@ -42,13 +41,6 @@ void GameObject::removeComponent (const Component::SPtr& comp)
 void GameObject::removeComponent ()
 {
 	m_components.clear ();
-}
-
-
-void GameObject::AddComponentPrefab (std::shared_ptr<PrefabBase> pPrefab)
-{
-	m_pPrefabs.push_back (pPrefab);	// TODO leszarmazott objektumok itt nem jelennek meg, szoval ez nem heterogen kollekcio
-	pPrefab->Init (this);
 }
 
 
@@ -105,13 +97,6 @@ void GameObject::removeChildren ()
 
 void GameObject::Start ()
 {
-	for (auto prefab : m_pPrefabs) {
-		if (prefab->IsCreationImmediate ()) {
-			prefab->ApplyPrimaryParams ();
-			prefab->ApplySecondaryParams ();
-		}
-	}
-
 	for (const auto& component : m_components)
 		component->Start ();
 }

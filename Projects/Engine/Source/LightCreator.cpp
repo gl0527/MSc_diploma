@@ -1,29 +1,40 @@
 #include "LightCreator.h"
+#include "GameObject.h"
+
 
 namespace Engine {
 
-void LightCreator::SetCreationData (const LightComponent::InitData& creationData)
+void LightCreator::SetInitData (const LightComponent::InitData& initData)
 {
-	m_creationData = creationData;
+	m_initData = initData;
 }
 
 
-void LightCreator::SetCreationData (LightComponent::InitData&& creationData)
+void LightCreator::SetInitData (LightComponent::InitData&& initData)
 {
-	m_creationData = creationData;
+	m_initData = initData;
 }
 
 
-LightComponent::InitData& LightCreator::GetCreationData ()
+LightComponent::InitData& LightCreator::GetInitData ()
 {
-	return m_creationData;
+	return m_initData;
 }
 
 
-void LightCreator::ApplyCreationData ()
+void LightCreator::Create (GameObject* gameObject)
+{
+	if (m_managedComponent == nullptr) {
+		m_managedComponent.reset (new LightComponent (m_initData));
+		gameObject->AddComponent (m_managedComponent);
+	}
+}
+
+
+void LightCreator::ApplyInitData ()
 {
 	if (m_managedComponent != nullptr)
-		m_managedComponent->ApplyCreationData (m_creationData);
+		m_managedComponent->ApplyCreationData (m_initData);
 }
 
 }	// namespace Engine

@@ -3,26 +3,19 @@
 
 #pragma once
 
-// ---------------------------------- includes ----------------------------------
-
-#include "Component.h"
-
-
 namespace Engine {
+
+// ----------------------------- forward declaration -----------------------------
+
+class GameObject;
 
 // =========================== class ComponentCreator ===========================
 
 class ComponentCreator
 {
 public:
-	void SetInitData (std::shared_ptr<Component::InitData> pInitData);
-	std::shared_ptr<Component::InitData>& GetInitData ();
-
-	void ApplyInitData ();
-
-protected:
-	std::shared_ptr<Component::InitData>	m_pInitData;
-	std::shared_ptr<Component>				m_pComponent;
+	virtual void Create (GameObject* gameObject) = 0;
+	virtual void ApplyInitData () = 0;
 };
 
 }	// namespace Engine

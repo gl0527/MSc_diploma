@@ -6,8 +6,6 @@
 #include "ObjectManager.h"
 #include "XML/XMLParser.h"
 
-#include "Prefab.h"
-
 
 namespace Engine {
 namespace XML {
@@ -43,7 +41,7 @@ void TagProcessor::AddToParentObject (TiXmlElement* elem, const std::shared_ptr<
 }
 
 
-void TagProcessor::AddPrefabToParentObject (TiXmlElement* elem, std::shared_ptr<PrefabBase> pPrefab)
+bool TagProcessor::GetParentName (TiXmlElement* elem, std::string& outName)
 {
 	const char* objectName = nullptr;
 
@@ -52,13 +50,11 @@ void TagProcessor::AddPrefabToParentObject (TiXmlElement* elem, std::shared_ptr<
 	} catch (const std::runtime_error& re) {
 		std::cout << re.what () << std::endl;
 
-		return;
+		return false;
 	}
+	outName = std::string (objectName);
 
-	const auto& object = ObjectManager::GetSingletonInstance ().GetGameObjectByName (objectName);
-
-	if (auto obj = object.lock ())
-		obj->AddComponentPrefab (pPrefab);
+	return true;
 }
 
 }	// namespace XML

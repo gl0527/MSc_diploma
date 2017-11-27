@@ -9,6 +9,16 @@ namespace Engine {
 
 unsigned int LightComponent::instanceCount = 0;
 
+
+LightComponent::LightComponent (const InitData& initData)
+	: Component (initData.name),
+	sceneMgr (Game::GetInstance ().GetRenderSystem ()->getSceneManager ()),
+	light (nullptr),
+	type (initData.type)
+{
+}
+
+
 LightComponent::LightComponent (const std::string& name, const Ogre::Light::LightTypes& t)
 	: Component (name),
 	sceneMgr (Game::GetInstance ().GetRenderSystem ()->getSceneManager ()),
@@ -18,19 +28,10 @@ LightComponent::LightComponent (const std::string& name, const Ogre::Light::Ligh
 }
 
 
-LightComponent::LightComponent (std::tuple<std::string, Ogre::Light::LightTypes> tup)
-	: Component (std::get<0> (tup)),
-	sceneMgr (Game::GetInstance ().GetRenderSystem ()->getSceneManager ()),
-	light (nullptr),
-	type (std::get<1> (tup))
-{
-}
-
-
 void LightComponent::PostInit (GameObject* object)
 {
 	light = sceneMgr->createLight (object->GetName () + Ogre::StringConverter::toString (instanceCount++));
-	if (light)
+	if (light != nullptr)
 		light->setType (type);
 }
 
@@ -48,7 +49,7 @@ inline void LightComponent::PostUpdate (float t, float dt)
 
 void LightComponent::Destroy ()
 {
-	if (sceneMgr)
+	if (sceneMgr != nullptr)
 		sceneMgr->destroyLight (light->getName ());
 }
 
@@ -133,29 +134,13 @@ void LightComponent::setSpotRange (Ogre::Degree innerAngle, Ogre::Degree outerAn
 }
 
 
-LightComponent::Tuple& LightComponent::GetAttributes ()
+void LightComponent::ApplyCreationData (const InitData& initData)
 {
-	return m_attributes;
-}
-
-
-void LightComponent::ApplyAttributes ()
-{
-	setDiffuseColor (std::get<0> (m_attributes));
-	setSpecularColor (std::get<1> (m_attributes));
-	setIntensity (std::get<2> (m_attributes));
-	setAttenuation (std::get<3> (m_attributes), std::get<4> (m_attributes), std::get<5> (m_attributes), std::get<6> (m_attributes));
-	setSpotRange (Ogre::Degree (std::get<7> (m_attributes)), Ogre::Degree (std::get<8> (m_attributes)));
-}
-
-
-void LightComponent::ApplyCreationData (const InitData& creationData)
-{
-	setDiffuseColor (creationData.diffuseColor);
-	setSpecularColor (creationData.specularColor);
-	setIntensity (creationData.intensity);
-	setAttenuation (creationData.range, creationData.constantAttenuation, creationData.linearAttenuation, creationData.quadricAttenuation);
-	setSpotRange (Ogre::Degree (creationData.innerAngle), Ogre::Degree (creationData.outerAngle));
+	setDiffuseColor (initData.diffuseColor);
+	setSpecularColor (initData.specularColor);
+	setIntensity (initData.intensity);
+	setAttenuation (initData.range, initData.constantAttenuation, initData.linearAttenuation, initData.quadricAttenuation);
+	setSpotRange (Ogre::Degree (initData.innerAngle), Ogre::Degree (initData.outerAngle));
 }
 
 }	// namespace Engine

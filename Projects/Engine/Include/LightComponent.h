@@ -15,14 +15,13 @@ namespace Engine {
 
 class LightComponent : public Component
 {
-private:
-	using Tuple = std::tuple<Ogre::ColourValue, Ogre::ColourValue, float, float, float, float, float, float, float>;	// nehezkes a hasznalata, helyette struct
-
 public:
-	struct InitData : public Component::InitData
+	struct InitData
 	{
 		InitData ()
-			: diffuseColor (Ogre::ColourValue::ZERO),
+			: name (""),
+			type (Ogre::Light::LT_POINT),
+			diffuseColor (Ogre::ColourValue::ZERO),
 			specularColor (Ogre::ColourValue::ZERO),
 			intensity (0.0f),
 			range (0.0f),
@@ -33,6 +32,9 @@ public:
 			outerAngle (0.0f)
 		{
 		}
+
+		std::string name;
+		Ogre::Light::LightTypes type;
 
 		Ogre::ColourValue diffuseColor;
 		Ogre::ColourValue specularColor;
@@ -45,8 +47,8 @@ public:
 		float outerAngle;
 	};
 
+	LightComponent (const InitData& initData);
 	LightComponent (const std::string& name, const Ogre::Light::LightTypes& t);
-	LightComponent (std::tuple<std::string, Ogre::Light::LightTypes> tup);
 	~LightComponent () {}
 
 	virtual void PostInit (GameObject* object) override;
@@ -69,9 +71,7 @@ public:
 	void setAttenuation (float range, float constant, float linear, float quadric);
 	void setSpotRange (Ogre::Degree innerAngle, Ogre::Degree outerAngle);
 
-	Tuple& GetAttributes ();
-	void ApplyAttributes ();
-	void ApplyCreationData (const InitData& creationData);
+	void ApplyCreationData (const InitData& initData);
 
 private:
 	static unsigned int instanceCount;
@@ -79,8 +79,6 @@ private:
 	Ogre::SceneManager*		sceneMgr;
 	Ogre::Light*			light;
 	Ogre::Light::LightTypes type;
-
-	Tuple m_attributes;
 };
 
 }	// namespace Engine

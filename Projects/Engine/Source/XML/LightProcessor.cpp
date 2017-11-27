@@ -1,9 +1,11 @@
-#include <iostream>
-
-#include "LightComponent.h"
 #include "XML/LightProcessor.h"
 #include "XML/XMLParser.h"
-#include "Prefab.h"
+
+#include "LightComponent.h"
+#include "LightCreator.h"
+#include "ObjectManager.h"
+
+#include <iostream>
 
 
 namespace Engine {
@@ -13,12 +15,10 @@ bool LightProcessor::ProcessXMLTag (TiXmlElement* elem)
 {
 	const char* name = nullptr;
 	const char* type = nullptr;
-	bool immediateCreation;
 
 	try {
 		XMLParser::ParsePrimitive (elem, "name", &name);
 		XMLParser::ParsePrimitive (elem, "type", &type);
-		XMLParser::ParsePrimitive (elem, "immediate_creation", &immediateCreation);
 	} catch (const std::runtime_error& re) {
 		std::cout << re.what () << std::endl;
 
@@ -27,17 +27,18 @@ bool LightProcessor::ProcessXMLTag (TiXmlElement* elem)
 
 	Ogre::Light::LightTypes lightType;
 
-	if (strcmp (type, "point"))
+	if (strcmp (type, "point") == 0)
 		lightType = Ogre::Light::LT_POINT;
-	else if (strcmp (type, "directional"))
+	else if (strcmp (type, "directional") == 0)
 		lightType = Ogre::Light::LT_DIRECTIONAL;
-	else if (strcmp (type, "spot"))
+	else if (strcmp (type, "spot") == 0)
 		lightType = Ogre::Light::LT_SPOTLIGHT;
 
-	std::shared_ptr<Prefab<LightComponent>> lightPrefab (new Prefab<LightComponent> (immediateCreation));
+	LightCreator lightCreator;
 
-	lightPrefab->StorePrimaryParams (std::string (name), lightType);
-	AddPrefabToParentObject (elem, lightPrefab);
+	auto& initData = lightCreator.GetInitData ();
+	initData.name = name;
+	initData.type = lightType;
 
 	foreach_child (elem)
 	{
@@ -52,7 +53,7 @@ bool LightProcessor::ProcessXMLTag (TiXmlElement* elem)
 
 				return false;
 			}
-			lightPrefab->StoreSecondaryParam<0> (diffCol);
+			initData.diffuseColor = diffCol;
 		}
 		else if (childName == "specularcolor") {
 			Ogre::ColourValue specCol;
@@ -63,7 +64,7 @@ bool LightProcessor::ProcessXMLTag (TiXmlElement* elem)
 
 				return false;
 			}
-			lightPrefab->StoreSecondaryParam<1> (specCol);
+			initData.specularColor = specCol;
 		}
 		else if (childName == "intensity") {
 			float intensity;
@@ -74,7 +75,7 @@ bool LightProcessor::ProcessXMLTag (TiXmlElement* elem)
 
 				return false;
 			}
-			lightPrefab->StoreSecondaryParam<2> (intensity);
+			initData.intensity = intensity;
 		}
 		else if (childName == "attenuation") {
 			float range, constant, linear, quadric;
@@ -88,10 +89,10 @@ bool LightProcessor::ProcessXMLTag (TiXmlElement* elem)
 
 				return false;
 			}
-			lightPrefab->StoreSecondaryParam<3> (range);
-			lightPrefab->StoreSecondaryParam<4> (constant);
-			lightPrefab->StoreSecondaryParam<5> (linear);
-			lightPrefab->StoreSecondaryParam<6> (quadric);
+			initData.range = range;
+			initData.constantAttenuation = constant;
+			initData.linearAttenuation = linear;
+			initData.quadricAttenuation = quadric;
 		}
 		else if (childName == "angle") {
 			float inner, outer;
@@ -103,9 +104,17 @@ bool LightProcessor::ProcessXMLTag (TiXmlElement* elem)
 
 				return false;
 			}
-			lightPrefab->StoreSecondaryParam<7> (inner);
-			lightPrefab->StoreSecondaryParam<8> (outer);
+			initData.innerAngle = inner;
+			initData.outerAngle = outer;
 		}
+	}
+
+	std::string parentName;
+	if (GetParentName (elem, parentName)) {
+		auto object = ObjectManager::GetSingletonInstance ().GetGameObjectByName (parentName).lock ();
+
+		lightCreator.Create (object.get ());
+		lightCreator.ApplyInitData ();
 	}
 
 	return true;
