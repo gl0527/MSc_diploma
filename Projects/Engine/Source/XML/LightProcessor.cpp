@@ -1,7 +1,6 @@
 #include "XML/LightProcessor.h"
 #include "XML/XMLParser.h"
 
-#include "LightComponent.h"
 #include "LightCreator.h"
 #include "ObjectManager.h"
 

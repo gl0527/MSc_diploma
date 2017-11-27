@@ -12,15 +12,6 @@ Component::Component (const std::string& ident, bool uniq)
 }
 
 
-//Component::Component (ConstructionData constructionData)
-//	: m_name (constructionData.m_name),
-//	m_isUnique (constructionData.m_isUnique),
-//	m_isEnabled (constructionData.m_isEnabled),
-//	m_owner (nullptr)
-//{
-//}
-
-
 Component::~Component ()
 {
 }

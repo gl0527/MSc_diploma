@@ -29,7 +29,7 @@ public:
 	virtual DLL_EXPORT ~Component ();
 
 	// runs when this component is added to a gameobject
-	void			Init (GameObject* object);
+	void					Init (GameObject* object);
 	virtual DLL_EXPORT void	PostInit (GameObject* object);
 	// runs just before the updating loop - every gameobject is ready
 	virtual DLL_EXPORT void	Start ();
