@@ -11,13 +11,11 @@
 #include "XML/AudioProcessor.h"
 #include "XML/ParticleProcessor.h"
 #include "XML/LightProcessor.h"
+#include "XML/PrefabProcessor.h"
 
 
 namespace Engine {
 namespace XML {
-
-XMLParser* XMLParser::s_pInstance = nullptr;
-
 
 XMLParser::XMLParser () : m_pDocumentRoot (nullptr)
 {
@@ -26,24 +24,8 @@ XMLParser::XMLParser () : m_pDocumentRoot (nullptr)
 
 XMLParser& XMLParser::GetInstance ()
 {
-	if (!s_pInstance)
-		s_pInstance = new XMLParser;
-	return *s_pInstance;
-}
-
-
-void XMLParser::DeleteInstance ()
-{
-	if (s_pInstance) {
-		delete s_pInstance;
-		s_pInstance = nullptr;
-	}
-}
-
-
-bool XMLParser::IsExist ()
-{
-	return (s_pInstance != nullptr);
+	std::call_once (s_onceFlag, [] () { s_pInstance.reset (new XMLParser); });
+	return *s_pInstance.get ();
 }
 
 
@@ -65,6 +47,7 @@ bool XMLParser::Init ()
 	new AudioProcessor;
 	new ParticleProcessor;
 	new LightProcessor;
+	new PrefabProcessor;
 
 	return true;
 }
@@ -106,47 +89,59 @@ void XMLParser::TraverseXMLTree (TiXmlElement* elem)
 }
 
 
-void XMLParser::ParsePrimitive (TiXmlElement* tag, const char* attrName, float* outResult)
+void XMLParser::ParsePrimitive (TiXmlElement* tag, const char* attrName, float* outResult, bool optional/* = false*/)
 {
 	if (tag->QueryFloatAttribute (attrName, outResult) != 0) {
-		std::string errorMsg ("Float parsing error: " + std::string (attrName) +
-			" attribute of " + std::string (tag->Value ()) + " tag not found.");
+		std::string errorMsg ("[ *** Float parsing error *** ]\t\"" + std::string (attrName) +
+			"\" attribute of \"" + std::string (tag->Value ()) + "\" tag not found.");
 
-		throw std::runtime_error (errorMsg.c_str ());
+		if (!optional)
+			throw std::runtime_error (errorMsg.c_str ());
+		else
+			std::cout << errorMsg << std::endl;
 	}
 }
 
 
-void XMLParser::ParsePrimitive (TiXmlElement* tag, const char* attrName, int* outResult)
+void XMLParser::ParsePrimitive (TiXmlElement* tag, const char* attrName, int* outResult, bool optional/* = false*/)
 {
 	if (tag->QueryIntAttribute (attrName, outResult) != 0) {
-		std::string errorMsg ("Int parsing error: " + std::string (attrName) +
-			" attribute of " + std::string (tag->Value ()) + " tag not found.");
+		std::string errorMsg ("[ *** Int parsing error *** ]\t\"" + std::string (attrName) +
+			"\" attribute of \"" + std::string (tag->Value ()) + "\" tag not found.");
 
-		throw std::runtime_error (errorMsg.c_str ());
+		if (!optional)
+			throw std::runtime_error (errorMsg.c_str ());
+		else
+			std::cout << errorMsg << std::endl;
 	}
 }
 
 
-void XMLParser::ParsePrimitive (TiXmlElement* tag, const char* attrName, const char** outResult)
+void XMLParser::ParsePrimitive (TiXmlElement* tag, const char* attrName, const char** outResult, bool optional/* = false*/)
 {
 	*outResult = tag->Attribute (attrName);
 	if (*outResult == nullptr) {
-		std::string errorMsg ("String parsing error: " + std::string (attrName) +
-			" attribute of " + std::string (tag->Value ()) + " tag not found.");
+		std::string errorMsg ("[ *** String parsing error *** ]\t\"" + std::string (attrName) +
+			"\" attribute of \"" + std::string (tag->Value ()) + "\" tag not found.");
 
-		throw std::runtime_error (errorMsg.c_str ());
+		if (!optional)
+			throw std::runtime_error (errorMsg.c_str ());
+		else
+			std::cout << errorMsg << std::endl;
 	}
 }
 
 
-void XMLParser::ParsePrimitive (TiXmlElement* tag, const char* attrName, bool* outResult)
+void XMLParser::ParsePrimitive (TiXmlElement* tag, const char* attrName, bool* outResult, bool optional/* = false*/)
 {
 	if (tag->QueryBoolAttribute (attrName, outResult) != 0) {
-		std::string errorMsg ("Boolean parsing error: " + std::string (attrName) +
-			" attribute of " + std::string (tag->Value ()) + " tag not found.");
+		std::string errorMsg ("[ *** Boolean parsing error *** ]\t\"" + std::string (attrName) +
+			"\" attribute of \"" + std::string (tag->Value ()) + "\" tag not found.");
 
-		throw std::runtime_error (errorMsg.c_str ());
+		if (!optional)
+			throw std::runtime_error (errorMsg.c_str ());
+		else
+			std::cout << errorMsg << std::endl;
 	}
 }
 

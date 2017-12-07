@@ -7,16 +7,6 @@ macro (create_vs_filters file_list)
 	endforeach()
 endmacro ()
 
-#Force static runtime libraries
-FOREACH (flag
- CMAKE_C_FLAGS_RELEASE CMAKE_C_FLAGS_RELWITHDEBINFO
- CMAKE_C_FLAGS_DEBUG CMAKE_C_FLAGS_DEBUG_INIT
- CMAKE_CXX_FLAGS_RELEASE  CMAKE_CXX_FLAGS_RELWITHDEBINFO
- CMAKE_CXX_FLAGS_DEBUG  CMAKE_CXX_FLAGS_DEBUG_INIT)
- STRING (REPLACE "/MD"  "/MT" "${flag}" "${${flag}}")
- SET ("${flag}" "${${flag}} /EHsc")
-ENDFOREACH ()
-
 # setting the target name same as the current folder
 get_filename_component (TARGET_NAME ${CMAKE_CURRENT_SOURCE_DIR} NAME)
 string (REPLACE " " "_" TARGET_NAME ${TARGET_NAME})

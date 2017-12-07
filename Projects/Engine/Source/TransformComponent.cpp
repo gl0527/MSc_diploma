@@ -9,7 +9,7 @@ void TransformComponent::Start ()
 	if (auto parent = m_owner->GetParent ().lock ()) {
 		auto parentTrans = parent->Transform ();
 		auto parentPos = parentTrans->worldPosition ();
-		localPos = globalPos * parentPos;
+		localPos = globalPos - parentPos;
 	}
 	else {
 		localPos = globalPos;

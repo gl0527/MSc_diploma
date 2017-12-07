@@ -3,7 +3,7 @@
 
 namespace Engine {
 
-Component::Component (const std::string& ident, bool uniq)
+Component::Component (const std::string& ident, bool uniq/* = false*/)
 	: m_name (ident),
 	m_isUnique (uniq),
 	m_isEnabled (true),

@@ -18,6 +18,12 @@ CameraComponent::CameraComponent (const std::string& name, int zDepth)
 }
 
 
+CameraComponent::CameraComponent (const Descriptor& desc)
+	: CameraComponent (desc.name, desc.zOrder)
+{
+}
+
+
 CameraComponent::~CameraComponent ()
 {
 }
@@ -49,6 +55,15 @@ void CameraComponent::Destroy ()
 	}
 	m_pCurrentNode = nullptr;
 	//sceneMgr->destroyEntity(camera->getName());
+}
+
+
+void CameraComponent::ApplyDescriptor (const Descriptor& desc)
+{
+	setLookAt (desc.lookat);
+	setNearClip (desc.nearClip);
+	setFarClip (desc.farClip);
+	setRenderDist (desc.renderDist);
 }
 
 

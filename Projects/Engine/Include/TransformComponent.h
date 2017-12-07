@@ -17,7 +17,7 @@ class TransformComponent : public Component
 {
 public:
 	TransformComponent (const std::string& name) :
-		Component (name),
+		Component (name, true),
 		globalPos (Ogre::Vector3::ZERO),
 		globalRot (Ogre::Quaternion::IDENTITY),
 		globalScale (Ogre::Vector3::UNIT_SCALE)

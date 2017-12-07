@@ -1,8 +1,14 @@
-#include <iostream>
-
 #include "XML/AudioProcessor.h"
+
 #include "AudioComponent.h"
+
 #include "XML/XMLParser.h"
+
+#include "Prefab/GameObjectCreator.h"
+#include "Prefab/GenericPrefab.h"
+#include "ObjectManager.h"
+
+#include <iostream>
 
 
 namespace Engine {
@@ -12,63 +18,89 @@ bool AudioProcessor::ProcessXMLTag (TiXmlElement* elem)
 {
 	const char* file;
 	const char* listener;
-	bool immediateCreation;
 
 	try {
 		XMLParser::ParsePrimitive (elem, "file", &file);
 		XMLParser::ParsePrimitive (elem, "listener", &listener);
-		XMLParser::ParsePrimitive (elem, "immediate_creation", &immediateCreation);
 	} catch (const std::runtime_error& re) {
 		std::cout << re.what () << std::endl;
 
 		return false;
 	}
 
-	/*Prefab<AudioComponent> audioFactory (immediateCreation);
-	audioFactory.SetPrimaryAttributes (file, listener);
-	//AddPrefabToParentObject (elem, audioFactory);
+	using AudioPrefab = Prefab::GenericPrefab<AudioComponent, AudioComponent::Descriptor>;
+
+	AudioPrefab audioPrefab;
+	AudioComponent::Descriptor desc;
+
+	desc.fileName = file;
+	desc.listenerName = listener;
 
 	foreach_child (elem)
 	{
-	std::string childName (child->Value ());
+		std::string childName (child->Value ());
 
-	if (childName == "volume") {
-	float volume;
+		if (childName == "volume") {
+			float volume;
 
-	try {
-	XMLParser::ParsePrimitive (child, "value", &volume);
-	} catch (const std::runtime_error& re) {
-	std::cout << re.what () << std::endl;
+			try {
+				XMLParser::ParsePrimitive (child, "value", &volume);
+			} catch (const std::runtime_error& re) {
+				std::cout << re.what () << std::endl;
 
-	return false;
+				return false;
+			}
+			desc.volume = volume;
+		}
+		else if (childName == "speed") {
+			float speed;
+
+			try {
+				XMLParser::ParsePrimitive (child, "value", &speed);
+			} catch (const std::runtime_error& re) {
+				std::cout << re.what () << std::endl;
+
+				return false;
+			}
+			desc.speed = speed;
+		}
+		else if (childName == "loop") {
+			bool loop;
+
+			try {
+				XMLParser::ParsePrimitive (child, "value", &loop);
+			} catch (const std::runtime_error& re) {
+				std::cout << re.what () << std::endl;
+
+				return false;
+			}
+			desc.loop = loop;
+		}
 	}
-	audioFactory.SetSecondaryAttribute<0> (volume);
-	}
-	else if (childName == "speed") {
-	float speed;
 
-	try {
-	XMLParser::ParsePrimitive (child, "value", &speed);
-	} catch (const std::runtime_error& re) {
-	std::cout << re.what () << std::endl;
+	audioPrefab.SetDescriptor(desc);
 
-	return false;
-	}
-	audioFactory.SetSecondaryAttribute<1> (speed);
-	}
-	else if (childName == "loop") {
-	bool loop;
+	std::string parentTag (elem->Parent ()->Value ());
 
-	try {
-	XMLParser::ParsePrimitive (child, "value", &loop);
-	} catch (const std::runtime_error& re) {
-	std::cout << re.what () << std::endl;
+	if (parentTag == std::string ("gameobject")) {
+		std::string parentName;
+		if (GetParentName (elem, parentName)) {
+			auto object = ObjectManager::GetInstance ().GetGameObjectByName (parentName).lock ();
 
-	return false;
+			audioPrefab.Create ();
+			audioPrefab.Attach (object.get ());
+			audioPrefab.ApplyDescriptor ();
+		}
 	}
-	audioFactory.SetSecondaryAttribute<2> (loop);
+	else if (parentTag == std::string ("prefab")) {
+		std::string parentName;
+		if (GetParentName (elem, parentName)) {
+			std::shared_ptr<Prefab::GameObjectCreator> prefab;
+
+			if (ObjectManager::GetInstance ().GetGameObjectCreator (parentName, prefab))
+				prefab->AddComponentCreator (std::make_shared<AudioPrefab> (audioPrefab));
+		}
 	}
-	}*/
 
 	return true;
 }

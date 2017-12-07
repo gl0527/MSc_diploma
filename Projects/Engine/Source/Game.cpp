@@ -38,7 +38,7 @@ void Game::DeleteInstance ()
 	if (s_pInstance) {
 		delete s_pInstance;
 		s_pInstance = nullptr;
-		ObjectManager::GetSingletonInstance ().DeleteSingletonInstance ();
+		ObjectManager::GetInstance ().DeleteInstance ();
 		InputHandler::DeleteInstance ();
 	}
 }
@@ -83,7 +83,7 @@ void Game::Start ()
 			m_pTimer->Pause ();
 	}
 
-	ObjectManager::GetSingletonInstance ().Start ();
+	ObjectManager::GetInstance ().Start ();
 
 	m_state = State::Running;
 
@@ -124,14 +124,14 @@ bool Game::Update (float t, float dt)
 	if (!InputHandler::GetInstance ().update (t, dt))
 		return false;
 
-	ObjectManager::GetSingletonInstance ().PreUpdate (t, dt); // fizika elotti teendok befrissitese
+	ObjectManager::GetInstance ().PreUpdate (t, dt); // fizika elotti teendok befrissitese
 
 	if (!m_pPhysicsSystem->update (t, dt)) // fizikai rendszer befrissitese
 		return false;
 
-	ObjectManager::GetSingletonInstance ().Update (t, dt); // fizika befrissitese
+	ObjectManager::GetInstance ().Update (t, dt); // fizika befrissitese
 
-	ObjectManager::GetSingletonInstance ().PostUpdate (t, dt); // fizika utani teendok elvegzese
+	ObjectManager::GetInstance ().PostUpdate (t, dt); // fizika utani teendok elvegzese
 
 	if (!m_pAudioSystem->update (t, dt))
 		return false;
@@ -152,7 +152,7 @@ void Game::Destroy ()
 	else return;
 
 	XML::XMLParser::GetInstance ().Destroy ();
-	ObjectManager::GetSingletonInstance ().Destroy ();
+	ObjectManager::GetInstance ().Destroy ();
 	InputHandler::GetInstance ().destroy ();
 	m_pPhysicsSystem->destroy ();
 	m_pRenderSystem->destroy ();

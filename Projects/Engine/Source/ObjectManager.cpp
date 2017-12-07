@@ -1,12 +1,10 @@
 #include "ObjectManager.h"
 #include "GameObject.h"
+#include "Prefab/GameObjectCreator.h"
 #include <iostream>
 
 
 namespace Engine {
-
-ObjectManager* ObjectManager::s_pInstance = nullptr;
-
 
 ObjectManager::~ObjectManager ()
 {
@@ -14,26 +12,10 @@ ObjectManager::~ObjectManager ()
 }
 
 
-ObjectManager& ObjectManager::GetSingletonInstance ()
+ObjectManager& ObjectManager::GetInstance ()
 {
-	if (s_pInstance == nullptr)
-		s_pInstance = new ObjectManager;
-	return *s_pInstance;
-}
-
-
-void ObjectManager::DeleteSingletonInstance ()
-{
-	if (s_pInstance) {
-		delete s_pInstance;
-		s_pInstance = nullptr;
-	}
-}
-
-
-bool ObjectManager::IsExist ()
-{
-	return (s_pInstance != nullptr);
+	std::call_once (s_onceFlag, [] () { s_pInstance.reset (new ObjectManager); });
+	return *s_pInstance.get ();
 }
 
 
@@ -61,6 +43,24 @@ void ObjectManager::RemoveGameObject (const std::string& id)
 		removableObject->Destroy ();
 		m_gameObjectMap.erase (m_gameObjectMap.find (id));
 	}
+}
+
+
+void ObjectManager::AddGameObjectCreator (std::shared_ptr<Prefab::GameObjectCreator> prefab)
+{
+	m_prefabMap[prefab->GetName ()] = prefab;
+}
+
+
+bool ObjectManager::GetGameObjectCreator (const std::string& name, std::shared_ptr<Prefab::GameObjectCreator>& outCreator)
+{
+	if (m_prefabMap.find (name) != m_prefabMap.end ()) {
+		outCreator = m_prefabMap.at (name);
+
+		return true;
+	}
+
+	return false;
 }
 
 

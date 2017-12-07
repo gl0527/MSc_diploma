@@ -34,7 +34,7 @@ void TagProcessor::AddToParentObject (TiXmlElement* elem, const std::shared_ptr<
 		return;
 	}
 
-	const auto& object = ObjectManager::GetSingletonInstance ().GetGameObjectByName (objectName);
+	const auto& object = ObjectManager::GetInstance ().GetGameObjectByName (objectName);
 
 	if (auto obj = object.lock ())
 		obj->AddComponent (component);

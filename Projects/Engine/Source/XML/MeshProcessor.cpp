@@ -3,6 +3,10 @@
 #include "XML/XMLParser.h"
 #include "Ogre.h"
 
+#include "Prefab/GameObjectCreator.h"
+#include "Prefab/GenericPrefab.h"
+#include "ObjectManager.h"
+
 
 namespace Engine {
 namespace XML {
@@ -21,10 +25,14 @@ bool MeshProcessor::ProcessXMLTag (TiXmlElement* elem)
 		return false;
 	}
 
-	std::shared_ptr<MeshComponent> comp (new MeshComponent (entityName, meshName));
+	using MeshPrefab = Prefab::GenericPrefab<MeshComponent, MeshComponent::Descriptor>;
 
-	AddToParentObject (elem, comp);
+	MeshPrefab meshPrefab;
+	MeshComponent::Descriptor desc;
 
+	desc.entityName = entityName;
+	desc.meshFileName = meshName;
+	
 	foreach_child (elem)
 	{
 		std::string childName (child->Value ());
@@ -39,8 +47,7 @@ bool MeshProcessor::ProcessXMLTag (TiXmlElement* elem)
 
 				return false;
 			}
-
-			comp->setMaterial (material);
+			desc.materialName = material;
 		}
 		else if (childName == "shadows") {
 			bool castShadows;
@@ -52,8 +59,29 @@ bool MeshProcessor::ProcessXMLTag (TiXmlElement* elem)
 
 				return false;
 			}
+		}
+	}
+	meshPrefab.SetDescriptor (desc);
 
-			comp->SetCastShadows (castShadows);
+	std::string parentTag (elem->Parent ()->Value ());
+
+	if (parentTag == std::string ("gameobject")) {
+		std::string parentName;
+		if (GetParentName (elem, parentName)) {
+			auto object = ObjectManager::GetInstance ().GetGameObjectByName (parentName).lock ();
+
+			meshPrefab.Create ();
+			meshPrefab.Attach (object.get ());
+			meshPrefab.ApplyDescriptor ();
+		}
+	}
+	else if (parentTag == std::string ("prefab")) {
+		std::string parentName;
+		if (GetParentName (elem, parentName)) {
+			std::shared_ptr<Prefab::GameObjectCreator> prefab;
+
+			if (ObjectManager::GetInstance ().GetGameObjectCreator (parentName, prefab))
+				prefab->AddComponentCreator (std::make_shared<MeshPrefab> (meshPrefab));
 		}
 	}
 

@@ -10,8 +10,8 @@ namespace Engine {
 
 AudioComponent::AudioComponent (const std::string& fileName, const std::string& listenerName)
 	: Component (fileName),
-	volume (0.5f),
-	speed (1.0f),
+	volume (0.0f),
+	speed (0.0f),
 	looping (false)
 {
 	buffer = alutCreateBufferFromFile (fileName.c_str ());
@@ -20,7 +20,13 @@ AudioComponent::AudioComponent (const std::string& fileName, const std::string& 
 		std::cout << "Cannot load audio file.\n";
 	alGenSources (1, &source);
 	alSourcei (source, AL_BUFFER, buffer);
-	listener = ObjectManager::GetSingletonInstance ().GetGameObjectByName (listenerName);
+	listener = ObjectManager::GetInstance ().GetGameObjectByName (listenerName);
+}
+
+
+AudioComponent::AudioComponent (const Descriptor& desc)
+	: AudioComponent (desc.fileName, desc.listenerName)
+{
 }
 
 
@@ -115,17 +121,11 @@ void AudioComponent::setLooping (bool loop)
 }
 
 
-AudioComponent::Tuple& AudioComponent::GetAttributes ()
+void AudioComponent::ApplyDescriptor (const Descriptor& desc)
 {
-	return m_attributes;
-}
-
-
-void AudioComponent::ApplyAttributes ()
-{
-	setVolume (std::get<0> (m_attributes));
-	setSpeed (std::get<1> (m_attributes));
-	setLooping (std::get<2> (m_attributes));
+	setVolume (desc.volume);
+	setSpeed (desc.speed);
+	setLooping (desc.loop);
 }
 
 }	// namespace Engine

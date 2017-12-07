@@ -320,7 +320,7 @@ void SoldierAnimComponent::ShootState::PostExecute (Stateable* stateable, float 
 		nextState->EnableAll ();
 		firstHit = true;
 	}
-	if (Blend (nextState, 1.0f, 0.0f, 1.0f, 0.015f)) {
+	if (Blend (nextState, 1.0f, 0.0f, 1.0f)) {
 		firstHit = false;
 		stateable->SetCurrentState (nextState);
 	}

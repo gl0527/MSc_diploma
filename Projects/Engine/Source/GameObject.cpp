@@ -25,6 +25,15 @@ void GameObject::AddComponent (const Component::SPtr& comp)
 }
 
 
+void GameObject::InsertComponent (size_t index, const std::shared_ptr<Component>& comp)
+{
+	if (comp) {
+		m_components.insert (m_components.begin () + index, comp);
+		comp->Init (this);
+	}
+}
+
+
 void GameObject::removeComponent (const std::string& compName)
 {
 	auto predicate = [&compName] (const Component::SPtr& elem) { return elem->GetName () == compName; };
@@ -64,7 +73,7 @@ void GameObject::removeTag ()
 
 void GameObject::addChild (const std::string& childName)
 {
-	if (const auto& child = ObjectManager::GetSingletonInstance ().GetGameObjectByName (childName).lock ()) {
+	if (const auto& child = ObjectManager::GetInstance ().GetGameObjectByName (childName).lock ()) {
 		m_children.push_back (child);
 	}
 
@@ -185,7 +194,7 @@ inline bool GameObject::hasParent () const
 
 void GameObject::setParent (const std::string& parentName)
 {
-	if (auto ancestor = ObjectManager::GetSingletonInstance ().GetGameObjectByName (parentName).lock ()) {
+	if (auto ancestor = ObjectManager::GetInstance ().GetGameObjectByName (parentName).lock ()) {
 		m_pParent = ancestor;
 		ancestor->addChild (m_Name);
 	}

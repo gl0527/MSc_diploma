@@ -15,12 +15,29 @@ namespace Engine {
 class PhysicsMaterial
 {
 public:
-	PhysicsMaterial ();
+	struct Descriptor
+	{
+		Descriptor ()
+			: angularDamping (0.0f),
+			bounciness (0.0f),
+			friction (0.0f),
+			linearDamping (0.0f)
+		{
+		}
 
-	DLL_EXPORT float	GetAngularDamping () const;
-	DLL_EXPORT float	GetBounciness () const;
-	DLL_EXPORT float	GetFriction () const;
-	DLL_EXPORT float	GetLinearDamping () const;
+		float angularDamping;
+		float bounciness;
+		float friction;
+		float linearDamping;
+	};
+
+	PhysicsMaterial ();
+	PhysicsMaterial (const Descriptor& desc);
+
+	DLL_EXPORT float GetAngularDamping () const;
+	DLL_EXPORT float GetBounciness () const;
+	DLL_EXPORT float GetFriction () const;
+	DLL_EXPORT float GetLinearDamping () const;
 
 	DLL_EXPORT void	SetAngularDamping (float newAngularDamping);
 	DLL_EXPORT void	SetBounciness (float newBounciness);

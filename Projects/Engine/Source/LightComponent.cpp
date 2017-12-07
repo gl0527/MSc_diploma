@@ -10,11 +10,8 @@ namespace Engine {
 unsigned int LightComponent::instanceCount = 0;
 
 
-LightComponent::LightComponent (const InitData& initData)
-	: Component (initData.name),
-	sceneMgr (Game::GetInstance ().GetRenderSystem ()->getSceneManager ()),
-	light (nullptr),
-	type (initData.type)
+LightComponent::LightComponent (const Descriptor& desc)
+	: LightComponent (desc.name, desc.type)
 {
 }
 
@@ -30,7 +27,8 @@ LightComponent::LightComponent (const std::string& name, const Ogre::Light::Ligh
 
 void LightComponent::PostInit (GameObject* object)
 {
-	light = sceneMgr->createLight (object->GetName () + Ogre::StringConverter::toString (instanceCount++));
+	Ogre::String lName (object->GetName () + "_light_" + Ogre::StringConverter::toString (instanceCount++));
+	light = sceneMgr->createLight (lName);
 	if (light != nullptr)
 		light->setType (type);
 }
@@ -134,13 +132,13 @@ void LightComponent::setSpotRange (Ogre::Degree innerAngle, Ogre::Degree outerAn
 }
 
 
-void LightComponent::ApplyCreationData (const InitData& initData)
+void LightComponent::ApplyDescriptor (const Descriptor& desc)
 {
-	setDiffuseColor (initData.diffuseColor);
-	setSpecularColor (initData.specularColor);
-	setIntensity (initData.intensity);
-	setAttenuation (initData.range, initData.constantAttenuation, initData.linearAttenuation, initData.quadricAttenuation);
-	setSpotRange (Ogre::Degree (initData.innerAngle), Ogre::Degree (initData.outerAngle));
+	setDiffuseColor (desc.diffuseColor);
+	setSpecularColor (desc.specularColor);
+	setIntensity (desc.intensity);
+	setAttenuation (desc.range, desc.constantAttenuation, desc.linearAttenuation, desc.quadricAttenuation);
+	setSpotRange (Ogre::Degree (desc.innerAngle), Ogre::Degree (desc.outerAngle));
 }
 
 }	// namespace Engine

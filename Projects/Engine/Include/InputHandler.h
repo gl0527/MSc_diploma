@@ -10,7 +10,7 @@
 #include "stdafx.h"
 
 
-// ----------------------------- forward declaration-----------------------------
+// ----------------------------- forward declaration ----------------------------
 
 namespace Ogre {
 class RenderWindow;

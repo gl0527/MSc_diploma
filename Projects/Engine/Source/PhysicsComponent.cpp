@@ -9,7 +9,7 @@
 namespace Engine {
 
 PhysicsComponent::PhysicsComponent (const std::string& name, float m)
-	: Component (name),
+	: Component (name, true),
 	m_mass (m),
 	m_isTrigger (false),
 	m_pRigidBody (nullptr),
@@ -24,6 +24,19 @@ PhysicsComponent::PhysicsComponent (const std::string& name, float m)
 	}
 	else
 		m_rigidBodyType = RigidBodyType::Dynamic;
+}
+
+
+PhysicsComponent::PhysicsComponent (const Descriptor& desc)
+	: Component (desc.name),
+	m_mass (desc.mass),
+	m_isTrigger (desc.isTrigger),
+	m_pRigidBody (nullptr),
+	m_pCompoundShape (new btCompoundShape),
+	m_pWorld (Game::GetInstance ().getPhysicsSystem ()->getWorld ()),
+	triggerEnter (defaultTriggerEnter),
+	collision (defaultCollision)
+{
 }
 
 
@@ -124,6 +137,12 @@ void PhysicsComponent::Destroy ()
 		delete m_pRigidBody;
 		m_pRigidBody = nullptr;
 	}
+}
+
+
+void PhysicsComponent::ApplyDescriptor (const Descriptor& desc)
+{
+
 }
 
 

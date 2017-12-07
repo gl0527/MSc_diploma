@@ -30,9 +30,9 @@ int main(int argc, char** argv)
 
 	auto renderSys = game.GetRenderSystem();
 	auto& xmlParser = XML::XMLParser::GetInstance();
-	auto& objectMgr = ObjectManager::GetSingletonInstance ();
+	auto& objectMgr = ObjectManager::GetInstance ();
 
-	if (!xmlParser.LoadXMLFromFile ("Media\\map\\test.xml"))
+	if (!xmlParser.LoadXMLFromFile ("media\\map\\test.xml"))
 		return -1;
 
 	if (auto exp = objectMgr.GetGameObjectByName("explosive").lock())

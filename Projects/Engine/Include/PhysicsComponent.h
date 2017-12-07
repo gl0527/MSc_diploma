@@ -26,13 +26,42 @@ namespace Engine {
 
 class PhysicsComponent : public Component
 {
+private:
+	enum class RigidBodyType : unsigned char
+	{
+		Static,
+		Dynamic,
+		Kinematic
+	};
+
 public:
+	struct Descriptor
+	{
+		Descriptor ()
+			: name (""),
+			mass (0.0f),
+			isTrigger (false),
+			rigidBodyType (RigidBodyType::Static)
+		{
+		}
+
+		std::string name;
+		float mass;
+		
+		bool isTrigger;
+		RigidBodyType rigidBodyType;
+		PhysicsMaterial::Descriptor materialDesc;
+	};
+
 	PhysicsComponent (const std::string& name, float m);
+	PhysicsComponent (const Descriptor& desc);
 	virtual ~PhysicsComponent ();
 
 	virtual void PostInit (GameObject* object) override;
 	virtual void Update (float t, float dt) override;
 	virtual void Destroy () override;
+
+	void ApplyDescriptor (const Descriptor& desc);
 
 	void AddCollisionShape (btCollisionShape* collShape, const Ogre::Vector3& p, const Ogre::Quaternion& q);
 	void RemoveCollisionShape (btCollisionShape* collShape);
@@ -65,12 +94,6 @@ public:
 	void onCollision (PhysicsComponent* other) { collision (other); }
 
 private:
-	enum class RigidBodyType : unsigned char
-	{
-		Static,
-		Dynamic,
-		Kinematic
-	};
 	RigidBodyType m_rigidBodyType;
 
 	float	m_mass;

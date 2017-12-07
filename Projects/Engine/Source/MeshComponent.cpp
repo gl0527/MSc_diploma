@@ -12,7 +12,12 @@ MeshComponent::MeshComponent (const std::string& eName, const std::string& mName
 	entity (nullptr),
 	mesh (mName)
 {
+}
 
+
+MeshComponent::MeshComponent (const Descriptor& desc)
+	: MeshComponent (desc.entityName, desc.meshFileName)
+{
 }
 
 
@@ -33,6 +38,13 @@ void MeshComponent::Destroy ()
 {
 	if (m_pSceneManager)
 		m_pSceneManager->destroyEntity (entity->getName ());
+}
+
+
+void MeshComponent::ApplyDescriptor (const Descriptor& desc)
+{
+	if (desc.materialName != std::string (""))
+		setMaterial (desc.materialName);
 }
 
 

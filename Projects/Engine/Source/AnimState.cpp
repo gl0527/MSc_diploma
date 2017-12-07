@@ -159,7 +159,7 @@ bool AnimState::Blend (const AnimState::SPtr& destAnim,
 	float srcMinProgression /*= 0.0f*/,
 	float srcEndWeight /*= 0.0f*/,
 	float destEndWeight /*= 1.0f*/,
-	float dWeight /*= 0.015f*/)
+	float dWeight /*= 0.025f*/)
 {
 	if (GetProgression () < srcMinProgression)
 		return false;

@@ -21,11 +21,11 @@ void TransformProcessor::AddToParentObject (TiXmlElement* elem, const std::share
 		return;
 	}
 
-	const auto& object = ObjectManager::GetSingletonInstance ().GetGameObjectByName (objectName);
+	const auto& object = ObjectManager::GetInstance ().GetGameObjectByName (objectName);
 
 	if (auto obj = object.lock ()) {
 		obj->removeComponent (obj->GetName ()); // a régi transform kitörlése
-		obj->AddComponent (component);
+		obj->InsertComponent(0, component);
 	}
 }
 

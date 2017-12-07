@@ -16,9 +16,9 @@ namespace Engine {
 class LightComponent : public Component
 {
 public:
-	struct InitData
+	struct Descriptor
 	{
-		InitData ()
+		Descriptor ()
 			: name (""),
 			type (Ogre::Light::LT_POINT),
 			diffuseColor (Ogre::ColourValue::ZERO),
@@ -47,7 +47,7 @@ public:
 		float outerAngle;
 	};
 
-	LightComponent (const InitData& initData);
+	LightComponent (const Descriptor& desc);
 	LightComponent (const std::string& name, const Ogre::Light::LightTypes& t);
 	~LightComponent () {}
 
@@ -71,7 +71,7 @@ public:
 	void setAttenuation (float range, float constant, float linear, float quadric);
 	void setSpotRange (Ogre::Degree innerAngle, Ogre::Degree outerAngle);
 
-	void ApplyCreationData (const InitData& initData);
+	void ApplyDescriptor (const Descriptor& desc);
 
 private:
 	static unsigned int instanceCount;

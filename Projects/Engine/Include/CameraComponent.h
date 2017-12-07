@@ -6,18 +6,8 @@
 // ---------------------------------- includes ----------------------------------
 
 #include "RenderComponent.h"
+#include "Ogre.h"
 
-
-// ----------------------------- forward declaration -----------------------------
-
-namespace Ogre {
-class Camera;
-class Viewport;
-class Ray;
-class RenderWindow;
-class RenderTexture;
-class Vector3;
-}
 
 namespace Engine {
 
@@ -26,11 +16,34 @@ namespace Engine {
 class CameraComponent : public RenderComponent
 {
 public:
+	struct Descriptor
+	{
+		Descriptor ()
+			: name (""),
+			zOrder (0),
+			nearClip (0.0f),
+			farClip (0.0f),
+			lookat (Ogre::Vector3::ZERO),
+			renderDist (0.0f)
+		{}
+
+		std::string name;
+		int zOrder;
+
+		float nearClip;
+		float farClip;
+		Ogre::Vector3 lookat;
+		float renderDist;
+	};
+
 	CameraComponent (const std::string& name, int zDepth);
+	CameraComponent (const Descriptor& desc);
 	virtual ~CameraComponent ();
 
 	virtual void PostInit (GameObject* obj) override;
 	virtual void Destroy () override;
+
+	void ApplyDescriptor (const Descriptor& desc);
 
 	Ogre::Camera* getCamera () const;
 	Ogre::Viewport* getViewPort () const;

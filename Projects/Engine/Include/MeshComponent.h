@@ -21,11 +21,22 @@ namespace Engine {
 class MeshComponent : public RenderComponent
 {
 public:
+	struct Descriptor
+	{
+		std::string entityName;
+		std::string meshFileName;
+
+		std::string materialName;
+	};
+
 	MeshComponent (const std::string& eName, const std::string& mName);
+	MeshComponent (const Descriptor& desc);
 	virtual ~MeshComponent ();
 
 	virtual void PostInit (GameObject* obj) override;
 	virtual void Destroy () override;
+
+	void ApplyDescriptor (const Descriptor& desc);
 
 	void setMaterial (const std::string& matName);
 	Ogre::Entity* getEntity () const { return entity; }

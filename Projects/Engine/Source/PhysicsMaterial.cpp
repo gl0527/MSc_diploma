@@ -12,6 +12,15 @@ PhysicsMaterial::PhysicsMaterial ()
 }
 
 
+PhysicsMaterial::PhysicsMaterial (const Descriptor& desc)
+	: m_angularDamping (desc.angularDamping),
+	m_bounciness (desc.bounciness),
+	m_friction (desc.friction),
+	m_linearDamping (desc.linearDamping)
+{
+}
+
+
 inline float PhysicsMaterial::GetAngularDamping () const
 {
 	return m_angularDamping;

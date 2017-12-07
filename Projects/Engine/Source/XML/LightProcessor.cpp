@@ -1,7 +1,10 @@
 #include "XML/LightProcessor.h"
 #include "XML/XMLParser.h"
 
-#include "LightCreator.h"
+#include "Prefab/GameObjectCreator.h"
+#include "Prefab/GenericPrefab.h"
+
+#include "LightComponent.h"
 #include "ObjectManager.h"
 
 #include <iostream>
@@ -32,12 +35,16 @@ bool LightProcessor::ProcessXMLTag (TiXmlElement* elem)
 		lightType = Ogre::Light::LT_DIRECTIONAL;
 	else if (strcmp (type, "spot") == 0)
 		lightType = Ogre::Light::LT_SPOTLIGHT;
+	else
+		lightType = Ogre::Light::LT_POINT;
 
-	LightCreator lightCreator;
+	using LightPrefab = Prefab::GenericPrefab<LightComponent, LightComponent::Descriptor>;
 
-	auto& initData = lightCreator.GetInitData ();
-	initData.name = name;
-	initData.type = lightType;
+	LightPrefab lightPrefab;
+	LightComponent::Descriptor desc;
+
+	desc.name = name;
+	desc.type = lightType;
 
 	foreach_child (elem)
 	{
@@ -52,7 +59,7 @@ bool LightProcessor::ProcessXMLTag (TiXmlElement* elem)
 
 				return false;
 			}
-			initData.diffuseColor = diffCol;
+			desc.diffuseColor = diffCol;
 		}
 		else if (childName == "specularcolor") {
 			Ogre::ColourValue specCol;
@@ -63,7 +70,7 @@ bool LightProcessor::ProcessXMLTag (TiXmlElement* elem)
 
 				return false;
 			}
-			initData.specularColor = specCol;
+			desc.specularColor = specCol;
 		}
 		else if (childName == "intensity") {
 			float intensity;
@@ -74,7 +81,7 @@ bool LightProcessor::ProcessXMLTag (TiXmlElement* elem)
 
 				return false;
 			}
-			initData.intensity = intensity;
+			desc.intensity = intensity;
 		}
 		else if (childName == "attenuation") {
 			float range, constant, linear, quadric;
@@ -88,10 +95,10 @@ bool LightProcessor::ProcessXMLTag (TiXmlElement* elem)
 
 				return false;
 			}
-			initData.range = range;
-			initData.constantAttenuation = constant;
-			initData.linearAttenuation = linear;
-			initData.quadricAttenuation = quadric;
+			desc.range = range;
+			desc.constantAttenuation = constant;
+			desc.linearAttenuation = linear;
+			desc.quadricAttenuation = quadric;
 		}
 		else if (childName == "angle") {
 			float inner, outer;
@@ -103,17 +110,31 @@ bool LightProcessor::ProcessXMLTag (TiXmlElement* elem)
 
 				return false;
 			}
-			initData.innerAngle = inner;
-			initData.outerAngle = outer;
+			desc.innerAngle = inner;
+			desc.outerAngle = outer;
 		}
 	}
+	lightPrefab.SetDescriptor (desc);
 
-	std::string parentName;
-	if (GetParentName (elem, parentName)) {
-		auto object = ObjectManager::GetSingletonInstance ().GetGameObjectByName (parentName).lock ();
+	std::string parentTag (elem->Parent ()->Value ());
 
-		lightCreator.Create (object.get ());
-		lightCreator.ApplyInitData ();
+	if (parentTag == std::string ("gameobject")) {
+		std::string parentName;
+		if (GetParentName (elem, parentName)) {
+			auto object = ObjectManager::GetInstance ().GetGameObjectByName (parentName).lock ();
+
+			lightPrefab.Create ();
+			lightPrefab.Attach(object.get ());	// TODO ezt csak akkor kene megtenni, ha meg nem volt a tagja
+			lightPrefab.ApplyDescriptor ();
+		}
+	} else if (parentTag == std::string ("prefab")) {
+		std::string parentName;
+		if (GetParentName (elem, parentName)) {
+			std::shared_ptr<Prefab::GameObjectCreator> prefab;
+
+			if (ObjectManager::GetInstance ().GetGameObjectCreator (parentName, prefab))
+				prefab->AddComponentCreator (std::make_shared<LightPrefab> (lightPrefab));
+		}
 	}
 
 	return true;

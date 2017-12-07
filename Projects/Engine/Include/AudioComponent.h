@@ -23,11 +23,28 @@ namespace Engine {
 
 class AudioComponent : public Component
 {
-private:
-	using Tuple = std::tuple<float, float, bool>;
-
 public:
+	struct Descriptor
+	{
+		Descriptor ()
+			: fileName (""),
+			listenerName (""),
+			volume (0.0f),
+			speed (0.0f),
+			loop (false)
+		{
+		}
+
+		std::string fileName;
+		std::string listenerName;
+		
+		float volume;
+		float speed;
+		bool loop;
+	};
+
 	AudioComponent (const std::string& fileName, const std::string& listenerName);
+	AudioComponent (const Descriptor& desc);
 	virtual ~AudioComponent ();
 
 	virtual void PreUpdate (float t, float dt) override;
@@ -41,8 +58,7 @@ public:
 	void setSpeed (float spd);
 	void setLooping (bool loop);
 
-	Tuple& GetAttributes ();
-	void ApplyAttributes ();
+	void ApplyDescriptor (const Descriptor& desc);
 
 private:
 	float volume;
@@ -51,8 +67,6 @@ private:
 	ALuint buffer;
 	ALuint source;
 	std::weak_ptr<GameObject> listener;
-
-	Tuple m_attributes;
 
 	void updatePose (const Ogre::Vector3& pos, const Ogre::Vector3& dir);
 };

@@ -49,7 +49,7 @@ protected:
 		float srcMinProgression = 0.0f,
 		float srcEndWeight = 0.0f,
 		float destEndWeight = 1.0f,
-		float dWeight = 0.015f);
+		float dWeight = 0.025f);
 
 	float GetProgression ();
 	float GetWeight ();
