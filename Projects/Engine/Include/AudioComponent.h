@@ -26,14 +26,7 @@ class AudioComponent : public Component
 public:
 	struct Descriptor
 	{
-		Descriptor ()
-			: fileName (""),
-			listenerName (""),
-			volume (0.0f),
-			speed (0.0f),
-			loop (false)
-		{
-		}
+		Descriptor ();
 
 		std::string fileName;
 		std::string listenerName;

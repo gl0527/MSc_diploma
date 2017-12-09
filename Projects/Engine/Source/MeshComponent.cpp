@@ -7,6 +7,14 @@ namespace Engine {
 
 unsigned int MeshComponent::instanceCount = 0;
 
+MeshComponent::Descriptor::Descriptor ()
+	: entityName (""),
+	meshFileName (""),
+	materialName ("")
+{
+}
+
+
 MeshComponent::MeshComponent (const std::string& eName, const std::string& mName)
 	: RenderComponent (eName),
 	entity (nullptr),

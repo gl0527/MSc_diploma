@@ -23,6 +23,8 @@ class MeshComponent : public RenderComponent
 public:
 	struct Descriptor
 	{
+		Descriptor ();
+		
 		std::string entityName;
 		std::string meshFileName;
 

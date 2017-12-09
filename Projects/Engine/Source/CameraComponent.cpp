@@ -7,6 +7,17 @@
 
 namespace Engine {
 
+CameraComponent::Descriptor::Descriptor ()
+	: name (""),
+	zOrder (0),
+	nearClip (0.0f),
+	farClip (0.0f),
+	lookat (Ogre::Vector3::ZERO),
+	renderDist (0.0f)
+{
+}
+
+
 CameraComponent::CameraComponent (const std::string& name, int zDepth)
 	: RenderComponent (name),
 	zOrder (zDepth),

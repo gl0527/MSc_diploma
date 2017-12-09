@@ -18,14 +18,7 @@ class CameraComponent : public RenderComponent
 public:
 	struct Descriptor
 	{
-		Descriptor ()
-			: name (""),
-			zOrder (0),
-			nearClip (0.0f),
-			farClip (0.0f),
-			lookat (Ogre::Vector3::ZERO),
-			renderDist (0.0f)
-		{}
+		Descriptor ();
 
 		std::string name;
 		int zOrder;

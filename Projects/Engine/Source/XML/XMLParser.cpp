@@ -13,6 +13,8 @@
 #include "XML/LightProcessor.h"
 #include "XML/PrefabProcessor.h"
 
+#include "ErrorMessage.h"
+
 
 namespace Engine {
 namespace XML {
@@ -91,14 +93,16 @@ void XMLParser::TraverseXMLTree (TiXmlElement* elem)
 
 void XMLParser::ParsePrimitive (TiXmlElement* tag, const char* attrName, float* outResult, bool optional/* = false*/)
 {
-	if (tag->QueryFloatAttribute (attrName, outResult) != 0) {
-		std::string errorMsg ("[ *** Float parsing error *** ]\t\"" + std::string (attrName) +
-			"\" attribute of \"" + std::string (tag->Value ()) + "\" tag not found.");
+	if (tag->QueryFloatAttribute (attrName, outResult) != 0) {		
+		std::string errStr ("[ *** Float parsing error *** ]\t\'" + std::string (attrName) +
+			"\' attribute of \'" + std::string (tag->Value ()) + "\' tag not found");
+
+		ErrorMessage errMsg (errStr, __FILE__, __LINE__);
 
 		if (!optional)
-			throw std::runtime_error (errorMsg.c_str ());
+			throw std::runtime_error (errMsg.Get ());
 		else
-			std::cout << errorMsg << std::endl;
+			std::cout << errMsg << std::endl;
 	}
 }
 
@@ -106,13 +110,15 @@ void XMLParser::ParsePrimitive (TiXmlElement* tag, const char* attrName, float* 
 void XMLParser::ParsePrimitive (TiXmlElement* tag, const char* attrName, int* outResult, bool optional/* = false*/)
 {
 	if (tag->QueryIntAttribute (attrName, outResult) != 0) {
-		std::string errorMsg ("[ *** Int parsing error *** ]\t\"" + std::string (attrName) +
-			"\" attribute of \"" + std::string (tag->Value ()) + "\" tag not found.");
+		std::string errStr ("[ *** Int parsing error *** ]\t\'" + std::string (attrName) +
+			"\' attribute of \'" + std::string (tag->Value ()) + "\' tag not found");
+
+		ErrorMessage errMsg (errStr, __FILE__, __LINE__);
 
 		if (!optional)
-			throw std::runtime_error (errorMsg.c_str ());
+			throw std::runtime_error (errMsg.Get ());
 		else
-			std::cout << errorMsg << std::endl;
+			std::cout << errMsg << std::endl;
 	}
 }
 
@@ -121,13 +127,15 @@ void XMLParser::ParsePrimitive (TiXmlElement* tag, const char* attrName, const c
 {
 	*outResult = tag->Attribute (attrName);
 	if (*outResult == nullptr) {
-		std::string errorMsg ("[ *** String parsing error *** ]\t\"" + std::string (attrName) +
-			"\" attribute of \"" + std::string (tag->Value ()) + "\" tag not found.");
+		std::string errStr ("[ *** String parsing error *** ]\t\'" + std::string (attrName) +
+			"\' attribute of \'" + std::string (tag->Value ()) + "\' tag not found");
+
+		ErrorMessage errMsg (errStr, __FILE__, __LINE__);
 
 		if (!optional)
-			throw std::runtime_error (errorMsg.c_str ());
+			throw std::runtime_error (errMsg.Get ());
 		else
-			std::cout << errorMsg << std::endl;
+			std::cout << errMsg << std::endl;
 	}
 }
 
@@ -135,13 +143,15 @@ void XMLParser::ParsePrimitive (TiXmlElement* tag, const char* attrName, const c
 void XMLParser::ParsePrimitive (TiXmlElement* tag, const char* attrName, bool* outResult, bool optional/* = false*/)
 {
 	if (tag->QueryBoolAttribute (attrName, outResult) != 0) {
-		std::string errorMsg ("[ *** Boolean parsing error *** ]\t\"" + std::string (attrName) +
-			"\" attribute of \"" + std::string (tag->Value ()) + "\" tag not found.");
+		std::string errStr ("[ *** Boolean parsing error *** ]\t\'" + std::string (attrName) +
+			"\' attribute of \'" + std::string (tag->Value ()) + "\' tag not found");
+
+		ErrorMessage errMsg (errStr, __FILE__, __LINE__);
 
 		if (!optional)
-			throw std::runtime_error (errorMsg.c_str ());
+			throw std::runtime_error (errMsg.Get ());
 		else
-			std::cout << errorMsg << std::endl;
+			std::cout << errMsg << std::endl;
 	}
 }
 

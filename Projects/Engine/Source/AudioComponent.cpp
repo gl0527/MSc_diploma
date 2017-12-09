@@ -8,6 +8,16 @@
 
 namespace Engine {
 
+AudioComponent::Descriptor::Descriptor ()
+	: fileName (""),
+	listenerName (""),
+	volume (0.0f),
+	speed (0.0f),
+	loop (false)
+{
+}
+
+
 AudioComponent::AudioComponent (const std::string& fileName, const std::string& listenerName)
 	: Component (fileName),
 	volume (0.0f),
