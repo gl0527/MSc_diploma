@@ -20,7 +20,7 @@ class GenericPrefab : public IPrefab
 {
 public:
 	void Create () override;
-	void Attach (GameObject* owner) override;
+	void Attach (GameObject* owner, bool replaceOld = true) override;
 	void ApplyDescriptor () override;
 
 	void SetDescriptor (const DESC& desc);
@@ -41,10 +41,10 @@ inline void GenericPrefab<TYPE, DESC>::Create ()
 
 
 template<typename TYPE, typename DESC>
-inline void GenericPrefab<TYPE, DESC>::Attach (GameObject* owner)
+inline void GenericPrefab<TYPE, DESC>::Attach (GameObject* owner, bool replaceOld /*= true*/)
 {
 	if (m_managedObj != nullptr)
-		owner->AddComponent (m_managedObj);
+		owner->AddComponent (m_managedObj, replaceOld);
 }
 
 template<typename TYPE, typename DESC>

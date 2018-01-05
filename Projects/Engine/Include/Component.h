@@ -42,11 +42,13 @@ public:
 	virtual DLL_EXPORT void	Destroy ();
 
 	DLL_EXPORT const std::string&	GetName () const;
-	const bool			IsUnique () const;
+	DLL_EXPORT const bool			IsUnique () const;
 	bool				IsEnabled () const;
 	void				Enable ();
 	void				Disable ();
 	DLL_EXPORT GameObject*			GetOwner () const;
+
+	DLL_EXPORT std::string GetTypeName () const;
 
 protected:
 	const std::string	m_name;

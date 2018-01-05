@@ -3,31 +3,14 @@
 
 #pragma once
 
-// ---------------------------------- includes ----------------------------------
+#define WRAP(statements) do { statements } while (0)
 
-#include <iostream>
+#define STRINGIFY(x) #x
+#define TOSTRING(x) STRINGIFY(x)
 
+#define ERR_PREFIX "[ " __TIME__ " ] At " __FILE__ "(" TOSTRING (__LINE__) ")"
 
-namespace Engine {
-
-// ============================= class ErrorMessage =============================
-
-class ErrorMessage
-{
-public:
-	ErrorMessage (const std::string& errString, const std::string fileName, size_t lineNum);
-	
-	const std::string& Get () const;
-	friend std::ostream& operator<< (std::ostream& os, const ErrorMessage& errorMessage);
-
-private:
-	const std::string m_errString;
-	const std::string m_fileName;
-	const size_t m_lineNum;
-	
-	std::string m_errMessage;
-};
-
-}	// namespace Engine
+#define ERR_LOG(os, msg) os << ERR_PREFIX << ": " << msg
+#define ERR_THROW(exceptionType, errMsg) throw exceptionType (ERR_PREFIX + std::string (": ") + errMsg)
 
 #endif	// ERROR_MESSAGE_H

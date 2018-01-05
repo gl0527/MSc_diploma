@@ -17,7 +17,7 @@ namespace Prefab {
 class IPrefab {
 public:
 	virtual void Create () = 0;
-	virtual void Attach (GameObject*) = 0;
+	virtual void Attach (GameObject* owner, bool replaceOld = true) = 0;
 	virtual void ApplyDescriptor () = 0;
 };
 

@@ -124,7 +124,7 @@ bool LightProcessor::ProcessXMLTag (TiXmlElement* elem)
 			auto object = ObjectManager::GetInstance ().GetGameObjectByName (parentName).lock ();
 
 			lightPrefab.Create ();
-			lightPrefab.Attach(object.get ());	// TODO ezt csak akkor kene megtenni, ha meg nem volt a tagja
+			lightPrefab.Attach(object.get ());
 			lightPrefab.ApplyDescriptor ();
 		}
 	} else if (parentTag == std::string ("prefab")) {

@@ -89,4 +89,10 @@ inline GameObject* Component::GetOwner () const
 	return m_owner;
 }
 
+
+inline std::string Component::GetTypeName () const
+{
+	return typeid (*this).name ();
+}
+
 }	// namespace Engine

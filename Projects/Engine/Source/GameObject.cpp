@@ -15,10 +15,33 @@ GameObject::GameObject (const std::string& id)
 }
 
 
-void GameObject::AddComponent (const Component::SPtr& comp)
+void GameObject::AddComponent (const Component::SPtr& comp, bool replaceOld/* = true*/)
 {
-	// TODO: unicitást ellenorizni kellene!
-	if (comp) {
+	if (comp == nullptr)
+		return;
+	
+	auto it = m_components.begin ();
+	for (; it != m_components.end () && (*it)->GetTypeName () != comp->GetTypeName (); ++it);
+
+	if (comp->IsUnique ()) {
+		if (it != m_components.end ()) {
+			if (replaceOld) {
+				removeComponent ((*it)->GetName ());
+				m_components.push_back (comp);
+				comp->Init (this);
+			}
+		} else {
+			m_components.push_back (comp);
+			comp->Init (this);
+		}
+	} else {
+		if (it != m_components.end ()) {
+			if ((*it)->GetName () == comp->GetName ()) {
+				if (replaceOld) {
+					removeComponent ((*it)->GetName ());
+				}
+			}
+		}
 		m_components.push_back (comp);
 		comp->Init (this);
 	}
@@ -36,8 +59,13 @@ void GameObject::InsertComponent (size_t index, const std::shared_ptr<Component>
 
 void GameObject::removeComponent (const std::string& compName)
 {
-	auto predicate = [&compName] (const Component::SPtr& elem) { return elem->GetName () == compName; };
-	m_components.erase (std::remove_if (m_components.begin (), m_components.end (), predicate), m_components.end ());
+	for (auto it = m_components.begin (); it != m_components.end (); ++it) {
+		if ((*it)->GetName () == compName) {
+			(*it)->Destroy ();
+			m_components.erase (it);
+			break;
+		}
+	}
 }
 
 

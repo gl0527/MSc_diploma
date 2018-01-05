@@ -31,7 +31,7 @@ public:
 	explicit GameObject (const std::string& id);
 	~GameObject ();
 
-	DLL_EXPORT void AddComponent (const std::shared_ptr<Component>& comp);
+	DLL_EXPORT void AddComponent (const std::shared_ptr<Component>& comp, bool replaceOld = true);
 	void InsertComponent (size_t index, const std::shared_ptr<Component>& comp);
 	DLL_EXPORT void removeComponent (const std::string& compName);
 	void removeComponent (const std::shared_ptr<Component>& comp);
