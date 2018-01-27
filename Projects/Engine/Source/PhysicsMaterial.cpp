@@ -3,6 +3,15 @@
 
 namespace Engine {
 
+PhysicsMaterial::Descriptor::Descriptor ()
+	: angularDamping (0.0f),
+	bounciness (0.0f),
+	friction (0.0f),
+	linearDamping (0.0f)
+{
+}
+
+
 PhysicsMaterial::PhysicsMaterial ()
 	: m_angularDamping (0.0f),
 	m_bounciness (0.0f),

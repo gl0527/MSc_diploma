@@ -36,7 +36,7 @@ void ObjectManager::RemoveGameObject (const std::string& id)
 {
 	auto& removableObject = m_gameObjectMap[id];
 	if (removableObject) {
-		const auto& removableChildren = removableObject->getChildrenNames ();
+		const auto& removableChildren = removableObject->GetChildrenNames ();
 		for (auto it = removableChildren.begin (); it != removableChildren.end (); ++it) {
 			RemoveGameObject (*it);
 		}

@@ -2,6 +2,7 @@
 #include "PhysicsComponent.h"
 #include "Ogre.h"
 #include "XML/XMLParser.h"
+#include "PhysicsMaterial.h"
 
 
 namespace Engine {

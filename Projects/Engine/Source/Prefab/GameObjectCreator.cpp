@@ -17,7 +17,7 @@ void GameObjectCreator::AddComponentCreator (std::shared_ptr<Prefab::IPrefab> co
 }
 
 
-void GameObjectCreator::Instantiate (const std::string& name)
+void GameObjectCreator::Instantiate (const std::string& name) const
 {
 	if (auto spGameObj = ObjectManager::GetInstance ().CreateGameObject (name).lock ()) {
 		for (auto& compCreator : m_compCreatorVec) {

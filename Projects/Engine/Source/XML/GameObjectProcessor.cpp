@@ -43,7 +43,7 @@ bool GameObjectProcessor::ProcessXMLTag (TiXmlElement* elem)
 					return false;
 				}
 
-				obj->setParent (parentName);
+				obj->SetParent (parentName);
 			}
 		}
 	} else {

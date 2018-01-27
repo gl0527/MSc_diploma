@@ -27,7 +27,7 @@ bool InputHandler::init ()
 {
 	OIS::ParamList pl;
 	size_t windowHnd = 0;
-	m_pRenderWindow = Game::GetInstance ().GetRenderSystem ()->getRenderWindow ();
+	m_pRenderWindow = Game::GetInstance ().GetRenderSystem ()->GetRenderWindow ();
 	m_pRenderWindow->getCustomAttribute ("WINDOW", &windowHnd);
 	std::ostringstream windowHndStr;
 	windowHndStr << windowHnd;

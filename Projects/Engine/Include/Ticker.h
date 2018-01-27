@@ -3,6 +3,8 @@
 
 #pragma once
 
+#include "stdafx.h"
+
 namespace Engine {
 
 // ================================ class Ticker ================================
@@ -10,17 +12,21 @@ namespace Engine {
 class Ticker
 {
 public:
-	Ticker ();
+						Ticker (float limit = 0.0f);
 
-	void	Tick ();
-	void	Pause ();
-	float	GetTimeFromStart ()	const { return m_timeFromStart; }
-	float	GetTimeFromLastFrame ()	const { return m_timeFromLastFrame; }
+	void				Tick ();
+	void				Reset ();
+	DLL_EXPORT void		Pause ();
+
+	DLL_EXPORT void		UptimeInSec (float* pOutSec) const;
+	void				UptimeInHourMinSec (unsigned long* pOutHour, unsigned long* pOutMin, unsigned long* pOutSec) const;
+	DLL_EXPORT void		LastFrameDurationInSec (float* pOutSec) const;
 
 private:
-	unsigned int	m_lastTimeFromStart;
-	float			m_timeFromStart;
-	float			m_timeFromLastFrame;
+	float m_lastFrameTimeInSec;
+	float m_uptimeInSec;
+	float m_lastFrameDurationInSec;
+	float m_limitInSec;
 };
 
 }	// namespace Engine

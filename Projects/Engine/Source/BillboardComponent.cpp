@@ -5,11 +5,11 @@
 
 namespace Engine {
 
-unsigned int BillboardComponent::instanceCount = 0;
+unsigned int BillboardComponent::s_instanceCount = 0;
 
 BillboardComponent::BillboardComponent (const std::string& bbName)
 	: RenderComponent (bbName),
-	billboardSet (nullptr)
+	m_pBillboardSet (nullptr)
 {
 }
 
@@ -21,15 +21,21 @@ BillboardComponent::~BillboardComponent ()
 
 void BillboardComponent::PostInit (GameObject* obj)
 {
-	billboardSet = m_pSceneManager->createBillboardSet (obj->GetName () + Ogre::StringConverter::toString (instanceCount++));
-	m_pObject = billboardSet;
+	m_pBillboardSet = m_pSceneManager->createBillboardSet (obj->GetName () + Ogre::StringConverter::toString (s_instanceCount++));
+	m_pObject = m_pBillboardSet;
 	RenderComponent::PostInit (obj);
 }
 
 
 void BillboardComponent::Destroy ()
 {
-	m_pSceneManager->destroyBillboardSet (billboardSet->getName ());
+	m_pSceneManager->destroyBillboardSet (m_pBillboardSet->getName ());
+}
+
+
+Ogre::BillboardSet*	BillboardComponent::GetBillboardSet () const
+{
+	return m_pBillboardSet;
 }
 
 }	// namespace Engine

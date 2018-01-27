@@ -8,9 +8,17 @@
 #include "System.h"
 #include "Ogre.h"
 #include "Overlay\OgreOverlayManager.h"
-#include "Overlay\OgreOverlaySystem.h"
+#include "MyGUI.h"
 #include "stdafx.h"
 
+
+namespace Ogre {
+class OverlaySystem;
+}
+
+namespace MyGUI {
+class OgrePlatform;
+}
 
 namespace Engine {
 
@@ -19,47 +27,62 @@ namespace Engine {
 class RenderSystem : public System
 {
 public:
-	RenderSystem (const char* wName, size_t w = 800, size_t h = 600);
+									RenderSystem (const char* wName, size_t w = 800, size_t h = 600);
 
-	virtual bool init () override;
-	virtual bool update (float t, float dt) override;
-	virtual void destroy () override;
+	virtual bool					init () override;
+	virtual bool					update (float t, float dt) override;
+	virtual void					destroy () override;
 
-	static Ogre::MeshPtr	createPlaneMeshXZ (const char* planeMeshName, float y, unsigned int u = 1, unsigned int v = 1);
-	static Ogre::TexturePtr createTexture (const char* texName, unsigned int w, unsigned int h);
+	static	Ogre::MeshPtr			CreatePlaneMeshXZ (const char* planeMeshName, float y, unsigned int u = 1, unsigned int v = 1);
+	static	Ogre::TexturePtr		CreateTexture (const char* texName, unsigned int w, unsigned int h);
 
-	Ogre::Root*			getRoot () const { return ogreRoot; }
-	Ogre::SceneNode*	getRootNode () const { return sceneManager->getRootSceneNode (); }
-	Ogre::SceneManager* getSceneManager () const { return sceneManager; }
-	Ogre::RenderWindow* getRenderWindow () const { return renderWindow; }
+	Ogre::Root*						GetRoot () const;
+ 	DLL_EXPORT Ogre::SceneNode*		GetRootNode () const;
+	DLL_EXPORT Ogre::SceneManager*	GetSceneManager () const;
+	DLL_EXPORT Ogre::RenderWindow*	GetRenderWindow () const;
 
-	Ogre::OverlayElement*	getOverlayElement (const char* elementName) const;
-	Ogre::Overlay*			getOverlay (const char* overlayName) const;
-	Ogre::OverlayContainer* getContainer (const char* containerName) const;
-	Ogre::OverlayManager*	getOverlayMgr () const { return overlayManager; }
+	Ogre::OverlayElement*			GetOverlayElement (const char* elementName) const;
+	Ogre::Overlay*					GetOverlay (const char* overlayName) const;
+	Ogre::OverlayContainer*			GetContainer (const char* containerName) const;
+	Ogre::OverlayManager*			GetOverlayMgr () const;
 
-	Ogre::Overlay* createOverlay (const char* name) { return overlayManager->create (name); }
+	DLL_EXPORT Ogre::Overlay*		CreateOverlay (const char* name);
 
 	template<typename T>
-	T* createOverlayElement (const char* typeName, const char* name)
-	{
-		return static_cast<T*>(overlayManager->createOverlayElement (typeName, name));
-	}
+	T* 								CreateOverlayElement (const char* typeName, const char* name);
+
+	DLL_EXPORT void					LoadGUILayout (const std::string& layoutFileName);
+
+	template<typename T>
+	T*								GetWidget (const std::string& widgetName);
 
 private:
-	Ogre::Root* ogreRoot;
-	Ogre::SceneManager* sceneManager;
-	Ogre::RenderWindow* renderWindow;
-	Ogre::OverlaySystem* overlaySystem;
-	Ogre::OverlayManager* overlayManager;
+	Ogre::Root*				m_pOgreRoot;
+	Ogre::SceneManager*		m_pSceneMgr;
+	Ogre::RenderWindow*		m_pRenderWnd;
+	Ogre::OverlaySystem*	m_pOverlaySys;
+	Ogre::OverlayManager*	m_pOverlayMgr;
+	MyGUI::OgrePlatform*	m_pOgrePlatform;
+	MyGUI::Gui*				m_pGUI;
 
-	std::string windowName;
-	size_t windowWidth;
-	size_t windowHeight;
-
-	std::string m_resConfig;
-	std::string m_plugConfig;
+	std::string				m_wndName;
+	size_t					m_wndWidth;
+	size_t					m_wndHeight;
 };
+
+
+template<typename T>
+inline T* RenderSystem::CreateOverlayElement (const char* typeName, const char* name)
+{
+	return reinterpret_cast<T*> (m_pOverlayMgr->createOverlayElement (typeName, name));
+}
+
+
+template<typename T>
+inline T* RenderSystem::GetWidget (const std::string& widgetName)
+{
+	return m_pGUI->findWidget<T> (widgetName);
+}
 
 }	// namespace Engine
 

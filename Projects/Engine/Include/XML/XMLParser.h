@@ -34,23 +34,23 @@ class TagProcessor;
 class XMLParser final : public SingletonBase<XMLParser>
 {
 public:
-	static DLL_EXPORT XMLParser&	GetInstance ();
+	static	DLL_EXPORT	XMLParser&	GetInstance ();
 
-	static DLL_EXPORT void ParsePrimitive (TiXmlElement* tag, const char* attrName, float* outResult, bool optional = false);
-	static DLL_EXPORT void ParsePrimitive (TiXmlElement* tag, const char* attrName, int* outResult, bool optional = false);
-	static DLL_EXPORT void ParsePrimitive (TiXmlElement* tag, const char* attrName, const char** outResult, bool optional = false);
-	static DLL_EXPORT void ParsePrimitive (TiXmlElement* tag, const char* attrName, bool* outResult, bool optional = false);
+	static	DLL_EXPORT	void		ParsePrimitive (TiXmlElement* tag, const char* attrName, float* outResult, bool optional = false);
+	static	DLL_EXPORT	void		ParsePrimitive (TiXmlElement* tag, const char* attrName, int* outResult, bool optional = false);
+	static	DLL_EXPORT	void		ParsePrimitive (TiXmlElement* tag, const char* attrName, const char** outResult, bool optional = false);
+	static	DLL_EXPORT	void		ParsePrimitive (TiXmlElement* tag, const char* attrName, bool* outResult, bool optional = false);
 
-	static DLL_EXPORT void ParseFloat3_XYZ (TiXmlElement* tag, Ogre::Vector3& outResult);
-	static DLL_EXPORT void ParseFloat3_RGB (TiXmlElement* tag, Ogre::ColourValue& outResult);
-	static DLL_EXPORT void ParseFloat3_RGBA (TiXmlElement* tag, Ogre::ColourValue& outResult);
-	static DLL_EXPORT void ParseFloat4_WXYZ (TiXmlElement* tag, Ogre::Quaternion& outResult);
+	static	DLL_EXPORT	void		ParseFloat3_XYZ (TiXmlElement* tag, Ogre::Vector3& outResult);
+	static	DLL_EXPORT	void		ParseFloat3_RGB (TiXmlElement* tag, Ogre::ColourValue& outResult);
+	static	DLL_EXPORT	void		ParseFloat3_RGBA (TiXmlElement* tag, Ogre::ColourValue& outResult);
+	static	DLL_EXPORT	void		ParseFloat4_WXYZ (TiXmlElement* tag, Ogre::Quaternion& outResult);
 
-	DLL_EXPORT void AddXMLProcessor (TagProcessor* proc);
+			DLL_EXPORT	void		AddXMLProcessor (TagProcessor* proc);
 
-	bool Init ();
-	DLL_EXPORT bool LoadXMLFromFile (const char* fileName);
-	void Destroy ();
+						bool		Init ();
+			DLL_EXPORT	bool		LoadXMLFromFile (const char* fileName);
+						void		Destroy ();
 
 private:
 	friend class SingletonBase<XMLParser>;
@@ -62,9 +62,9 @@ private:
 	TiXmlElement*		m_pDocumentRoot;
 
 
-	XMLParser ();
+									XMLParser ();
 
-	void TraverseXMLTree (TiXmlElement* elem);
+						void		TraverseXMLTree (TiXmlElement* elem);
 };
 
 }	// namespace XML

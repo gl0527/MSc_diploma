@@ -21,16 +21,17 @@ namespace Engine {
 class ParticleComponent : public RenderComponent
 {
 public:
-	ParticleComponent (const std::string& name, const std::string& partName);
-	virtual ~ParticleComponent ();
+					ParticleComponent (const std::string& name, const std::string& partName);
+	virtual			~ParticleComponent ();
 
-	virtual void PostInit (GameObject* obj) override;
-	virtual void Destroy () override;
+	virtual void	PostInit (GameObject* obj) override;
+	virtual void	Destroy () override;
 
 private:
-	static unsigned int instanceCount;
-	Ogre::ParticleSystem* partSys;
-	std::string particle;
+	static unsigned int		s_instanceCount;
+
+	Ogre::ParticleSystem*	m_pParticleSys;
+	std::string				m_particleName;
 };
 
 }	// namespace Engine

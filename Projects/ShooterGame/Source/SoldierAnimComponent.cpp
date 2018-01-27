@@ -31,8 +31,8 @@ SoldierAnimComponent::~SoldierAnimComponent ()
 
 void SoldierAnimComponent::Start ()
 {
-	if (auto ownerMesh = m_owner->getFirstComponentByType<MeshComponent> ().lock ()) {
-		m_entity = ownerMesh->getEntity ();
+	if (auto ownerMesh = m_owner->GetFirstComponentByType<MeshComponent> ().lock ()) {
+		m_entity = ownerMesh->GetEntity ();
 
 		if (auto skeleton = m_entity->getSkeleton ()) {
 			skeleton->setBlendMode (Ogre::ANIMBLEND_CUMULATIVE);
@@ -41,7 +41,7 @@ void SoldierAnimComponent::Start ()
 			return;
 		}
 	}
-	m_owner->removeComponent (m_name);
+	m_owner->RemoveComponent (m_name);
 }
 
 
@@ -229,9 +229,9 @@ void SoldierAnimComponent::RunState::PostExecute (Stateable* stateable, float t,
 		return;
 	}
 
-	const Ogre::Vector3& forward = -1.0f * m_pParent->m_owner->Transform()->forward ();	// a -1-es szorzo csak azert kell, mert a katona alap nezeti iranya a z=+1, s nem z=-1
+	const Ogre::Vector3& forward = -1.0f * m_pParent->m_owner->Transform()->GetForwardVecInWorldSpace ();	// a -1-es szorzo csak azert kell, mert a katona alap nezeti iranya a z=+1, s nem z=-1
 
- 	auto ownerPhysics = m_pParent->m_owner->getFirstComponentByType<PhysicsComponent>();
+ 	auto ownerPhysics = m_pParent->m_owner->GetFirstComponentByType<PhysicsComponent>();
 
 	if (auto phy = ownerPhysics.lock ()) {
 		phy->SetLinearVelocity (0.0f, 0.0f, 0.0f);

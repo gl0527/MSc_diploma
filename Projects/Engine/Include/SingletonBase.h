@@ -17,7 +17,7 @@ template <typename T>
 class SingletonBase
 {
 public:
-	static void DeleteInstance ();
+	static void	DeleteInstance ();
 	static bool IsExist ();
 
 protected:
@@ -28,10 +28,10 @@ protected:
 	static UPtr				s_pInstance;
 	static std::once_flag	s_onceFlag;
 
-	SingletonBase () = default;
-	~SingletonBase () = default;
-	SingletonBase (const SingletonBase&) = delete;
-	SingletonBase* operator= (const SingletonBase&) = delete;
+					SingletonBase () = default;
+					~SingletonBase () = default;
+					SingletonBase (const SingletonBase&) = delete;
+	SingletonBase*	operator= (const SingletonBase&) = delete;
 };
 
 

@@ -12,7 +12,7 @@ CameraControlComponent::CameraControlComponent(const std::string& name)
 	camDist(0.0f),
 	motBlend(0.0f),
 	fixed(false),
-	world(Game::GetInstance().getPhysicsSystem()),
+	world(Game::GetInstance().GetPhysicsSystem()),
 	ownerCam(std::shared_ptr<CameraComponent>(nullptr))
 {
 }
@@ -25,9 +25,9 @@ CameraControlComponent::~CameraControlComponent()
 
 void CameraControlComponent::Start()
 {
-	ownerCam = m_owner->getFirstComponentByType<CameraComponent>();
+	ownerCam = m_owner->GetFirstComponentByType<CameraComponent>();
 	if (ownerCam.lock() == nullptr)
-		m_owner->removeComponent(m_name);
+		m_owner->RemoveComponent(m_name);
 }
 
 
@@ -37,8 +37,8 @@ void CameraControlComponent::PostUpdate(float t, float dt)
 	{
 		if (auto parent = m_owner->GetParent().lock())
 		{
-			const auto& ownerPos = m_owner->Transform()->worldPosition();
-			const auto& parentPos = parent->Transform()->worldPosition();
+			const auto& ownerPos = m_owner->Transform()->GetPositionInWorldSpace();
+			const auto& parentPos = parent->Transform()->GetPositionInWorldSpace();
 
 			/*btVector3 btOwnerPos(ownerPos.x, ownerPos.y, ownerPos.z);
 			btVector3 btParentPos(parentPos.x, parentPos.y, parentPos.z);

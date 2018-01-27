@@ -20,8 +20,8 @@ DynamicMovementComponent::~DynamicMovementComponent()
 
 void DynamicMovementComponent::Start()
 {
-	ownerPhysics = m_owner->getFirstComponentByType<PhysicsComponent>();
-	ownerSoldierComp = m_owner->getFirstComponentByType<SoldierAnimComponent>();
+	ownerPhysics = m_owner->GetFirstComponentByType<PhysicsComponent>();
+	ownerSoldierComp = m_owner->GetFirstComponentByType<SoldierAnimComponent>();
 }
 
 
@@ -74,7 +74,7 @@ void DynamicMovementComponent::PreUpdate(float t, float dt)
 	ownerObject->transform()->setRotation(Qpitch * ownerObject->transform()->rotation());*/
 
 	force.normalise();
-	force = m_owner->Transform()->worldRotation() * force; // azert, hogy a movedir az ownerObject koordinata-rendszereben legyen ertve
+	force = m_owner->Transform()->GetRotationInWorldSpace() * force; // azert, hogy a movedir az ownerObject koordinata-rendszereben legyen ertve
 
 	if (auto phy = ownerPhysics.lock())
 	{

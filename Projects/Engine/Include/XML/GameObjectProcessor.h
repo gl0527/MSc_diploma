@@ -16,9 +16,10 @@ namespace XML {
 class GameObjectProcessor : public TagProcessor
 {
 public:
-	GameObjectProcessor () : TagProcessor ("gameobject") {}
-	virtual bool ProcessXMLTag (TiXmlElement* elem) override;
-	virtual void AddToParentObject (TiXmlElement* /*elem*/, const std::shared_ptr<Component>& /*component*/) {}
+					GameObjectProcessor () : TagProcessor ("gameobject") {}
+
+	virtual bool	ProcessXMLTag (TiXmlElement* elem) override;
+	virtual void	AddToParentObject (TiXmlElement* /*elem*/, const std::shared_ptr<Component>& /*component*/) {}
 };
 
 }	// namespace XML

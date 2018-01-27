@@ -15,8 +15,9 @@ namespace XML {
 class LightProcessor : public TagProcessor
 {
 public:
-	LightProcessor () : TagProcessor ("lightcomponent") {}
-	virtual bool ProcessXMLTag (TiXmlElement* elem) override;
+					LightProcessor () : TagProcessor ("lightcomponent") {}
+
+	virtual bool	ProcessXMLTag (TiXmlElement* elem) override;
 };
 
 }	// namespace XML

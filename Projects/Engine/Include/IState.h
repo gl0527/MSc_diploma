@@ -20,18 +20,18 @@ class Stateable;
 class IState
 {
 public:
-	explicit DLL_EXPORT IState (const std::string& name);
-	IState (const IState&) = delete;
-	virtual DLL_EXPORT ~IState ();
+	explicit DLL_EXPORT			IState (const std::string& name);
+								IState (const IState&) = delete;
+	virtual DLL_EXPORT			~IState ();
 
-	IState* operator= (const IState&) = delete;
+	IState&						operator= (const IState&) = delete;
 
-	virtual DLL_EXPORT void Enter (Stateable* stateable) = 0;
-	virtual DLL_EXPORT void Execute (Stateable* stateable, float t, float dt) = 0;
-	virtual DLL_EXPORT void Exit (Stateable* stateable) = 0;
+	virtual DLL_EXPORT void		Enter (Stateable* stateable) = 0;
+	virtual DLL_EXPORT void		Execute (Stateable* stateable, float t, float dt) = 0;
+	virtual DLL_EXPORT void		Exit (Stateable* stateable) = 0;
 
-	void Enable ();
-	void Disable ();
+	void						Enable ();
+	void						Disable ();
 
 protected:
 	const std::string	m_name;

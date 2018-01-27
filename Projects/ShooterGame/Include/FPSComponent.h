@@ -10,6 +10,10 @@
 
 using namespace Engine;
 
+namespace Ogre {
+class TextAreaOverlayElement;
+}
+
 // ============================= class FPSComponent ==============================
 
 class FPSComponent : public Component

@@ -5,11 +5,9 @@
 namespace Engine {
 
 AudioSystem::AudioSystem ()
-	: audioDevice (nullptr),
-	audioContext (nullptr),
-	enabled (true),
-	MAX_BUFFERS (32),
-	MAX_SOURCES (8)
+	: m_pAudioDevice (nullptr),
+	m_pAudioContext (nullptr),
+	m_isEnabled (true)
 {
 }
 
@@ -24,13 +22,13 @@ bool AudioSystem::init ()
 	if (!alutInitWithoutContext (0, 0))
 		return false;
 
-	audioDevice = alcOpenDevice (NULL);
-	if (!audioDevice)
+	m_pAudioDevice = alcOpenDevice (NULL);
+	if (!m_pAudioDevice)
 		return false;
 
-	audioContext = alcCreateContext (audioDevice, NULL);
-	alcMakeContextCurrent (audioContext);
-	if (!audioContext)
+	m_pAudioContext = alcCreateContext (m_pAudioDevice, NULL);
+	alcMakeContextCurrent (m_pAudioContext);
+	if (!m_pAudioContext)
 		return false;
 
 	ALenum error = alutGetError ();
@@ -43,9 +41,27 @@ bool AudioSystem::init ()
 void AudioSystem::destroy ()
 {
 	alcMakeContextCurrent (NULL);
-	alcDestroyContext (audioContext);
-	alcCloseDevice (audioDevice);
+	alcDestroyContext (m_pAudioContext);
+	alcCloseDevice (m_pAudioDevice);
 	alutExit ();
+}
+
+
+inline bool AudioSystem::IsEnabled () const
+{
+	return m_isEnabled;
+}
+
+
+inline void AudioSystem::Enable ()
+{
+	m_isEnabled = true;
+}
+
+
+inline void AudioSystem::Disable ()
+{
+	m_isEnabled = false;
 }
 
 }	// namespace Engine

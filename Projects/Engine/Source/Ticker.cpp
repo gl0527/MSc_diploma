@@ -8,6 +8,8 @@
 
 
 #ifdef __linux__
+namespace {
+
 unsigned int timeGetTime ()
 {
 	static struct timeval start;
@@ -20,35 +22,70 @@ unsigned int timeGetTime ()
 	gettimeofday (&now, NULL);
 	return now.tv_usec / 1000 + (now.tv_sec - start.tv_sec) * 1000;
 }
+
+}
 #endif
 
 
 namespace Engine {
 
-Ticker::Ticker () :
-	m_lastTimeFromStart (0),
-	m_timeFromStart (0.0f),
-	m_timeFromLastFrame (0.0f)
+Ticker::Ticker (float limit /*= 0.0f*/) :
+	m_lastFrameTimeInSec (0.0f),
+	m_uptimeInSec (0.0f),
+	m_lastFrameDurationInSec (0.0f),
+	m_limitInSec (limit)
 {
 }
 
 
 void Ticker::Tick ()
 {
-	unsigned int currentTime = ::timeGetTime ();
+	float currFrameTimeInSec = ::timeGetTime () * 0.001f;
 
-	if (m_lastTimeFromStart == 0)
-		m_lastTimeFromStart = currentTime;
+	if (m_lastFrameTimeInSec < 1.0e-4)
+		m_lastFrameTimeInSec = currFrameTimeInSec;
 
-	m_timeFromLastFrame = (currentTime - m_lastTimeFromStart) * 0.001f;
-	m_timeFromStart += m_timeFromLastFrame;
-	m_lastTimeFromStart = currentTime;
+	m_lastFrameDurationInSec = currFrameTimeInSec - m_lastFrameTimeInSec;
+	m_uptimeInSec += m_lastFrameDurationInSec;
+
+	if (m_limitInSec > 0.0f && m_uptimeInSec > m_limitInSec)
+		Reset ();
+
+	m_lastFrameTimeInSec = currFrameTimeInSec;
 }
 
 
-void Ticker::Pause ()
+inline void Ticker::Reset ()
 {
-	m_lastTimeFromStart = ::timeGetTime ();
+	m_lastFrameTimeInSec = 0.0f;
+	m_uptimeInSec = 0.0f;
+	m_lastFrameDurationInSec = 0.0f;
+}
+
+
+inline void Ticker::Pause ()
+{
+	m_lastFrameTimeInSec = ::timeGetTime () * 0.001f;
+}
+
+
+inline void Ticker::UptimeInSec (float* pOutSec) const
+{
+	*pOutSec = m_uptimeInSec;
+}
+
+
+inline void Ticker::UptimeInHourMinSec (unsigned long* pOutHour, unsigned long* pOutMin, unsigned long* pOutSec) const
+{
+	*pOutHour = static_cast<unsigned long> (m_uptimeInSec) / 3600;
+	*pOutMin = (static_cast<unsigned long> (m_uptimeInSec) / 60) % 60;
+	*pOutSec = static_cast<unsigned long> (m_uptimeInSec) % 60;
+}
+
+
+inline void Ticker::LastFrameDurationInSec (float* pOutSec) const
+{
+	*pOutSec = m_lastFrameDurationInSec;
 }
 
 }	// namespace Engine

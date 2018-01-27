@@ -41,8 +41,8 @@ bool TPCameraProcessor::ProcessXMLTag (TiXmlElement* elem)
 				return false;
 			}
 
-			comp->setNearClip (nearPlane);
-			comp->setFarClip (farPlane);
+			comp->SetNearClip (nearPlane);
+			comp->SetFarClip (farPlane);
 		}
 		else if (childName == "height") {
 			float height;

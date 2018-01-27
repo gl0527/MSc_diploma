@@ -2,7 +2,6 @@
 #include "GameObject.h"
 #include "Game.h"
 #include "RenderSystem.h"
-#include "Ogre.h"
 
 
 namespace Engine {
@@ -20,11 +19,11 @@ CameraComponent::Descriptor::Descriptor ()
 
 CameraComponent::CameraComponent (const std::string& name, int zDepth)
 	: RenderComponent (name),
-	zOrder (zDepth),
-	camera (nullptr),
-	viewport (nullptr),
-	renderWnd (Game::GetInstance ().GetRenderSystem ()->getRenderWindow ()),
-	renderTexture (nullptr)
+	m_zOrder (zDepth),
+	m_pCamera (nullptr),
+	m_pViewport (nullptr),
+	m_pRenderWnd (Game::GetInstance ().GetRenderSystem ()->GetRenderWindow ()),
+	m_pRenderTex (nullptr)
 {
 }
 
@@ -42,14 +41,14 @@ CameraComponent::~CameraComponent ()
 
 void CameraComponent::PostInit (GameObject* obj)
 {
-	while (renderWnd->hasViewportWithZOrder (zOrder))
-		++zOrder;
+	while (m_pRenderWnd->hasViewportWithZOrder (m_zOrder))
+		++m_zOrder;
 
-	camera = m_pSceneManager->createCamera (obj->GetName () + Ogre::StringConverter::toString (zOrder));
+	m_pCamera = m_pSceneManager->createCamera (obj->GetName () + Ogre::StringConverter::toString (m_zOrder));
 
-	viewport = renderWnd->addViewport (camera, zOrder);
-	camera->setAspectRatio (Ogre::Real (viewport->getActualWidth ()) / Ogre::Real (viewport->getActualHeight ()));
-	m_pObject = camera;
+	m_pViewport = m_pRenderWnd->addViewport (m_pCamera, m_zOrder);
+	m_pCamera->setAspectRatio (Ogre::Real (m_pViewport->getActualWidth ()) / Ogre::Real (m_pViewport->getActualHeight ()));
+	m_pObject = m_pCamera;
 
 	CreateNode ();
 	m_pCurrentNode->attachObject (m_pObject);
@@ -58,10 +57,10 @@ void CameraComponent::PostInit (GameObject* obj)
 
 void CameraComponent::Destroy ()
 {
-	if (renderWnd)
-		renderWnd->removeViewport (zOrder);
+	if (m_pRenderWnd)
+		m_pRenderWnd->removeViewport (m_zOrder);
 	if (m_pSceneManager) {
-		m_pSceneManager->destroyCamera (camera->getName ());
+		m_pSceneManager->destroyCamera (m_pCamera->getName ());
 		m_pSceneManager->destroySceneNode (m_pCurrentNode);
 	}
 	m_pCurrentNode = nullptr;
@@ -71,59 +70,59 @@ void CameraComponent::Destroy ()
 
 void CameraComponent::ApplyDescriptor (const Descriptor& desc)
 {
-	setLookAt (desc.lookat);
-	setNearClip (desc.nearClip);
-	setFarClip (desc.farClip);
-	setRenderDist (desc.renderDist);
+	SetLookAt (desc.lookat);
+	SetNearClip (desc.nearClip);
+	SetFarClip (desc.farClip);
+	SetRenderDist (desc.renderDist);
 }
 
 
-Ogre::Camera* CameraComponent::getCamera () const
+Ogre::Camera* CameraComponent::GetCamera () const
 {
-	return camera;
+	return m_pCamera;
 }
 
 
-Ogre::Viewport* CameraComponent::getViewPort () const
+Ogre::Viewport* CameraComponent::GetViewPort () const
 {
-	return viewport;
+	return m_pViewport;
 }
 
 
-Ogre::Ray CameraComponent::getRay (float screenX, float screenY) const
+Ogre::Ray CameraComponent::GetRay (float screenX, float screenY) const
 {
-	return camera->getCameraToViewportRay (screenX, screenY);
+	return m_pCamera->getCameraToViewportRay (screenX, screenY);
 }
 
 
-void CameraComponent::setLookAt (const Ogre::Vector3& newLookAt)
+void CameraComponent::SetLookAt (const Ogre::Vector3& newLookAt)
 {
-	camera->lookAt (newLookAt);
+	m_pCamera->lookAt (newLookAt);
 }
 
 
-void CameraComponent::setNearClip (float nclip)
+void CameraComponent::SetNearClip (float nclip)
 {
-	camera->setNearClipDistance (nclip);
+	m_pCamera->setNearClipDistance (nclip);
 }
 
 
-void CameraComponent::setFarClip (float fclip)
+void CameraComponent::SetFarClip (float fclip)
 {
-	camera->setFarClipDistance (fclip);
+	m_pCamera->setFarClipDistance (fclip);
 }
 
 
-void CameraComponent::setRenderDist (float dist)
+void CameraComponent::SetRenderDist (float dist)
 {
-	camera->setRenderingDistance (dist);
+	m_pCamera->setRenderingDistance (dist);
 }
 
 
-void CameraComponent::setRenderTexture (Ogre::RenderTexture* rt)
+void CameraComponent::SetRenderTexture (Ogre::RenderTexture* rt)
 {
-	renderTexture = rt;
-	viewport = renderTexture->addViewport (camera, zOrder + 1);
+	m_pRenderTex = rt;
+	m_pViewport = m_pRenderTex->addViewport (m_pCamera, m_zOrder + 1);
 	//renderWnd->removeViewport(zOrder);
 
 }

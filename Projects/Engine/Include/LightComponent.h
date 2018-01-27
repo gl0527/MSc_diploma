@@ -18,20 +18,7 @@ class LightComponent : public Component
 public:
 	struct Descriptor
 	{
-		Descriptor ()
-			: name (""),
-			type (Ogre::Light::LT_POINT),
-			diffuseColor (Ogre::ColourValue::ZERO),
-			specularColor (Ogre::ColourValue::ZERO),
-			intensity (0.0f),
-			range (0.0f),
-			constantAttenuation (0.0f),
-			linearAttenuation (0.0f),
-			quadricAttenuation (0.0f),
-			innerAngle (0.0f),
-			outerAngle (0.0f)
-		{
-		}
+		Descriptor ();
 
 		std::string name;
 		Ogre::Light::LightTypes type;
@@ -47,38 +34,37 @@ public:
 		float outerAngle;
 	};
 
-	LightComponent (const Descriptor& desc);
-	LightComponent (const std::string& name, const Ogre::Light::LightTypes& t);
-	~LightComponent () {}
+								LightComponent (const Descriptor& desc);
+								LightComponent (const std::string& name, const Ogre::Light::LightTypes& t);
 
-	virtual void PostInit (GameObject* object) override;
-	virtual void PostUpdate (float t, float dt) override;
-	virtual void Destroy () override;
+	virtual void				PostInit (GameObject* object) override;
+	virtual void				PostUpdate (float t, float dt) override;
+	virtual void				Destroy () override;
 
-	const Ogre::ColourValue&	getDiffuseColor () const { return light->getDiffuseColour (); }
-	const Ogre::ColourValue&	getSpecularColor () const { return light->getSpecularColour (); }
-	float						getIntensity () const { return light->getPowerScale (); }
-	float						getAttenuationRange () const;
-	float						getConstantAttenuation () const;
-	float						getLinearAttenuation () const;
-	float						getQuadricAttenuation () const;
-	const Ogre::Vector3&		getPosition () const;
-	const Ogre::Vector3&		getDirection () const;
+	const Ogre::ColourValue&	GetDiffuseColor () const;
+	const Ogre::ColourValue&	GetSpecularColor () const;
+	float						GetIntensity () const;
+	float						GetAttenRange () const;
+	float						GetConstAtten () const;
+	float						GetLinAtten () const;
+	float						GetQuadAtten () const;
+	const Ogre::Vector3&		GetPosition () const;
+	const Ogre::Vector3&		GetDirection () const;
 
-	void setDiffuseColor (const Ogre::ColourValue& diffuseColor) { light->setDiffuseColour (diffuseColor); }
-	void setSpecularColor (const Ogre::ColourValue& specularColor) { light->setSpecularColour (specularColor); }
-	void setIntensity (float intensity) { light->setPowerScale (intensity); }
-	void setAttenuation (float range, float constant, float linear, float quadric);
-	void setSpotRange (Ogre::Degree innerAngle, Ogre::Degree outerAngle);
+	void						SetDiffuseColor (const Ogre::ColourValue& diffuseColor);
+	void						SetSpecularColor (const Ogre::ColourValue& specularColor);
+	void						SetIntensity (float intensity);
+	void						SetAttenuation (float range, float constant, float linear, float quadric);
+	void						SetSpotRange (Ogre::Degree innerAngle, Ogre::Degree outerAngle);
 
-	void ApplyDescriptor (const Descriptor& desc);
+	void						ApplyDescriptor (const Descriptor& desc);
 
 private:
-	static unsigned int instanceCount;
+	static unsigned int		s_instanceCount;
 
-	Ogre::SceneManager*		sceneMgr;
-	Ogre::Light*			light;
-	Ogre::Light::LightTypes type;
+	Ogre::SceneManager*		m_pSceneMgr;
+	Ogre::Light*			m_pLight;
+	Ogre::Light::LightTypes m_type;
 };
 
 }	// namespace Engine

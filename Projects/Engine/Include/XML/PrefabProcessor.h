@@ -16,9 +16,10 @@ namespace XML {
 class PrefabProcessor : public TagProcessor
 {
 public:
-	PrefabProcessor () : TagProcessor ("prefab") {}
-	virtual bool ProcessXMLTag (TiXmlElement* elem) override;
-	virtual void AddToParentObject (TiXmlElement* /*elem*/, const std::shared_ptr<Component>& /*component*/) {}
+					PrefabProcessor () : TagProcessor ("prefab") {}
+
+	virtual bool	ProcessXMLTag (TiXmlElement* elem) override;
+	virtual void	AddToParentObject (TiXmlElement* /*elem*/, const std::shared_ptr<Component>& /*component*/) {}
 };
 
 }	// namespace XML

@@ -5,7 +5,7 @@
 
 namespace Engine {
 
-unsigned int MeshComponent::instanceCount = 0;
+unsigned int MeshComponent::s_instanceCount = 0;
 
 MeshComponent::Descriptor::Descriptor ()
 	: entityName (""),
@@ -17,8 +17,8 @@ MeshComponent::Descriptor::Descriptor ()
 
 MeshComponent::MeshComponent (const std::string& eName, const std::string& mName)
 	: RenderComponent (eName),
-	entity (nullptr),
-	mesh (mName)
+	m_pEntity (nullptr),
+	m_meshName (mName)
 {
 }
 
@@ -36,8 +36,8 @@ MeshComponent::~MeshComponent ()
 
 void MeshComponent::PostInit (GameObject* obj)
 {
-	entity = m_pSceneManager->createEntity (obj->GetName () + Ogre::StringConverter::toString (instanceCount++), mesh);
-	m_pObject = entity;
+	m_pEntity = m_pSceneManager->createEntity (obj->GetName () + Ogre::StringConverter::toString (s_instanceCount++), m_meshName);
+	m_pObject = m_pEntity;
 	RenderComponent::PostInit (obj);
 }
 
@@ -45,21 +45,27 @@ void MeshComponent::PostInit (GameObject* obj)
 void MeshComponent::Destroy ()
 {
 	if (m_pSceneManager)
-		m_pSceneManager->destroyEntity (entity->getName ());
+		m_pSceneManager->destroyEntity (m_pEntity->getName ());
 }
 
 
 void MeshComponent::ApplyDescriptor (const Descriptor& desc)
 {
 	if (desc.materialName != std::string (""))
-		setMaterial (desc.materialName);
+		SetMaterial (desc.materialName);
 }
 
 
-void MeshComponent::setMaterial (const std::string& matName)
+void MeshComponent::SetMaterial (const std::string& matName)
 {
-	if (entity)
-		entity->setMaterialName (matName);
+	if (m_pEntity)
+		m_pEntity->setMaterialName (matName);
+}
+
+
+inline Ogre::Entity* MeshComponent::GetEntity () const
+{
+	return m_pEntity;
 }
 
 }	// namespace Engine

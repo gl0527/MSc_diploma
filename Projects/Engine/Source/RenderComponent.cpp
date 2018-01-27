@@ -9,10 +9,10 @@ namespace Engine {
 
 RenderComponent::RenderComponent (const std::string& name)
 	: Component (name),
-	m_pParentNode (Game::GetInstance ().GetRenderSystem ()->getRootNode ()),
+	m_pParentNode (Game::GetInstance ().GetRenderSystem ()->GetRootNode ()),
 	m_pCurrentNode (nullptr),
 	m_pObject (nullptr),
-	m_pSceneManager (Game::GetInstance ().GetRenderSystem ()->getSceneManager ())
+	m_pSceneManager (Game::GetInstance ().GetRenderSystem ()->GetSceneManager ())
 {
 }
 
@@ -26,9 +26,9 @@ void RenderComponent::PostInit (GameObject* obj)
 
 void RenderComponent::PostUpdate (float t, float dt)
 {
-	m_pCurrentNode->setPosition (m_owner->Transform ()->worldPosition ());
-	m_pCurrentNode->setOrientation (m_owner->Transform ()->worldRotation ());
-	m_pCurrentNode->setScale (m_owner->Transform ()->worldScale ());
+	m_pCurrentNode->setPosition (m_owner->Transform ()->GetPositionInWorldSpace ());
+	m_pCurrentNode->setOrientation (m_owner->Transform ()->GetRotationInWorldSpace ());
+	m_pCurrentNode->setScale (m_owner->Transform ()->GetScaleInWorldSpace ());
 }
 
 
@@ -42,7 +42,7 @@ void RenderComponent::Destroy ()
 void RenderComponent::CreateNode ()
 {
 	if (const auto& ownerParent = m_owner->GetParent ().lock ()) {
-		if (const auto& ownerRenderer = ownerParent->getFirstComponentByType<RenderComponent> ().lock ()) {
+		if (const auto& ownerRenderer = ownerParent->GetFirstComponentByType<RenderComponent> ().lock ()) {
 			if (auto pNode = ownerRenderer->GetOgreNode ())
 				m_pParentNode = pNode;
 		}

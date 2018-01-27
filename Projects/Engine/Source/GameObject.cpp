@@ -26,7 +26,7 @@ void GameObject::AddComponent (const Component::SPtr& comp, bool replaceOld/* = 
 	if (comp->IsUnique ()) {
 		if (it != m_components.end ()) {
 			if (replaceOld) {
-				removeComponent ((*it)->GetName ());
+				RemoveComponent ((*it)->GetName ());
 				m_components.push_back (comp);
 				comp->Init (this);
 			}
@@ -38,7 +38,7 @@ void GameObject::AddComponent (const Component::SPtr& comp, bool replaceOld/* = 
 		if (it != m_components.end ()) {
 			if ((*it)->GetName () == comp->GetName ()) {
 				if (replaceOld) {
-					removeComponent ((*it)->GetName ());
+					RemoveComponent ((*it)->GetName ());
 				}
 			}
 		}
@@ -57,7 +57,7 @@ void GameObject::InsertComponent (size_t index, const std::shared_ptr<Component>
 }
 
 
-void GameObject::removeComponent (const std::string& compName)
+void GameObject::RemoveComponent (const std::string& compName)
 {
 	for (auto it = m_components.begin (); it != m_components.end (); ++it) {
 		if ((*it)->GetName () == compName) {
@@ -69,37 +69,37 @@ void GameObject::removeComponent (const std::string& compName)
 }
 
 
-void GameObject::removeComponent (const Component::SPtr& comp)
+void GameObject::RemoveComponent (const Component::SPtr& comp)
 {
 	m_components.erase (std::remove (m_components.begin (), m_components.end (), comp), m_components.end ());
 }
 
 
-void GameObject::removeComponent ()
+void GameObject::RemoveComponent ()
 {
 	m_components.clear ();
 }
 
 
-void GameObject::addTag (const std::string& tag)
+void GameObject::AddTag (const std::string& tag)
 {
 	m_tags.insert (tag);
 }
 
 
-void GameObject::removeTag (const std::string& tag)
+void GameObject::RemoveTag (const std::string& tag)
 {
 	m_tags.erase (tag);
 }
 
 
-void GameObject::removeTag ()
+void GameObject::RemoveTag ()
 {
 	m_tags.clear ();
 }
 
 
-void GameObject::addChild (const std::string& childName)
+void GameObject::AddChild (const std::string& childName)
 {
 	if (const auto& child = ObjectManager::GetInstance ().GetGameObjectByName (childName).lock ()) {
 		m_children.push_back (child);
@@ -111,7 +111,7 @@ void GameObject::addChild (const std::string& childName)
 }
 
 
-void GameObject::removeChild (const std::string& childName)
+void GameObject::RemoveChild (const std::string& childName)
 {
 	auto predicate = [&childName] (WPtr elem) -> bool {
 		if (auto child = elem.lock ()) {
@@ -126,7 +126,7 @@ void GameObject::removeChild (const std::string& childName)
 }
 
 
-void GameObject::removeChildren ()
+void GameObject::RemoveChildren ()
 {
 	m_children.clear ();
 }
@@ -162,7 +162,7 @@ void GameObject::PostUpdate (float t, float dt)
 
 void GameObject::Destroy ()
 {
-	clearParent ();
+	ClearParent ();
 
 	for (const auto& component : m_components)
 		component->Destroy ();
@@ -179,7 +179,7 @@ inline const std::string& GameObject::GetName () const
 
 inline TransformComponent* GameObject::Transform () const
 {
-	return (TransformComponent*)m_components[0].get ();
+	return reinterpret_cast<TransformComponent*> (m_components[0].get ());
 }
 
 
@@ -198,7 +198,7 @@ inline GameObject::WPtr GameObject::GetParent () const
 }
 
 
-std::vector<std::string> GameObject::getChildrenNames () const
+std::vector<std::string> GameObject::GetChildrenNames () const
 {
 	std::vector<std::string> childrenNames;
 	for (auto child = m_children.begin (), end = m_children.end (); child != end; ++child) {
@@ -208,28 +208,28 @@ std::vector<std::string> GameObject::getChildrenNames () const
 }
 
 
-inline void GameObject::clearParent ()
+inline void GameObject::ClearParent ()
 {
 	m_pParent.reset ();
 }
 
 
-inline bool GameObject::hasParent () const
+inline bool GameObject::HasParent () const
 {
 	return m_pParent != nullptr;
 }
 
 
-void GameObject::setParent (const std::string& parentName)
+void GameObject::SetParent (const std::string& parentName)
 {
 	if (auto ancestor = ObjectManager::GetInstance ().GetGameObjectByName (parentName).lock ()) {
 		m_pParent = ancestor;
-		ancestor->addChild (m_Name);
+		ancestor->AddChild (m_Name);
 	}
 }
 
 
-bool GameObject::hasTag (const std::string& t)
+bool GameObject::HasTag (const std::string& t) const
 {
 	for (auto it = m_tags.cbegin (), end = m_tags.cend (); it != end; ++it) {
 		if (*it == t)
@@ -239,7 +239,7 @@ bool GameObject::hasTag (const std::string& t)
 }
 
 
-inline bool GameObject::isDestroyed () const
+inline bool GameObject::IsDestroyed () const
 {
 	return m_isDestroyed;
 }
@@ -247,9 +247,9 @@ inline bool GameObject::isDestroyed () const
 
 GameObject::~GameObject ()
 {
-	removeComponent ();
-	removeTag ();
-	removeChildren ();
+	RemoveComponent ();
+	RemoveTag ();
+	RemoveChildren ();
 }
 
 }	// namespace Engine

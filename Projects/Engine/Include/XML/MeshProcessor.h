@@ -16,8 +16,9 @@ namespace XML {
 class MeshProcessor : public TagProcessor
 {
 public:
-	MeshProcessor () : TagProcessor ("meshcomponent") {}
-	virtual bool ProcessXMLTag (TiXmlElement* elem) override;
+					MeshProcessor () : TagProcessor ("meshcomponent") {}
+
+	virtual bool	ProcessXMLTag (TiXmlElement* elem) override;
 };
 
 }	// namespace XML

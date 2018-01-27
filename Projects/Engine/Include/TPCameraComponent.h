@@ -20,27 +20,27 @@ class PhysicsSystem;
 class TPCameraComponent : public CameraComponent
 {
 public:
-	TPCameraComponent (const std::string& name, int zDepth);
-	~TPCameraComponent ();
+					TPCameraComponent (const std::string& name, int zDepth);
+					~TPCameraComponent ();
 
-	virtual void PostInit (GameObject* object) override;
-	virtual void PostUpdate (float t, float dt) override;
+	virtual void	PostInit (GameObject* object) override;
+	virtual void	PostUpdate (float t, float dt) override;
 
-	bool isFixed () const { return fixed; }
+	bool			isFixed () const { return fixed; }
 
-	void setCameraHeight (float cHeight) { camHeight = cHeight; }
-	void setTargetHeight (float tHeight) { targetHeight = tHeight; }
-	void setCameraDist (float dist) { camDist = dist; }
-	void setMotionBlend (float mBlend) { motBlend = mBlend; }
-	void setFixed (bool fix) { fixed = fix; }
+	void			setCameraHeight (float cHeight) { camHeight = cHeight; }
+	void			setTargetHeight (float tHeight) { targetHeight = tHeight; }
+	void			setCameraDist (float dist) { camDist = dist; }
+	void			setMotionBlend (float mBlend) { motBlend = mBlend; }
+	void			setFixed (bool fix) { fixed = fix; }
 
 private:
-	float camHeight;
-	float targetHeight;
-	float camDist;
-	float motBlend;
-	bool fixed;
-	PhysicsSystem* physicsSys;
+	float			camHeight;
+	float			targetHeight;
+	float			camDist;
+	float			motBlend;
+	bool			fixed;
+	PhysicsSystem*	physicsSys;
 };
 
 }	// namespace Engine

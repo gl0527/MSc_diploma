@@ -14,7 +14,7 @@ TPCameraComponent::TPCameraComponent (const std::string& name, int zDepth)
 	camDist (0.0f),
 	motBlend (0.0f),
 	fixed (false),
-	physicsSys (Game::GetInstance ().getPhysicsSystem ())
+	physicsSys (Game::GetInstance ().GetPhysicsSystem ())
 {
 }
 
@@ -26,27 +26,27 @@ TPCameraComponent::~TPCameraComponent ()
 void TPCameraComponent::PostInit (GameObject* object)
 {
 	CameraComponent::PostInit (object);
-	auto dir = m_owner->Transform ()->forward ();
+	auto dir = m_owner->Transform ()->GetForwardVecInWorldSpace ();
 	dir.normalise ();
-	const auto& ownerPos = m_owner->Transform ()->worldPosition ();
+	const auto& ownerPos = m_owner->Transform ()->GetPositionInWorldSpace ();
 
-	camera->setPosition (ownerPos - dir*camDist + Ogre::Vector3 (0, camHeight, 0));
-	camera->lookAt (ownerPos + Ogre::Vector3 (0, targetHeight, 0));
+	m_pCamera->setPosition (ownerPos - dir*camDist + Ogre::Vector3 (0, camHeight, 0));
+	m_pCamera->lookAt (ownerPos + Ogre::Vector3 (0, targetHeight, 0));
 }
 
 
 void TPCameraComponent::PostUpdate (float t, float dt)
 {
-	const auto& ownerPos = m_owner->Transform ()->worldPosition () + Ogre::Vector3 (0, targetHeight, 0);
-	auto dir = m_owner->Transform ()->forward ();
+	const auto& ownerPos = m_owner->Transform ()->GetPositionInWorldSpace () + Ogre::Vector3 (0, targetHeight, 0);
+	auto dir = m_owner->Transform ()->GetForwardVecInWorldSpace ();
 	dir.normalise ();
 	auto newPos = ownerPos - dir*camDist + Ogre::Vector3 (0, camHeight, 0);
 
 	//int sgn = camera->getDirection().z < 0.0f ? -1 : 1;
 
-	btVector3 btCamPos (camera->getPosition ().x, camera->getPosition ().y, camera->getPosition ().z);
+	btVector3 btCamPos (m_pCamera->getPosition ().x, m_pCamera->getPosition ().y, m_pCamera->getPosition ().z);
 	btVector3 btOwnerPos (ownerPos.x, ownerPos.y, ownerPos.z);
-	auto ray = physicsSys->rayTest (btOwnerPos, btCamPos);
+	auto ray = physicsSys->RayTest (btOwnerPos, btCamPos);
 
 	if (ray.hasHit ()) {
 		//auto& hitPoint = ray.m_hitPointWorld;
@@ -61,8 +61,8 @@ void TPCameraComponent::PostUpdate (float t, float dt)
 	float w = motBlend * dt;
 
 	if (!fixed)
-		camera->setPosition (w * newPos + (1.0f - w) * camera->getPosition ());
-	camera->lookAt (ownerPos/* + Ogre::Vector3(0, targetHeight, 0)*/);
+		m_pCamera->setPosition (w * newPos + (1.0f - w) * m_pCamera->getPosition ());
+	m_pCamera->lookAt (ownerPos/* + Ogre::Vector3(0, targetHeight, 0)*/);
 }
 
 }	// namespace Engine

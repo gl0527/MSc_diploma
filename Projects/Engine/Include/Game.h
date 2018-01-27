@@ -22,18 +22,18 @@ class Ticker;
 class Game
 {
 public:
-	static DLL_EXPORT Game&	GetInstance ();
+	static DLL_EXPORT Game&		GetInstance ();
 	static DLL_EXPORT void		DeleteInstance ();
-	static bool		IsExist ();
+	static bool					IsExist ();
 
-	DLL_EXPORT bool	Init ();
-	DLL_EXPORT void	Start ();
-	void	Pause ();
-	DLL_EXPORT void	Destroy ();
+	DLL_EXPORT bool				Init ();
+	DLL_EXPORT void				Start ();
+	void						Pause ();
+	DLL_EXPORT void				Destroy ();
 
 	// TODO ezeket nem lenne szabad hasznalni, helyettuk wrapper fuggvenyek
 	DLL_EXPORT RenderSystem*	GetRenderSystem ()	const { return m_pRenderSystem; }
-	DLL_EXPORT PhysicsSystem*	getPhysicsSystem () const { return m_pPhysicsSystem; }
+	DLL_EXPORT PhysicsSystem*	GetPhysicsSystem () const { return m_pPhysicsSystem; }
 
 private:
 	enum class State : unsigned char
@@ -55,10 +55,10 @@ private:
 	Ticker*			m_pTimer;
 
 
-	Game (const char* title);
+								Game (const char* title);
 
-	void MainLoop ();
-	bool Update (float t, float dt);
+	void						MainLoop ();
+	bool						Update (float t, float dt);
 };
 
 }	// namespace Engine

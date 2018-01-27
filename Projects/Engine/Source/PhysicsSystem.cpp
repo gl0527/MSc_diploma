@@ -2,117 +2,130 @@
 #include "PhysicsComponent.h"
 
 
+// using anonymous namespace to force internal linkage
+// so its content will be accessible for only one translation unit (created from this source file)
+namespace {
+
+bool collisionCallback (btManifoldPoint& /*cp*/, void* body0, void* body1)
+{
+	btRigidBody* rigidbody0 = reinterpret_cast<btRigidBody*> (body0);
+	btRigidBody* rigidbody1 = reinterpret_cast<btRigidBody*> (body1);
+
+	Engine::PhysicsComponent* collider0 = reinterpret_cast<Engine::PhysicsComponent*> (rigidbody0->getUserPointer ());
+	Engine::PhysicsComponent* collider1 = reinterpret_cast<Engine::PhysicsComponent*> (rigidbody1->getUserPointer ());
+
+	if (collider0 && collider0->IsTrigger ()) { // az elso szereplo trigger volt
+		collider0->onTriggerEnter (collider1);
+	}
+	else if (collider1 && collider1->IsTrigger ()) { // a masodik szereplo trigger volt
+		collider1->onTriggerEnter (collider0);
+	}
+	else {
+		if (collider0)
+			collider0->onCollision (collider1);
+
+		if (collider1)
+			collider1->onCollision (collider0);
+	}
+
+	return true;
+}
+
+}	// namespace
+
+
 namespace Engine {
 
 PhysicsSystem::PhysicsSystem ()
-	: gravity (btVector3 (0.0f, -100.0f, 0.0f)),
-	collisionConfiguration (nullptr),
-	dispatcher (nullptr),
-	overlappingPairCache (nullptr),
-	solver (nullptr),
-	world (nullptr)
+	: m_pCollisionConfig (nullptr),
+	m_pDispatcher (nullptr),
+	m_pOverlapPairCache (nullptr),
+	m_pConstraintSolver (nullptr),
+	m_pPhyWorld (nullptr)
 {
 }
 
 
 bool PhysicsSystem::init ()
 {
-	collisionConfiguration = new btDefaultCollisionConfiguration;
-	dispatcher = new btCollisionDispatcher (collisionConfiguration);
-	overlappingPairCache = new btDbvtBroadphase;
-	solver = new btSequentialImpulseConstraintSolver;
+	m_pCollisionConfig = new btDefaultCollisionConfiguration;
+	m_pDispatcher = new btCollisionDispatcher (m_pCollisionConfig);
+	m_pOverlapPairCache = new btDbvtBroadphase;
+	m_pConstraintSolver = new btSequentialImpulseConstraintSolver;
 
-	world = new btDiscreteDynamicsWorld (dispatcher, overlappingPairCache, solver, collisionConfiguration);
-	world->setGravity (gravity);
-	gContactProcessedCallback = onContactProcessed;
+	m_pPhyWorld = new btDiscreteDynamicsWorld (m_pDispatcher, m_pOverlapPairCache, m_pConstraintSolver, m_pCollisionConfig);
+	m_pPhyWorld->setGravity (btVector3 (0.0f, -100.0f, 0.0f));
+	gContactProcessedCallback = collisionCallback;
 
-	return true;
-}
-
-
-bool PhysicsSystem::onContactProcessed (btManifoldPoint& /*cp*/, void* body0, void* body1)
-{
-	btRigidBody* rigidbody0 = (btRigidBody*)body0;
-	btRigidBody* rigidbody1 = (btRigidBody*)body1;
-
-	PhysicsComponent* collider0 = (PhysicsComponent*)rigidbody0->getUserPointer ();
-	PhysicsComponent* collider1 = (PhysicsComponent*)rigidbody1->getUserPointer ();
-
-	if (collider0 && collider0->IsTrigger ()) // az elso szereplo trigger volt
-	{
-		collider0->onTriggerEnter (collider1);
-	}
-	else if (collider1 && collider1->IsTrigger ()) // a masodik szereplo trigger volt
-	{
-		collider1->onTriggerEnter (collider0);
-	}
-	else // egyik szereplo sem volt trigger
-	{
-		collider0->onCollision (collider1);
-		collider1->onCollision (collider0);
-	}
 	return true;
 }
 
 
 bool PhysicsSystem::update (float /*t*/, float dt)
 {
-	if (world) {
-		world->stepSimulation (dt);
+	if (m_pPhyWorld != nullptr) {
+		m_pPhyWorld->stepSimulation (dt);
+		
 		return true;
-	}
-	else
+	} else {
 		return false;
-}
-
-
-btCollisionWorld::ClosestRayResultCallback PhysicsSystem::rayTest (const btVector3& from, const btVector3& to)
-{
-	btCollisionWorld::ClosestRayResultCallback ray (from, to);
-	if (world)
-		world->rayTest (from, to, ray);
-	return ray;
-}
-
-
-void PhysicsSystem::setGravity (float y)
-{
-	btVector3 g (0.0f, y, 0.0f);
-	if (world)
-		world->setGravity (g);
-}
-
-
-void PhysicsSystem::setGravity (float x, float y, float z)
-{
-	btVector3 g (x, y, z);
-	if (world)
-		world->setGravity (g);
+	}
 }
 
 
 void PhysicsSystem::destroy ()
 {
-	if (world) {
-		delete world;
-		world = nullptr;
+	if (m_pPhyWorld != nullptr) {
+		delete m_pPhyWorld;
+		m_pPhyWorld = nullptr;
 	}
-	if (solver) {
-		delete solver;
-		solver = nullptr;
+	if (m_pConstraintSolver != nullptr) {
+		delete m_pConstraintSolver;
+		m_pConstraintSolver = nullptr;
 	}
-	if (overlappingPairCache) {
-		delete overlappingPairCache;
-		overlappingPairCache = nullptr;
+	if (m_pOverlapPairCache != nullptr) {
+		delete m_pOverlapPairCache;
+		m_pOverlapPairCache = nullptr;
 	}
-	if (dispatcher) {
-		delete dispatcher;
-		dispatcher = nullptr;
+	if (m_pDispatcher != nullptr) {
+		delete m_pDispatcher;
+		m_pDispatcher = nullptr;
 	}
-	if (collisionConfiguration) {
-		delete collisionConfiguration;
-		collisionConfiguration = nullptr;
+	if (m_pCollisionConfig != nullptr) {
+		delete m_pCollisionConfig;
+		m_pCollisionConfig = nullptr;
 	}
+}
+
+
+inline btDiscreteDynamicsWorld* PhysicsSystem::GetWorldPtr () const
+{
+	return m_pPhyWorld;
+}
+
+
+btCollisionWorld::ClosestRayResultCallback PhysicsSystem::RayTest (const btVector3& from, const btVector3& to) const
+{
+	btCollisionWorld::ClosestRayResultCallback ray (from, to);
+	if (m_pPhyWorld != nullptr)
+		m_pPhyWorld->rayTest (from, to, ray);
+	return ray;
+}
+
+
+void PhysicsSystem::SetGravity (float y)
+{
+	btVector3 g (0.0f, y, 0.0f);
+	if (m_pPhyWorld != nullptr)
+		m_pPhyWorld->setGravity (g);
+}
+
+
+void PhysicsSystem::SetGravity (float x, float y, float z)
+{
+	btVector3 g (x, y, z);
+	if (m_pPhyWorld != nullptr)
+		m_pPhyWorld->setGravity (g);
 }
 
 }	// namespace Engine

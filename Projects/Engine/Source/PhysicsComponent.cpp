@@ -4,6 +4,7 @@
 #include "PhysicsSystem.h"
 #include <Ogre.h>
 #include "TransformComponent.h"
+#include "PhysicsMaterial.h"
 
 
 namespace Engine {
@@ -14,9 +15,8 @@ PhysicsComponent::PhysicsComponent (const std::string& name, float m)
 	m_isTrigger (false),
 	m_pRigidBody (nullptr),
 	m_pCompoundShape (new btCompoundShape),
-	m_pWorld (Game::GetInstance ().getPhysicsSystem ()->getWorld ()),
-	triggerEnter (defaultTriggerEnter),
-	collision (defaultCollision)
+	m_pWorld (Game::GetInstance ().GetPhysicsSystem ()->GetWorldPtr ()),
+	m_pPhyMaterial (nullptr)
 {
 	if (m_mass < 1e-4) {
 		m_mass = 0.0f;
@@ -33,9 +33,7 @@ PhysicsComponent::PhysicsComponent (const Descriptor& desc)
 	m_isTrigger (desc.isTrigger),
 	m_pRigidBody (nullptr),
 	m_pCompoundShape (new btCompoundShape),
-	m_pWorld (Game::GetInstance ().getPhysicsSystem ()->getWorld ()),
-	triggerEnter (defaultTriggerEnter),
-	collision (defaultCollision)
+	m_pWorld (Game::GetInstance ().GetPhysicsSystem ()->GetWorldPtr ())
 {
 }
 
@@ -62,8 +60,8 @@ void PhysicsComponent::CreateRigidBody ()
 		m_pRigidBody = nullptr;
 	}
 
-	const auto& q = m_owner->Transform ()->worldRotation ();
-	const auto& p = m_owner->Transform ()->worldPosition ();
+	const auto& q = m_owner->Transform ()->GetRotationInWorldSpace ();
+	const auto& p = m_owner->Transform ()->GetPositionInWorldSpace ();
 
 	btTransform pose (btQuaternion (q.x, q.y, q.z, q.w), btVector3 (p.x, p.y, p.z));
 	m_pMotionState = new btDefaultMotionState (pose);
@@ -97,12 +95,12 @@ void PhysicsComponent::PostInit (GameObject* object)
 void PhysicsComponent::Update (float t, float dt)
 {
 	if (m_rigidBodyType == RigidBodyType::Dynamic) {
-		m_owner->Transform ()->setPosition (GetPosition ());
-		m_owner->Transform ()->setRotation (GetOrientation ());
+		m_owner->Transform ()->SetWorldPosition (GetPosition ());
+		m_owner->Transform ()->SetWorldRotation (GetOrientation ());
 	}
 	else if (m_rigidBodyType == RigidBodyType::Kinematic) {
-		SetPosition (m_owner->Transform ()->worldPosition ());
-		SetOrientation (m_owner->Transform ()->worldRotation ());
+		SetPosition (m_owner->Transform ()->GetPositionInWorldSpace ());
+		SetOrientation (m_owner->Transform ()->GetRotationInWorldSpace ());
 
 		// getshape, atallitas (localscale), setshape
 		// vagy rigidbody lezuzas
@@ -182,12 +180,15 @@ void PhysicsComponent::SetOrientation (const Ogre::Quaternion& q)
 
 void PhysicsComponent::SetPhysicsMaterial (const PhysicsMaterial& phyMat)
 {
-	m_physicsMaterial = phyMat;
+	if (m_pPhyMaterial != nullptr)
+		delete m_pPhyMaterial;
+	
+	m_pPhyMaterial = new PhysicsMaterial (phyMat);
 
 	if (m_pRigidBody) {
-		m_pRigidBody->setFriction (m_physicsMaterial.GetFriction ());
-		m_pRigidBody->setDamping (m_physicsMaterial.GetLinearDamping (), m_physicsMaterial.GetAngularDamping ());
-		m_pRigidBody->setRestitution (m_physicsMaterial.GetBounciness ());
+		m_pRigidBody->setFriction (m_pPhyMaterial->GetFriction ());
+		m_pRigidBody->setDamping (m_pPhyMaterial->GetLinearDamping (), m_pPhyMaterial->GetAngularDamping ());
+		m_pRigidBody->setRestitution (m_pPhyMaterial->GetBounciness ());
 	}
 }
 

@@ -167,8 +167,7 @@ bool AnimState::Blend (const AnimState::SPtr& destAnim,
 	if (destAnim->GetWeight () > destEndWeight - dWeight &&
 		GetWeight () < srcEndWeight + dWeight) {
 		return true;
-	}
-	else {
+	} else {
 		destAnim->IncreaseWeightAll (dWeight);
 		DecreaseWeightAll (dWeight);
 

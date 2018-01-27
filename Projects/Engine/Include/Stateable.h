@@ -21,11 +21,11 @@ class IState;
 class Stateable : public Component
 {
 public:
-	using Component::Component;
-	virtual DLL_EXPORT ~Stateable ();
+						using Component::Component;
+	virtual DLL_EXPORT	~Stateable ();
 
-	DLL_EXPORT void SetCurrentState (std::shared_ptr<IState> newState);
-	DLL_EXPORT void PreUpdate (float t, float dt) override;
+	DLL_EXPORT void		SetCurrentState (std::shared_ptr<IState> newState);
+	DLL_EXPORT void		PreUpdate (float t, float dt) override;
 
 protected:
 	std::shared_ptr<IState> m_pCurrentState;

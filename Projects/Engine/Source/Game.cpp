@@ -110,8 +110,12 @@ void Game::MainLoop ()
 	while (m_pTimer) {
 		if (m_state == State::Running) {
 			m_pTimer->Tick ();
-			float dt = m_pTimer->GetTimeFromLastFrame ();
-			float t = m_pTimer->GetTimeFromStart ();
+			
+			float t, dt;
+
+			m_pTimer->UptimeInSec (&t);
+			m_pTimer->LastFrameDurationInSec (&dt);
+
 			if (!Update (t, dt))
 				Destroy ();
 		}

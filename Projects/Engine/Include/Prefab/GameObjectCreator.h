@@ -19,16 +19,16 @@ class IPrefab;
 class GameObjectCreator
 {
 public:
-	explicit GameObjectCreator (const std::string& name);
+	explicit			GameObjectCreator (const std::string& name);
 
-	void AddComponentCreator (std::shared_ptr<IPrefab> compCreator);
-	void Instantiate (const std::string& name);
+	void				AddComponentCreator (std::shared_ptr<IPrefab> compCreator);
+	void				Instantiate (const std::string& name) const;
 	
-	const std::string& GetName () const;
+	const std::string&	GetName () const;
 
 private:
-	std::vector<std::shared_ptr<IPrefab>> m_compCreatorVec;
-	const std::string m_name;
+	std::vector<std::shared_ptr<IPrefab>>	m_compCreatorVec;
+	const std::string						m_name;
 };
 
 }	// namespace Prefab

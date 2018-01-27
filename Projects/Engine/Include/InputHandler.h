@@ -24,21 +24,21 @@ namespace Engine {
 class InputHandler final : public SingletonBase<InputHandler>
 {
 public:
-	bool init ();
-	bool update (float t, float dt);
-	void destroy ();
+	bool							init ();
+	bool							update (float t, float dt);
+	void							destroy ();
 
-	static DLL_EXPORT InputHandler& GetInstance ();
+	static DLL_EXPORT InputHandler&	GetInstance ();
 
-	DLL_EXPORT bool IsButtonDown (OIS::KeyCode key) const;
-	DLL_EXPORT bool IsLeftMouseButtonDown () const;
-	bool IsRightMouseButtonDown () const;
-	bool IsMiddleMouseButtonDown () const;
+	DLL_EXPORT	bool				IsButtonDown (OIS::KeyCode key) const;
+	DLL_EXPORT	bool				IsLeftMouseButtonDown () const;
+	bool							IsRightMouseButtonDown () const;
+	bool							IsMiddleMouseButtonDown () const;
 
-	bool GetAbsoluteMouseX (int* outAbsoluteMouseX) const;
-	bool GetAbsoluteMouseY (int* outAbsoluteMouseY) const;
-	DLL_EXPORT bool GetRelativeMouseX (int* outRelativeMouseX) const;
-	DLL_EXPORT bool GetRelativeMouseY (int* outRelativeMouseY) const;
+	bool							GetAbsoluteMouseX (int* outAbsoluteMouseX) const;
+	bool							GetAbsoluteMouseY (int* outAbsoluteMouseY) const;
+	DLL_EXPORT	bool				GetRelativeMouseX (int* outRelativeMouseX) const;
+	DLL_EXPORT	bool				GetRelativeMouseY (int* outRelativeMouseY) const;
 
 private:
 	friend class SingletonBase<InputHandler>;

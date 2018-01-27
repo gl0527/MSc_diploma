@@ -9,7 +9,6 @@
 
 #include <AL\alut.h>
 #include <memory>
-#include <tuple>
 
 
 namespace Ogre {
@@ -29,39 +28,39 @@ public:
 		Descriptor ();
 
 		std::string fileName;
-		std::string listenerName;
+		std::string	listenerName;
 		
-		float volume;
-		float speed;
-		bool loop;
+		float		volume;
+		float		speed;
+		bool		loop;
 	};
 
-	AudioComponent (const std::string& fileName, const std::string& listenerName);
-	AudioComponent (const Descriptor& desc);
-	virtual ~AudioComponent ();
+					AudioComponent (const std::string& fileName, const std::string& listenerName);
+					AudioComponent (const Descriptor& desc);
+	virtual			~AudioComponent ();
 
-	virtual void PreUpdate (float t, float dt) override;
+	virtual void	PreUpdate (float t, float dt) override;
 
-	DLL_EXPORT void play ();
-	void pause ();
-	void stop ();
-	bool isPlaying ();
+	DLL_EXPORT void Play ();
+	void			Pause ();
+	void			Stop ();
+	bool			IsPlaying ();
 
-	void setVolume (float vol);
-	void setSpeed (float spd);
-	void setLooping (bool loop);
+	void			SetVolume (float vol);
+	void			SetSpeed (float spd);
+	void			SetLooping (bool loop);
 
-	void ApplyDescriptor (const Descriptor& desc);
+	void			ApplyDescriptor (const Descriptor& desc);
 
 private:
-	float volume;
-	float speed;
-	bool looping;
-	ALuint buffer;
-	ALuint source;
-	std::weak_ptr<GameObject> listener;
+	float						m_volume;
+	float						m_speed;
+	bool						m_looping;
+	ALuint						m_buffer;
+	ALuint						m_source;
+	std::weak_ptr<GameObject>	m_pListener;
 
-	void updatePose (const Ogre::Vector3& pos, const Ogre::Vector3& dir);
+	void			UpdatePose (const Ogre::Vector3& pos, const Ogre::Vector3& dir);
 };
 
 }	// namespace Engine

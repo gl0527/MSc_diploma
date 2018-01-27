@@ -1,35 +1,41 @@
 #include "RenderSystem.h"
+#include "Overlay\OgreOverlaySystem.h"
+#include "MyGUI_OgrePlatform.h"
 
 
 namespace Engine {
 
 RenderSystem::RenderSystem (const char* wName, size_t w, size_t h)
-	: ogreRoot (nullptr),
-	sceneManager (nullptr),
-	renderWindow (nullptr),
-	overlaySystem (nullptr),
-	overlayManager (nullptr),
-	windowName (wName),
-	windowWidth (w),
-	windowHeight (h)
+	: m_pOgreRoot (nullptr),
+	m_pSceneMgr (nullptr),
+	m_pRenderWnd (nullptr),
+	m_pOverlaySys (nullptr),
+	m_pOverlayMgr (nullptr),
+	m_pOgrePlatform (nullptr),
+	m_pGUI (nullptr),
+	m_wndName (wName),
+	m_wndWidth (w),
+	m_wndHeight (h)
 {
 }
 
 
 bool RenderSystem::init ()
 {
+	std::string resourceCfg, pluginCfg;
+
 #ifdef _DEBUG
-	m_resConfig = "resources_d.cfg";
-	m_plugConfig = "plugins_d.cfg";
+	resourceCfg = "resources_d.cfg";
+	pluginCfg = "plugins_d.cfg";
 #else
-	m_resConfig = "resources.cfg";
-	m_plugConfig = "plugins.cfg";
+	resourceCfg = "resources.cfg";
+	pluginCfg = "plugins.cfg";
 #endif
 
-	ogreRoot = new Ogre::Root (m_plugConfig);
+	m_pOgreRoot = new Ogre::Root (pluginCfg);
 
 	Ogre::ConfigFile configFile;
-	configFile.load (m_resConfig);
+	configFile.load (resourceCfg);
 
 	Ogre::ResourceGroupManager* resGroupManager = Ogre::ResourceGroupManager::getSingletonPtr ();
 
@@ -45,21 +51,26 @@ bool RenderSystem::init ()
 		}
 	}
 
-	if (!ogreRoot->restoreConfig () && !ogreRoot->showConfigDialog ()) {
-		delete ogreRoot;
+	if (!m_pOgreRoot->restoreConfig () && !m_pOgreRoot->showConfigDialog ()) {
+		delete m_pOgreRoot;
 		return false;
 	}
 
-	ogreRoot->initialise (false);
+	m_pOgreRoot->initialise (false);
 
-	renderWindow = ogreRoot->createRenderWindow (windowName, windowWidth, windowHeight, false);
-	sceneManager = ogreRoot->createSceneManager (Ogre::ST_GENERIC);
+	m_pRenderWnd = m_pOgreRoot->createRenderWindow (m_wndName, m_wndWidth, m_wndHeight, false);
+	m_pSceneMgr = m_pOgreRoot->createSceneManager (Ogre::ST_GENERIC);
 
-	overlaySystem = new Ogre::OverlaySystem;
-	sceneManager->addRenderQueueListener (overlaySystem);
-	overlayManager = Ogre::OverlayManager::getSingletonPtr ();
+	m_pOverlaySys = new Ogre::OverlaySystem;
+	m_pSceneMgr->addRenderQueueListener (m_pOverlaySys);
+	m_pOverlayMgr = Ogre::OverlayManager::getSingletonPtr ();
 
 	resGroupManager->initialiseAllResourceGroups ();
+
+	m_pOgrePlatform = new MyGUI::OgrePlatform;
+	m_pOgrePlatform->initialise (m_pRenderWnd, m_pSceneMgr);
+	m_pGUI = new MyGUI::Gui;
+	m_pGUI->initialise ();
 
 	return true;
 }
@@ -67,15 +78,15 @@ bool RenderSystem::init ()
 
 bool RenderSystem::update (float t, float dt)
 {
-	if (renderWindow->isClosed ()) {
-		ogreRoot->shutdown ();
+	if (m_pRenderWnd->isClosed ()) {
+		m_pOgreRoot->shutdown ();
 		return false;
 	}
 
 	Ogre::WindowEventUtilities::messagePump ();
 
-	if (!ogreRoot->renderOneFrame ()) {
-		ogreRoot->shutdown ();
+	if (!m_pOgreRoot->renderOneFrame ()) {
+		m_pOgreRoot->shutdown ();
 		return false;
 	}
 	return true;
@@ -84,24 +95,34 @@ bool RenderSystem::update (float t, float dt)
 
 void RenderSystem::destroy ()
 {
-	if (overlaySystem) {
-		delete overlaySystem;
-		overlaySystem = nullptr;
+	if (m_pGUI != nullptr) {
+		m_pGUI->shutdown ();
+		delete m_pGUI;
+		m_pGUI = nullptr;
 	}
-	if (sceneManager) {
-		sceneManager->clearScene ();
+	if (m_pOgrePlatform != nullptr) {
+		m_pOgrePlatform->shutdown ();
+		delete m_pOgrePlatform;
+		m_pOgrePlatform = nullptr;
 	}
-	if (renderWindow) {
-		renderWindow->destroy ();
+	if (m_pOverlaySys != nullptr) {
+		delete m_pOverlaySys;
+		m_pOverlaySys = nullptr;
 	}
-	if (ogreRoot) {
-		delete ogreRoot;
-		ogreRoot = nullptr;
+	if (m_pSceneMgr != nullptr) {
+		m_pSceneMgr->clearScene ();
+	}
+	if (m_pRenderWnd != nullptr) {
+		m_pRenderWnd->destroy ();
+	}
+	if (m_pOgreRoot != nullptr) {
+		delete m_pOgreRoot;
+		m_pOgreRoot = nullptr;
 	}
 }
 
 
-Ogre::MeshPtr RenderSystem::createPlaneMeshXZ (const char* planeMeshName, float y, unsigned int u, unsigned int v)
+Ogre::MeshPtr RenderSystem::CreatePlaneMeshXZ (const char* planeMeshName, float y, unsigned int u, unsigned int v)
 {
 	Ogre::MovablePlane plane (planeMeshName);
 	plane.d = y;
@@ -125,7 +146,7 @@ Ogre::MeshPtr RenderSystem::createPlaneMeshXZ (const char* planeMeshName, float 
 }
 
 
-Ogre::TexturePtr RenderSystem::createTexture (const char* texName, unsigned int w, unsigned int h)
+Ogre::TexturePtr RenderSystem::CreateTexture (const char* texName, unsigned int w, unsigned int h)
 {
 	Ogre::TexturePtr tp = Ogre::TextureManager::getSingleton ().createManual (
 		texName,
@@ -141,21 +162,63 @@ Ogre::TexturePtr RenderSystem::createTexture (const char* texName, unsigned int 
 }
 
 
-Ogre::OverlayElement* RenderSystem::getOverlayElement (const char* elementName) const
+inline Ogre::Root* RenderSystem::GetRoot () const
 {
-	return overlayManager->getOverlayElement (elementName);
+	return m_pOgreRoot;
 }
 
 
-Ogre::Overlay* RenderSystem::getOverlay (const char* overlayName) const
+inline Ogre::SceneNode* RenderSystem::GetRootNode () const
 {
-	return overlayManager->getByName (overlayName);
+	return m_pSceneMgr->getRootSceneNode ();
 }
 
 
-Ogre::OverlayContainer* RenderSystem::getContainer (const char* containerName) const
+inline Ogre::SceneManager* RenderSystem::GetSceneManager () const
 {
-	return static_cast<Ogre::OverlayContainer*>(overlayManager->getOverlayElement (containerName));
+	return m_pSceneMgr;
+}
+
+
+inline Ogre::RenderWindow* RenderSystem::GetRenderWindow () const
+{
+	return m_pRenderWnd;
+}
+
+
+inline Ogre::OverlayElement* RenderSystem::GetOverlayElement (const char* elementName) const
+{
+	return m_pOverlayMgr->getOverlayElement (elementName);
+}
+
+
+inline Ogre::Overlay* RenderSystem::GetOverlay (const char* overlayName) const
+{
+	return m_pOverlayMgr->getByName (overlayName);
+}
+
+
+Ogre::OverlayContainer* RenderSystem::GetContainer (const char* containerName) const
+{
+	return static_cast<Ogre::OverlayContainer*>(m_pOverlayMgr->getOverlayElement (containerName));
+}
+
+
+inline Ogre::OverlayManager* RenderSystem::GetOverlayMgr () const
+{
+	return m_pOverlayMgr;
+}
+
+
+Ogre::Overlay* RenderSystem::CreateOverlay (const char* name)
+{
+	return m_pOverlayMgr->create (name);
+}
+
+
+void RenderSystem::LoadGUILayout (const std::string& layoutFileName)
+{
+	MyGUI::LayoutManager::getInstance().loadLayout (layoutFileName);
 }
 
 }	// namespace Engine

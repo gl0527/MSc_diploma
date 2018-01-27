@@ -5,6 +5,7 @@
 
 // ---------------------------------- includes ----------------------------------
 
+#include "stdafx.h"
 #include "btBulletDynamicsCommon.h"
 #include "System.h"
 
@@ -16,26 +17,24 @@ namespace Engine {
 class PhysicsSystem : public System
 {
 public:
-	PhysicsSystem ();
+												PhysicsSystem ();
 
-	virtual bool init () override;
-	virtual bool update (float t, float dt) override;
-	virtual void destroy () override;
+	virtual bool								init () override;
+	virtual bool								update (float t, float dt) override;
+	virtual void								destroy () override;
 
-	btDiscreteDynamicsWorld* getWorld () const { return world; }
-	btCollisionWorld::ClosestRayResultCallback rayTest (const btVector3& from, const btVector3& to);
+	DLL_EXPORT btDiscreteDynamicsWorld*			GetWorldPtr () const;
+	btCollisionWorld::ClosestRayResultCallback	RayTest (const btVector3& from, const btVector3& to) const;
 
-	void setGravity (float y);
-	void setGravity (float x, float y, float z);
+	void										SetGravity (float y);
+	void										SetGravity (float x, float y, float z);
 
 private:
-	btVector3 gravity;
-	btDefaultCollisionConfiguration* collisionConfiguration;
-	btCollisionDispatcher* dispatcher;
-	btBroadphaseInterface* overlappingPairCache;
-	btSequentialImpulseConstraintSolver* solver;
-	btDiscreteDynamicsWorld* world;
-	static bool onContactProcessed (btManifoldPoint& cp, void* body0, void* body1);
+	btDefaultCollisionConfiguration*		m_pCollisionConfig;
+	btCollisionDispatcher*					m_pDispatcher;
+	btBroadphaseInterface*					m_pOverlapPairCache;
+	btSequentialImpulseConstraintSolver*	m_pConstraintSolver;
+	btDiscreteDynamicsWorld*				m_pPhyWorld;
 };
 
 }	// namespace Engine

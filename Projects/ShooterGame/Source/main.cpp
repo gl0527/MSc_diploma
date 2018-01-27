@@ -14,12 +14,18 @@
 #include "WeaponComponent.h"
 #include "SoldierAnimComponent.h"
 
+#include "MyGUI_Button.h"
+
 
 using namespace Engine;
 
 
 int main(int argc, char** argv)
 {
+#ifndef __cplusplus
+#error C++ compiler required
+#endif
+
 	auto& game = Game::GetInstance();
 	
 	if (!game.Init())
@@ -35,14 +41,19 @@ int main(int argc, char** argv)
 	if (!xmlParser.LoadXMLFromFile ("media\\map\\test.xml"))
 		return -1;
 
+	renderSys->LoadGUILayout ("sample.layout");
+	auto myButton = renderSys->GetWidget<MyGUI::Button> ("MyFirstButton");
+	myButton->setEnabled (true);
+
+
 	if (auto exp = objectMgr.GetGameObjectByName("explosive").lock())
 	{
-		if(auto explosivePhysx = exp->getFirstComponentByType<PhysicsComponent>().lock())
-			explosivePhysx->setOnTriggerEnter ([&objectMgr, &exp] (PhysicsComponent* other) { 
-				if(const auto& explosiveAudio = exp->getFirstComponentByType<AudioComponent>().lock())
-					explosiveAudio->play();
-				objectMgr.RemoveGameObject(other->GetOwner()->GetName());
-			});
+		if (auto explosivePhysx = exp->GetFirstComponentByType<PhysicsComponent> ().lock ()) {
+			explosivePhysx->onTriggerEnter += [] (PhysicsComponent* otherPhyComp) {
+				if (otherPhyComp != nullptr)
+					otherPhyComp->AddForce (1000, 2000, -5000);
+			};
+		}
 	}
 
 	if (auto soldierGO = objectMgr.GetGameObjectByName ("gijoe").lock ()) {
@@ -53,8 +64,8 @@ int main(int argc, char** argv)
 
 	if (auto lvl = objectMgr.GetGameObjectByName("level").lock())
 	{
-		if(auto levelSound = lvl->getFirstComponentByType<AudioComponent>().lock())
-			levelSound->play();
+		if(auto levelSound = lvl->GetFirstComponentByType<AudioComponent>().lock())
+			levelSound->Play();
 	}
 
 	if (auto frames = objectMgr.CreateGameObject("fps").lock())
@@ -81,7 +92,7 @@ int main(int argc, char** argv)
 	}
 	
 	// setting up environment
-	auto sceneMgr = renderSys->getSceneManager();
+	auto sceneMgr = renderSys->GetSceneManager ();
 
 	sceneMgr->setAmbientLight(Ogre::ColourValue(0.3f, 0.3f, 0.3f, 1.0f)); // ez is kellene az xml-be
 	//sceneMgr->setShadowTechnique(Ogre::SHADOWTYPE_STENCIL_MODULATIVE);

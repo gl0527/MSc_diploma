@@ -21,23 +21,23 @@ namespace Engine {
 class RenderComponent : public Component
 {
 public:
-	RenderComponent (const std::string& name);
-	virtual ~RenderComponent ();
+						RenderComponent (const std::string& name);
+	virtual				~RenderComponent ();
 
-	virtual void PostInit (GameObject* obj) override;
-	virtual void PostUpdate (float t, float dt) override;
-	virtual void Destroy () override;
+	virtual void		PostInit (GameObject* obj) override;
+	virtual void		PostUpdate (float t, float dt) override;
+	virtual void		Destroy () override;
 
-	Ogre::SceneNode* GetOgreNode () const { return m_pCurrentNode; }
+	Ogre::SceneNode*	GetOgreNode () const { return m_pCurrentNode; }
 
-	void SetCastShadows (bool cast);
-	void SetVisible (bool visible);
+	void				SetCastShadows (bool cast);
+	void				SetVisible (bool visible);
 
 protected:
-	Ogre::SceneNode* m_pParentNode;
-	Ogre::SceneNode* m_pCurrentNode;
-	Ogre::MovableObject* m_pObject;
-	Ogre::SceneManager* m_pSceneManager;
+	Ogre::SceneNode*		m_pParentNode;
+	Ogre::SceneNode*		m_pCurrentNode;
+	Ogre::MovableObject*	m_pObject;
+	Ogre::SceneManager*		m_pSceneManager;
 
 	void CreateNode ();
 };

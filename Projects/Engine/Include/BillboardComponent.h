@@ -21,17 +21,18 @@ namespace Engine {
 class BillboardComponent : public RenderComponent
 {
 public:
-	BillboardComponent (const std::string& bbName);
-	virtual ~BillboardComponent ();
+						BillboardComponent (const std::string& bbName);
+	virtual				~BillboardComponent ();
 
-	virtual void PostInit (GameObject* obj) override;
-	virtual void Destroy () override;
+	virtual	void		PostInit (GameObject* obj) override;
+	virtual void		Destroy () override;
 
-	Ogre::BillboardSet* getBillboardSet () const { return billboardSet; }
+	Ogre::BillboardSet*	GetBillboardSet () const;
 
 private:
-	static unsigned int instanceCount;
-	Ogre::BillboardSet* billboardSet;
+	static unsigned int	s_instanceCount;
+
+	Ogre::BillboardSet*	m_pBillboardSet;
 };
 
 }	// namespace Engine

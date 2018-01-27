@@ -31,22 +31,23 @@ public:
 		std::string materialName;
 	};
 
-	MeshComponent (const std::string& eName, const std::string& mName);
-	MeshComponent (const Descriptor& desc);
-	virtual ~MeshComponent ();
+								MeshComponent (const std::string& eName, const std::string& mName);
+								MeshComponent (const Descriptor& desc);
+	virtual						~MeshComponent ();
 
-	virtual void PostInit (GameObject* obj) override;
-	virtual void Destroy () override;
+	virtual void				PostInit (GameObject* obj) override;
+	virtual	void				Destroy () override;
 
-	void ApplyDescriptor (const Descriptor& desc);
+	void						ApplyDescriptor (const Descriptor& desc);
 
-	void setMaterial (const std::string& matName);
-	Ogre::Entity* getEntity () const { return entity; }
+	void						SetMaterial (const std::string& matName);
+	DLL_EXPORT Ogre::Entity*	GetEntity () const;
 
 private:
-	static unsigned int instanceCount;
-	Ogre::Entity* entity;
-	std::string mesh;
+	static unsigned int	s_instanceCount;
+	
+	Ogre::Entity*		m_pEntity;
+	std::string			m_meshName;
 };
 
 }	// namespace Engine

@@ -37,18 +37,21 @@ if (NOT WIN32)
 endif ()
 
 # setting up package variables
-set (3RDPARTY_DIR 			"${PROJECT_SOURCE_DIR}/../3rdparty" 			CACHE FILEPATH "")
-set (CMAKE_MODULE_PATH 		"${3RDPARTY_DIR}/OGRE-1.9.0-vc140-x86/CMake" 	CACHE FILEPATH "")
-set (BOOST_ROOT 			"${3RDPARTY_DIR}/boost-1.61-vc140-x86" 			CACHE FILEPATH "")
-set (BULLET_ROOT 			"${3RDPARTY_DIR}/bullet-2.82-r2704" 			CACHE FILEPATH "")
-set (OGRE_ROOT 				"${3RDPARTY_DIR}/OGRE-1.9.0-vc140-x86" 			CACHE FILEPATH "")
-set (OPENAL_INCLUDE_DIR 	"${3RDPARTY_DIR}/OpenAL/include" 				CACHE FILEPATH "OPENAL_INCLUDE_DIR" FORCE)
-set (OPENAL_LIBRARY 		"${3RDPARTY_DIR}/OpenAL/lib" 					CACHE FILEPATH "")
-set (TINYXML_INCLUDE_DIR 	"${3RDPARTY_DIR}/tinyxml" 						CACHE FILEPATH "")
-set (TINYXML_LIBRARY 		"${TINYXML_INCLUDE_DIR}/Debugtinyxml"			CACHE FILEPATH "")
-set (TINYXMLSTL_LIBRARY 	"${TINYXML_INCLUDE_DIR}/DebugtinyxmlSTL"		CACHE FILEPATH "")
+set (3RDPARTY_DIR 							"${PROJECT_SOURCE_DIR}/../3rdparty" 									CACHE FILEPATH "")
+set (CMAKE_MODULE_PATH 						"${3RDPARTY_DIR}/OGRE-1.9.0-vc140-x86/CMake" 							CACHE FILEPATH "")
+set (BOOST_ROOT 							"${3RDPARTY_DIR}/boost-1.61-vc140-x86" 									CACHE FILEPATH "")
+set (BULLET_ROOT 							"${3RDPARTY_DIR}/bullet-2.82-r2704" 									CACHE FILEPATH "")
+set (OGRE_ROOT 								"${3RDPARTY_DIR}/OGRE-1.9.0-vc140-x86" 									CACHE FILEPATH "")
+set (OPENAL_INCLUDE_DIR 					"${3RDPARTY_DIR}/OpenAL/include" 										CACHE FILEPATH "OPENAL_INCLUDE_DIR" FORCE)
+set (OPENAL_LIBRARY 						"${3RDPARTY_DIR}/OpenAL/lib" 											CACHE FILEPATH "")
+set (TINYXML_INCLUDE_DIR 					"${3RDPARTY_DIR}/tinyxml" 												CACHE FILEPATH "")
+set (TINYXML_LIBRARY 						"${TINYXML_INCLUDE_DIR}/Debugtinyxml"									CACHE FILEPATH "")
+set (TINYXMLSTL_LIBRARY 					"${TINYXML_INCLUDE_DIR}/DebugtinyxmlSTL"								CACHE FILEPATH "")
+set (MYGUI_MYGUIENGINE_INCLUDE_DIR			"e:/dev/tools/MyGUI_3.2.0/MyGUIEngine/include/"							CACHE FILEPATH "")
+set (MYGUI_OGREPLATFORM_INCLUDE_DIR			"e:/dev/tools/MyGUI_3.2.0/Platforms/Ogre/OgrePlatform/include/"			CACHE FILEPATH "")
+set (MYGUI_LIBRARY_DIR						"e:/dev/tools/MyGUI_3.2.0/build/lib/Debug/"								CACHE FILEPATH "")
 
-# set include and library directory
+# set include and library directories
 include_directories (${OGRE_ROOT}/include/OGRE)
 link_directories (${OGRE_ROOT}/lib/${CMAKE_BUILD_TYPE})
 
@@ -67,6 +70,10 @@ include_directories (${TINYXML_INCLUDE_DIR})
 link_directories (${TINYXML_LIBRARY})
 link_directories (${TINYXMLSTL_LIBRARY})
 
+include_directories (${MYGUI_MYGUIENGINE_INCLUDE_DIR})
+include_directories (${MYGUI_OGREPLATFORM_INCLUDE_DIR})
+link_directories (${MYGUI_LIBRARY_DIR})
+
 if (WIN32)
 	set (ADDITIONAL_LIBS_DEBUG "winmm.${STATIC_LIB_EXTENSION}")
 endif ()
@@ -84,6 +91,8 @@ set (LIBRARIES_DEBUG	"OgreMain${CONFIG_SUFFIX}.${STATIC_LIB_EXTENSION}"
 						"OpenAL32.${STATIC_LIB_EXTENSION}"
 						"tinyxml.${STATIC_LIB_EXTENSION}"
 						"tinyxmlSTL.${STATIC_LIB_EXTENSION}"
+						"MyGUIEngine${CONFIG_SUFFIX}.${STATIC_LIB_EXTENSION}"
+						"MyGUI.OgrePlatform${CONFIG_SUFFIX}.${STATIC_LIB_EXTENSION}"
 						"${ADDITIONAL_LIBS_DEBUG}")
 
 add_subdirectory (Engine)

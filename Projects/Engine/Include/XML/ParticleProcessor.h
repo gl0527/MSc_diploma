@@ -16,8 +16,9 @@ namespace XML {
 class ParticleProcessor : public TagProcessor
 {
 public:
-	ParticleProcessor () : TagProcessor ("particlecomponent") {}
-	virtual bool ProcessXMLTag (TiXmlElement* elem) override;
+					ParticleProcessor () : TagProcessor ("particlecomponent") {}
+
+	virtual bool	ProcessXMLTag (TiXmlElement* elem) override;
 };
 
 }	// namespace XML

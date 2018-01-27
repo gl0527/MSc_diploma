@@ -32,17 +32,17 @@ namespace XML {
 class TagProcessor
 {
 public:
-	explicit DLL_EXPORT TagProcessor (const std::string& tagName);
-	virtual ~TagProcessor () {}
+	explicit	DLL_EXPORT						TagProcessor (const std::string& tagName);
+	virtual										~TagProcessor () {}
 
-	virtual bool		ProcessXMLTag (TiXmlElement* elem) = 0;
-	DLL_EXPORT const std::string&	GetTagName () const;
+	virtual					bool				ProcessXMLTag (TiXmlElement* elem) = 0;
+				DLL_EXPORT	const std::string&	GetTagName () const;
 
 protected:
 	std::string m_tagName;
 
-	virtual DLL_EXPORT void AddToParentObject (TiXmlElement* elem, const std::shared_ptr<Component>& component);
-	bool GetParentName (TiXmlElement* elem, std::string& outName);
+	virtual		DLL_EXPORT	void				AddToParentObject (TiXmlElement* elem, const std::shared_ptr<Component>& component);
+							bool				GetParentName (TiXmlElement* elem, std::string& outName);
 };
 
 }	// namespace XML

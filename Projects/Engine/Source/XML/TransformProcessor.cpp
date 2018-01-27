@@ -24,7 +24,7 @@ void TransformProcessor::AddToParentObject (TiXmlElement* elem, const std::share
 	const auto& object = ObjectManager::GetInstance ().GetGameObjectByName (objectName);
 
 	if (auto obj = object.lock ()) {
-		obj->removeComponent (obj->GetName ()); // a régi transform kitörlése
+		obj->RemoveComponent (obj->GetName ()); // a régi transform kitörlése
 		obj->InsertComponent(0, component);
 	}
 }
@@ -61,7 +61,7 @@ bool TransformProcessor::ProcessXMLTag (TiXmlElement* elem)
 				return false;
 			}
 
-			comp->setPosition (position);
+			comp->SetWorldPosition (position);
 		}
 		else if (childName == "rotation") {
 			Ogre::Quaternion rotation;
@@ -74,7 +74,7 @@ bool TransformProcessor::ProcessXMLTag (TiXmlElement* elem)
 				return false;
 			}
 
-			comp->setRotation (rotation);
+			comp->SetWorldRotation (rotation);
 		}
 		else if (childName == "scale") {
 			Ogre::Vector3 scale;
@@ -87,7 +87,7 @@ bool TransformProcessor::ProcessXMLTag (TiXmlElement* elem)
 				return false;
 			}
 
-			comp->setScale (scale);
+			comp->SetWorldScale (scale);
 		}
 	}
 

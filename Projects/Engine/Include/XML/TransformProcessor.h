@@ -16,11 +16,12 @@ namespace XML {
 class TransformProcessor : public TagProcessor
 {
 public:
-	TransformProcessor () : TagProcessor ("transformcomponent") {}
-	virtual bool ProcessXMLTag (TiXmlElement* elem) override;
+					TransformProcessor () : TagProcessor ("transformcomponent") {}
+
+	virtual bool	ProcessXMLTag (TiXmlElement* elem) override;
 
 private:
-	virtual void AddToParentObject (TiXmlElement* elem, const std::shared_ptr<Component>& component) override;
+	virtual void	AddToParentObject (TiXmlElement* elem, const std::shared_ptr<Component>& component) override;
 };
 
 }	// namespace XML

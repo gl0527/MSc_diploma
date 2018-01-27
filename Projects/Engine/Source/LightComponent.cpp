@@ -7,7 +7,23 @@
 
 namespace Engine {
 
-unsigned int LightComponent::instanceCount = 0;
+unsigned int LightComponent::s_instanceCount = 0;
+
+
+LightComponent::Descriptor::Descriptor ()
+	: name (""),
+	type (Ogre::Light::LT_POINT),
+	diffuseColor (Ogre::ColourValue::ZERO),
+	specularColor (Ogre::ColourValue::ZERO),
+	intensity (0.0f),
+	range (0.0f),
+	constantAttenuation (0.0f),
+	linearAttenuation (0.0f),
+	quadricAttenuation (0.0f),
+	innerAngle (0.0f),
+	outerAngle (0.0f)
+{
+}
 
 
 LightComponent::LightComponent (const Descriptor& desc)
@@ -18,19 +34,19 @@ LightComponent::LightComponent (const Descriptor& desc)
 
 LightComponent::LightComponent (const std::string& name, const Ogre::Light::LightTypes& t)
 	: Component (name),
-	sceneMgr (Game::GetInstance ().GetRenderSystem ()->getSceneManager ()),
-	light (nullptr),
-	type (t)
+	m_pSceneMgr (Game::GetInstance ().GetRenderSystem ()->GetSceneManager ()),
+	m_pLight (nullptr),
+	m_type (t)
 {
 }
 
 
 void LightComponent::PostInit (GameObject* object)
 {
-	Ogre::String lName (object->GetName () + "_light_" + Ogre::StringConverter::toString (instanceCount++));
-	light = sceneMgr->createLight (lName);
-	if (light != nullptr)
-		light->setType (type);
+	Ogre::String lName (object->GetName () + "_light_" + Ogre::StringConverter::toString (s_instanceCount++));
+	m_pLight = m_pSceneMgr->createLight (lName);
+	if (m_pLight != nullptr)
+		m_pLight->setType (m_type);
 }
 
 
@@ -38,24 +54,42 @@ inline void LightComponent::PostUpdate (float t, float dt)
 {
 	auto ownerTransform = m_owner->Transform ();
 
-	if (type != Ogre::Light::LT_DIRECTIONAL)
-		light->setPosition (ownerTransform->worldPosition ());
-	if (type != Ogre::Light::LT_POINT)
-		light->setDirection (ownerTransform->forward ());
+	if (m_type != Ogre::Light::LT_DIRECTIONAL)
+		m_pLight->setPosition (ownerTransform->GetPositionInWorldSpace ());
+	if (m_type != Ogre::Light::LT_POINT)
+		m_pLight->setDirection (ownerTransform->GetForwardVecInWorldSpace ());
 }
 
 
 void LightComponent::Destroy ()
 {
-	if (sceneMgr != nullptr)
-		sceneMgr->destroyLight (light->getName ());
+	if (m_pSceneMgr != nullptr)
+		m_pSceneMgr->destroyLight (m_pLight->getName ());
 }
 
 
-float LightComponent::getAttenuationRange () const
+inline const Ogre::ColourValue& LightComponent::GetDiffuseColor () const
 {
-	if (type != Ogre::Light::LT_DIRECTIONAL)
-		return light->getAttenuationRange ();
+	return m_pLight->getDiffuseColour (); 
+}
+
+
+inline const Ogre::ColourValue& LightComponent::GetSpecularColor () const
+{
+	return m_pLight->getSpecularColour (); 
+}
+
+
+inline float LightComponent::GetIntensity () const
+{
+	return m_pLight->getPowerScale (); 
+}
+
+
+float LightComponent::GetAttenRange () const
+{
+	if (m_type != Ogre::Light::LT_DIRECTIONAL)
+		return m_pLight->getAttenuationRange ();
 	else {
 		std::cout << "Directional light has no attenuation!\n";
 		return 0.0f;
@@ -63,10 +97,10 @@ float LightComponent::getAttenuationRange () const
 }
 
 
-float LightComponent::getConstantAttenuation () const
+float LightComponent::GetConstAtten () const
 {
-	if (type != Ogre::Light::LT_DIRECTIONAL)
-		return light->getAttenuationConstant ();
+	if (m_type != Ogre::Light::LT_DIRECTIONAL)
+		return m_pLight->getAttenuationConstant ();
 	else {
 		std::cout << "Directional light has no attenuation!\n";
 		return 0.0f;
@@ -74,10 +108,10 @@ float LightComponent::getConstantAttenuation () const
 }
 
 
-float LightComponent::getLinearAttenuation () const
+float LightComponent::GetLinAtten () const
 {
-	if (type != Ogre::Light::LT_DIRECTIONAL)
-		return light->getAttenuationLinear ();
+	if (m_type != Ogre::Light::LT_DIRECTIONAL)
+		return m_pLight->getAttenuationLinear ();
 	else {
 		std::cout << "Directional light has no attenuation!\n";
 		return 0.0f;
@@ -85,10 +119,10 @@ float LightComponent::getLinearAttenuation () const
 }
 
 
-float LightComponent::getQuadricAttenuation () const
+float LightComponent::GetQuadAtten () const
 {
-	if (type != Ogre::Light::LT_DIRECTIONAL)
-		return light->getAttenuationQuadric ();
+	if (m_type != Ogre::Light::LT_DIRECTIONAL)
+		return m_pLight->getAttenuationQuadric ();
 	else {
 		std::cout << "Directional light has no attenuation!\n";
 		return 0.0f;
@@ -96,10 +130,10 @@ float LightComponent::getQuadricAttenuation () const
 }
 
 
-const Ogre::Vector3& LightComponent::getPosition () const
+const Ogre::Vector3& LightComponent::GetPosition () const
 {
-	if (type != Ogre::Light::LT_DIRECTIONAL)
-		return light->getPosition ();
+	if (m_type != Ogre::Light::LT_DIRECTIONAL)
+		return m_pLight->getPosition ();
 	else {
 		std::cout << "Directional light has no position!\n";
 		return Ogre::Vector3::ZERO;
@@ -107,10 +141,10 @@ const Ogre::Vector3& LightComponent::getPosition () const
 }
 
 
-const Ogre::Vector3& LightComponent::getDirection () const
+const Ogre::Vector3& LightComponent::GetDirection () const
 {
-	if (type != Ogre::Light::LT_POINT)
-		return light->getDirection ();
+	if (m_type != Ogre::Light::LT_POINT)
+		return m_pLight->getDirection ();
 	else {
 		std::cout << "Point light has no direction!\n";
 		return Ogre::Vector3::ZERO;
@@ -118,27 +152,45 @@ const Ogre::Vector3& LightComponent::getDirection () const
 }
 
 
-void LightComponent::setAttenuation (float range, float constant, float linear, float quadric)
+inline void LightComponent::SetDiffuseColor (const Ogre::ColourValue& diffuseColor)
 {
-	if (type != Ogre::Light::LT_DIRECTIONAL)
-		light->setAttenuation (range, constant, linear, quadric);
+	m_pLight->setDiffuseColour (diffuseColor);
 }
 
 
-void LightComponent::setSpotRange (Ogre::Degree innerAngle, Ogre::Degree outerAngle)
+inline void LightComponent::SetSpecularColor (const Ogre::ColourValue& specularColor)
 {
-	if (type == Ogre::Light::LT_SPOTLIGHT)
-		light->setSpotlightRange (innerAngle, outerAngle);
+	m_pLight->setSpecularColour (specularColor);
+}
+
+
+inline void LightComponent::SetIntensity (float intensity)
+{
+	m_pLight->setPowerScale (intensity);
+}
+
+
+inline void LightComponent::SetAttenuation (float range, float constant, float linear, float quadric)
+{
+	if (m_type != Ogre::Light::LT_DIRECTIONAL)
+		m_pLight->setAttenuation (range, constant, linear, quadric);
+}
+
+
+inline void LightComponent::SetSpotRange (Ogre::Degree innerAngle, Ogre::Degree outerAngle)
+{
+	if (m_type == Ogre::Light::LT_SPOTLIGHT)
+		m_pLight->setSpotlightRange (innerAngle, outerAngle);
 }
 
 
 void LightComponent::ApplyDescriptor (const Descriptor& desc)
 {
-	setDiffuseColor (desc.diffuseColor);
-	setSpecularColor (desc.specularColor);
-	setIntensity (desc.intensity);
-	setAttenuation (desc.range, desc.constantAttenuation, desc.linearAttenuation, desc.quadricAttenuation);
-	setSpotRange (Ogre::Degree (desc.innerAngle), Ogre::Degree (desc.outerAngle));
+	SetDiffuseColor (desc.diffuseColor);
+	SetSpecularColor (desc.specularColor);
+	SetIntensity (desc.intensity);
+	SetAttenuation (desc.range, desc.constantAttenuation, desc.linearAttenuation, desc.quadricAttenuation);
+	SetSpotRange (Ogre::Degree (desc.innerAngle), Ogre::Degree (desc.outerAngle));
 }
 
 }	// namespace Engine

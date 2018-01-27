@@ -16,8 +16,9 @@ namespace XML {
 class CameraProcessor : public TagProcessor
 {
 public:
-	CameraProcessor () : TagProcessor ("cameracomponent") {}
-	virtual bool ProcessXMLTag (TiXmlElement* elem) override;
+					CameraProcessor () : TagProcessor ("cameracomponent") {}
+
+	virtual bool	ProcessXMLTag (TiXmlElement* elem) override;
 };
 
 }	// namespace XML

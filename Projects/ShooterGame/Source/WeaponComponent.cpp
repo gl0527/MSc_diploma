@@ -21,14 +21,14 @@ void WeaponComponent::PreUpdate(float t, float dt)
 {
 	if (auto parent = m_owner->GetParent().lock())
 	{
-		if (auto parentMesh = parent->getFirstComponentByType<MeshComponent>().lock())
+		if (auto parentMesh = parent->GetFirstComponentByType<MeshComponent>().lock())
 		{
-			if (auto parentSkeleton = parentMesh->getEntity()->getSkeleton())
+			if (auto parentSkeleton = parentMesh->GetEntity()->getSkeleton())
 			{
 				if (auto rightHand = parentSkeleton->getBone("hand_r"))
 				{
-					m_owner->Transform()->setPosition(rightHand->_getDerivedPosition());
-					m_owner->Transform()->setRotation(rightHand->_getDerivedOrientation());
+					m_owner->Transform()->SetWorldPosition(rightHand->_getDerivedPosition());
+					m_owner->Transform()->SetWorldRotation(rightHand->_getDerivedOrientation());
 				}
 			}
 		}

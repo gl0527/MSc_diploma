@@ -17,13 +17,7 @@ class PhysicsMaterial
 public:
 	struct Descriptor
 	{
-		Descriptor ()
-			: angularDamping (0.0f),
-			bounciness (0.0f),
-			friction (0.0f),
-			linearDamping (0.0f)
-		{
-		}
+		Descriptor ();
 
 		float angularDamping;
 		float bounciness;
@@ -31,18 +25,18 @@ public:
 		float linearDamping;
 	};
 
-	PhysicsMaterial ();
-	PhysicsMaterial (const Descriptor& desc);
+						PhysicsMaterial ();
+						PhysicsMaterial (const Descriptor& desc);
 
-	DLL_EXPORT float GetAngularDamping () const;
-	DLL_EXPORT float GetBounciness () const;
-	DLL_EXPORT float GetFriction () const;
-	DLL_EXPORT float GetLinearDamping () const;
+	DLL_EXPORT float	GetAngularDamping () const;
+	DLL_EXPORT float	GetBounciness () const;
+	DLL_EXPORT float	GetFriction () const;
+	DLL_EXPORT float	GetLinearDamping () const;
 
-	DLL_EXPORT void	SetAngularDamping (float newAngularDamping);
-	DLL_EXPORT void	SetBounciness (float newBounciness);
-	DLL_EXPORT void	SetFriction (float newFriction);
-	DLL_EXPORT void	SetLinearDamping (float newLinearDamping);
+	DLL_EXPORT void		SetAngularDamping (float newAngularDamping);
+	DLL_EXPORT void		SetBounciness (float newBounciness);
+	DLL_EXPORT void		SetFriction (float newFriction);
+	DLL_EXPORT void		SetLinearDamping (float newLinearDamping);
 
 private:
 	float m_angularDamping; // perdulet csillapitas

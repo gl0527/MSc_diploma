@@ -16,8 +16,9 @@ namespace XML {
 class AudioProcessor : public TagProcessor
 {
 public:
-	AudioProcessor () : TagProcessor ("audiocomponent") {}
-	virtual bool ProcessXMLTag (TiXmlElement* elem) override;
+					AudioProcessor () : TagProcessor ("audiocomponent") {}
+
+	virtual bool	ProcessXMLTag (TiXmlElement* elem) override;
 };
 
 }	// namespace XML
