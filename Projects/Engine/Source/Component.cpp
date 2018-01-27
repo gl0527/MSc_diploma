@@ -54,43 +54,43 @@ void Component::Destroy ()
 }
 
 
-inline const std::string& Component::GetName () const
+const std::string& Component::GetName () const
 {
 	return m_name;
 }
 
 
-inline const bool Component::IsUnique () const
+const bool Component::IsUnique () const
 {
 	return m_isUnique;
 }
 
 
-inline bool Component::IsEnabled () const
+bool Component::IsEnabled () const
 {
 	return m_isEnabled;
 }
 
 
-inline void Component::Enable ()
+void Component::Enable ()
 {
 	m_isEnabled = true;
 }
 
 
-inline void Component::Disable ()
+void Component::Disable ()
 {
 	m_isEnabled = false;
 }
 
 
-inline GameObject* Component::GetOwner () const
+GameObject* Component::GetOwner () const
 {
 	return m_owner;
 }
 
 
-inline std::string Component::GetTypeName () const
+std::string Component::GetTypeName () const
 {
 	return typeid (*this).name ();
 }

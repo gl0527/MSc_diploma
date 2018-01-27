@@ -55,7 +55,7 @@ void Ticker::Tick ()
 }
 
 
-inline void Ticker::Reset ()
+void Ticker::Reset ()
 {
 	m_lastFrameTimeInSec = 0.0f;
 	m_uptimeInSec = 0.0f;
@@ -63,19 +63,19 @@ inline void Ticker::Reset ()
 }
 
 
-inline void Ticker::Pause ()
+void Ticker::Pause ()
 {
 	m_lastFrameTimeInSec = ::timeGetTime () * 0.001f;
 }
 
 
-inline void Ticker::UptimeInSec (float* pOutSec) const
+void Ticker::UptimeInSec (float* pOutSec) const
 {
 	*pOutSec = m_uptimeInSec;
 }
 
 
-inline void Ticker::UptimeInHourMinSec (unsigned long* pOutHour, unsigned long* pOutMin, unsigned long* pOutSec) const
+void Ticker::UptimeInHourMinSec (unsigned long* pOutHour, unsigned long* pOutMin, unsigned long* pOutSec) const
 {
 	*pOutHour = static_cast<unsigned long> (m_uptimeInSec) / 3600;
 	*pOutMin = (static_cast<unsigned long> (m_uptimeInSec) / 60) % 60;
@@ -83,7 +83,7 @@ inline void Ticker::UptimeInHourMinSec (unsigned long* pOutHour, unsigned long* 
 }
 
 
-inline void Ticker::LastFrameDurationInSec (float* pOutSec) const
+void Ticker::LastFrameDurationInSec (float* pOutSec) const
 {
 	*pOutSec = m_lastFrameDurationInSec;
 }

@@ -47,19 +47,19 @@ void AudioSystem::destroy ()
 }
 
 
-inline bool AudioSystem::IsEnabled () const
+bool AudioSystem::IsEnabled () const
 {
 	return m_isEnabled;
 }
 
 
-inline void AudioSystem::Enable ()
+void AudioSystem::Enable ()
 {
 	m_isEnabled = true;
 }
 
 
-inline void AudioSystem::Disable ()
+void AudioSystem::Disable ()
 {
 	m_isEnabled = false;
 }

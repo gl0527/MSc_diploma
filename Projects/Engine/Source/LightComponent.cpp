@@ -50,7 +50,7 @@ void LightComponent::PostInit (GameObject* object)
 }
 
 
-inline void LightComponent::PostUpdate (float t, float dt)
+void LightComponent::PostUpdate (float t, float dt)
 {
 	auto ownerTransform = m_owner->Transform ();
 
@@ -68,19 +68,19 @@ void LightComponent::Destroy ()
 }
 
 
-inline const Ogre::ColourValue& LightComponent::GetDiffuseColor () const
+const Ogre::ColourValue& LightComponent::GetDiffuseColor () const
 {
 	return m_pLight->getDiffuseColour (); 
 }
 
 
-inline const Ogre::ColourValue& LightComponent::GetSpecularColor () const
+const Ogre::ColourValue& LightComponent::GetSpecularColor () const
 {
 	return m_pLight->getSpecularColour (); 
 }
 
 
-inline float LightComponent::GetIntensity () const
+float LightComponent::GetIntensity () const
 {
 	return m_pLight->getPowerScale (); 
 }
@@ -152,32 +152,32 @@ const Ogre::Vector3& LightComponent::GetDirection () const
 }
 
 
-inline void LightComponent::SetDiffuseColor (const Ogre::ColourValue& diffuseColor)
+void LightComponent::SetDiffuseColor (const Ogre::ColourValue& diffuseColor)
 {
 	m_pLight->setDiffuseColour (diffuseColor);
 }
 
 
-inline void LightComponent::SetSpecularColor (const Ogre::ColourValue& specularColor)
+void LightComponent::SetSpecularColor (const Ogre::ColourValue& specularColor)
 {
 	m_pLight->setSpecularColour (specularColor);
 }
 
 
-inline void LightComponent::SetIntensity (float intensity)
+void LightComponent::SetIntensity (float intensity)
 {
 	m_pLight->setPowerScale (intensity);
 }
 
 
-inline void LightComponent::SetAttenuation (float range, float constant, float linear, float quadric)
+void LightComponent::SetAttenuation (float range, float constant, float linear, float quadric)
 {
 	if (m_type != Ogre::Light::LT_DIRECTIONAL)
 		m_pLight->setAttenuation (range, constant, linear, quadric);
 }
 
 
-inline void LightComponent::SetSpotRange (Ogre::Degree innerAngle, Ogre::Degree outerAngle)
+void LightComponent::SetSpotRange (Ogre::Degree innerAngle, Ogre::Degree outerAngle)
 {
 	if (m_type == Ogre::Light::LT_SPOTLIGHT)
 		m_pLight->setSpotlightRange (innerAngle, outerAngle);

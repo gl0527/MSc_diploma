@@ -33,19 +33,19 @@ void TransformComponent::Start ()
 }
 
 
-inline const Ogre::Vector3& TransformComponent::GetPositionInWorldSpace () const
+const Ogre::Vector3& TransformComponent::GetPositionInWorldSpace () const
 {
 	return m_posInWorldSpace;
 }
 
 
-inline const Ogre::Quaternion& TransformComponent::GetRotationInWorldSpace () const
+const Ogre::Quaternion& TransformComponent::GetRotationInWorldSpace () const
 {
 	return m_rotInWorldSpace;
 }
 
 
-inline const Ogre::Vector3& TransformComponent::GetScaleInWorldSpace () const
+const Ogre::Vector3& TransformComponent::GetScaleInWorldSpace () const
 {
 	return m_scaleInWorldSpace;
 }
@@ -57,43 +57,43 @@ Ogre::Vector3 TransformComponent::GetPositionInCameraSpace (const Ogre::Matrix4&
 }
 
 
-inline Ogre::Vector3 TransformComponent::GetForwardVecInWorldSpace () const
+Ogre::Vector3 TransformComponent::GetForwardVecInWorldSpace () const
 {
 	return m_rotInWorldSpace * Ogre::Vector3::NEGATIVE_UNIT_Z;
 }
 
 
-inline Ogre::Vector3 TransformComponent::GetUpVecInWorldSpace () const
+Ogre::Vector3 TransformComponent::GetUpVecInWorldSpace () const
 {
 	return m_rotInWorldSpace * Ogre::Vector3::UNIT_Y;
 }
 
 
-inline Ogre::Vector3 TransformComponent::GetRightVecInWorldSpace () const
+Ogre::Vector3 TransformComponent::GetRightVecInWorldSpace () const
 {
 	return m_rotInWorldSpace * Ogre::Vector3::UNIT_X;
 }
 
 
-inline void TransformComponent::SetWorldPosition (const Ogre::Vector3& p)
+void TransformComponent::SetWorldPosition (const Ogre::Vector3& p)
 {
 	m_posInWorldSpace = p;
 }
 
 
-inline void TransformComponent::SetWorldRotation (const Ogre::Quaternion& q)
+void TransformComponent::SetWorldRotation (const Ogre::Quaternion& q)
 {
 	m_rotInWorldSpace = q;
 }
 
 
-inline void TransformComponent::SetWorldScale (const Ogre::Vector3& s)
+void TransformComponent::SetWorldScale (const Ogre::Vector3& s)
 {
 	m_scaleInWorldSpace = s;
 }
 
 
-inline void TransformComponent::SetPosInParentSpace (const Ogre::Vector3& pos)
+void TransformComponent::SetPosInParentSpace (const Ogre::Vector3& pos)
 {
 	m_posInParentSpace = pos;
 	if (!m_hasParent)
@@ -101,7 +101,7 @@ inline void TransformComponent::SetPosInParentSpace (const Ogre::Vector3& pos)
 }
 
 
-inline void TransformComponent::SetRotInParentSpace (const Ogre::Quaternion& rot)
+void TransformComponent::SetRotInParentSpace (const Ogre::Quaternion& rot)
 {
 	m_rotInParentSpace = rot;
 	if (!m_hasParent)
@@ -109,7 +109,7 @@ inline void TransformComponent::SetRotInParentSpace (const Ogre::Quaternion& rot
 }
 
 
-inline void TransformComponent::SetScaleInParentSpace (const Ogre::Vector3& scale)
+void TransformComponent::SetScaleInParentSpace (const Ogre::Vector3& scale)
 {
 	m_scaleInParentSpace = scale;
 	if (!m_hasParent)
@@ -117,19 +117,19 @@ inline void TransformComponent::SetScaleInParentSpace (const Ogre::Vector3& scal
 }
 
 
-inline void TransformComponent::AddToWorldPosition (const Ogre::Vector3& p)
+void TransformComponent::AddToWorldPosition (const Ogre::Vector3& p)
 {
 	m_posInWorldSpace += p;
 }
 
 
-inline void TransformComponent::AddToWorldRotation (const Ogre::Quaternion& q)
+void TransformComponent::AddToWorldRotation (const Ogre::Quaternion& q)
 {
 	m_rotInWorldSpace = m_rotInWorldSpace * q;
 }
 
 
-inline void TransformComponent::AddToWorldScale (const Ogre::Vector3& s)
+void TransformComponent::AddToWorldScale (const Ogre::Vector3& s)
 {
 	m_scaleInWorldSpace *= s;
 }

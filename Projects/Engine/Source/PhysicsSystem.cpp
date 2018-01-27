@@ -98,7 +98,7 @@ void PhysicsSystem::destroy ()
 }
 
 
-inline btDiscreteDynamicsWorld* PhysicsSystem::GetWorldPtr () const
+btDiscreteDynamicsWorld* PhysicsSystem::GetWorldPtr () const
 {
 	return m_pPhyWorld;
 }

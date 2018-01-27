@@ -15,13 +15,13 @@ IState::~IState ()
 }
 
 
-inline void IState::Enable ()
+void IState::Enable ()
 {
 	m_isEnabled = true;
 }
 
 
-inline void IState::Disable ()
+void IState::Disable ()
 {
 	m_isEnabled = false;
 }

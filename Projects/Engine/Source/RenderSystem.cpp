@@ -162,37 +162,37 @@ Ogre::TexturePtr RenderSystem::CreateTexture (const char* texName, unsigned int 
 }
 
 
-inline Ogre::Root* RenderSystem::GetRoot () const
+Ogre::Root* RenderSystem::GetRoot () const
 {
 	return m_pOgreRoot;
 }
 
 
-inline Ogre::SceneNode* RenderSystem::GetRootNode () const
+Ogre::SceneNode* RenderSystem::GetRootNode () const
 {
 	return m_pSceneMgr->getRootSceneNode ();
 }
 
 
-inline Ogre::SceneManager* RenderSystem::GetSceneManager () const
+Ogre::SceneManager* RenderSystem::GetSceneManager () const
 {
 	return m_pSceneMgr;
 }
 
 
-inline Ogre::RenderWindow* RenderSystem::GetRenderWindow () const
+Ogre::RenderWindow* RenderSystem::GetRenderWindow () const
 {
 	return m_pRenderWnd;
 }
 
 
-inline Ogre::OverlayElement* RenderSystem::GetOverlayElement (const char* elementName) const
+Ogre::OverlayElement* RenderSystem::GetOverlayElement (const char* elementName) const
 {
 	return m_pOverlayMgr->getOverlayElement (elementName);
 }
 
 
-inline Ogre::Overlay* RenderSystem::GetOverlay (const char* overlayName) const
+Ogre::Overlay* RenderSystem::GetOverlay (const char* overlayName) const
 {
 	return m_pOverlayMgr->getByName (overlayName);
 }
@@ -204,7 +204,7 @@ Ogre::OverlayContainer* RenderSystem::GetContainer (const char* containerName) c
 }
 
 
-inline Ogre::OverlayManager* RenderSystem::GetOverlayMgr () const
+Ogre::OverlayManager* RenderSystem::GetOverlayMgr () const
 {
 	return m_pOverlayMgr;
 }

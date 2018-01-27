@@ -230,25 +230,25 @@ void PhysicsComponent::DisableRotationXYZ ()
 }
 
 
-inline bool PhysicsComponent::IsTrigger () const
+bool PhysicsComponent::IsTrigger () const
 {
 	return m_isTrigger;
 }
 
 
-inline bool PhysicsComponent::IsDynamic () const
+bool PhysicsComponent::IsDynamic () const
 {
 	return m_rigidBodyType == RigidBodyType::Dynamic;
 }
 
 
-inline bool PhysicsComponent::IsKinematic () const
+bool PhysicsComponent::IsKinematic () const
 {
 	return m_rigidBodyType == RigidBodyType::Kinematic;
 }
 
 
-inline bool PhysicsComponent::IsStatic () const
+bool PhysicsComponent::IsStatic () const
 {
 	return m_rigidBodyType == RigidBodyType::Static;
 }

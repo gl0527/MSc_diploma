@@ -63,7 +63,7 @@ void MeshComponent::SetMaterial (const std::string& matName)
 }
 
 
-inline Ogre::Entity* MeshComponent::GetEntity () const
+Ogre::Entity* MeshComponent::GetEntity () const
 {
 	return m_pEntity;
 }

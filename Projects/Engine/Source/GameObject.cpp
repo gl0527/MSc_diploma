@@ -171,13 +171,13 @@ void GameObject::Destroy ()
 }
 
 
-inline const std::string& GameObject::GetName () const
+const std::string& GameObject::GetName () const
 {
 	return m_Name;
 }
 
 
-inline TransformComponent* GameObject::Transform () const
+TransformComponent* GameObject::Transform () const
 {
 	return reinterpret_cast<TransformComponent*> (m_components[0].get ());
 }
@@ -192,7 +192,7 @@ std::weak_ptr<Component> GameObject::GetComponent (const std::string& cID) const
 }
 
 
-inline GameObject::WPtr GameObject::GetParent () const
+GameObject::WPtr GameObject::GetParent () const
 {
 	return m_pParent;
 }
@@ -208,13 +208,13 @@ std::vector<std::string> GameObject::GetChildrenNames () const
 }
 
 
-inline void GameObject::ClearParent ()
+void GameObject::ClearParent ()
 {
 	m_pParent.reset ();
 }
 
 
-inline bool GameObject::HasParent () const
+bool GameObject::HasParent () const
 {
 	return m_pParent != nullptr;
 }
@@ -239,7 +239,7 @@ bool GameObject::HasTag (const std::string& t) const
 }
 
 
-inline bool GameObject::IsDestroyed () const
+bool GameObject::IsDestroyed () const
 {
 	return m_isDestroyed;
 }
