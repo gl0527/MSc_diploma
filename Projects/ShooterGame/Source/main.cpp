@@ -14,10 +14,14 @@
 #include "WeaponComponent.h"
 #include "SoldierAnimComponent.h"
 
-#include "MyGUI_Button.h"
-
 
 using namespace Engine;
+
+
+static void GLOBAL_FUNC_NAME (MyGUI::Widget* _sender)
+{
+	std::cout << "GLOBAL_FUNC_NAME\n";
+}
 
 
 int main(int argc, char** argv)
@@ -27,6 +31,9 @@ int main(int argc, char** argv)
 #endif
 
 	auto& game = Game::GetInstance();
+	auto renderSys = game.GetRenderSystem ();
+	auto& xmlParser = XML::XMLParser::GetInstance ();
+	auto& objectMgr = ObjectManager::GetInstance ();
 	
 	if (!game.Init())
 		return -1;
@@ -34,16 +41,16 @@ int main(int argc, char** argv)
 	new InputProcessor;
 	new DynamicMovementProcessor;
 
-	auto renderSys = game.GetRenderSystem();
-	auto& xmlParser = XML::XMLParser::GetInstance();
-	auto& objectMgr = ObjectManager::GetInstance ();
-
 	if (!xmlParser.LoadXMLFromFile ("media\\map\\test.xml"))
 		return -1;
 
-	renderSys->LoadGUILayout ("sample.layout");
-	auto myButton = renderSys->GetWidget<MyGUI::Button> ("MyFirstButton");
-	myButton->setEnabled (true);
+	renderSys->LoadGUILayout ("EditPanel.layout");
+
+	renderSys->LoadGUILayout ("MainPanel.layout");	// xml parserben
+	auto button = renderSys->GetWidget<MyGUI::Button> ("New");
+	button->eventMouseButtonClick = MyGUI::newDelegate (GLOBAL_FUNC_NAME);
+
+	renderSys->LoadGUILayout ("ColourPanel.layout");
 
 
 	if (auto exp = objectMgr.GetGameObjectByName("explosive").lock())
@@ -51,7 +58,7 @@ int main(int argc, char** argv)
 		if (auto explosivePhysx = exp->GetFirstComponentByType<PhysicsComponent> ().lock ()) {
 			explosivePhysx->onTriggerEnter += [] (PhysicsComponent* otherPhyComp) {
 				if (otherPhyComp != nullptr)
-					otherPhyComp->AddForce (1000, 2000, -5000);
+					otherPhyComp->AddForce (2'000, 1'000, -20'000);
 			};
 		}
 	}

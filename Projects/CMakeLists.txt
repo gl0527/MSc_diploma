@@ -50,6 +50,7 @@ set (TINYXMLSTL_LIBRARY 					"${TINYXML_INCLUDE_DIR}/DebugtinyxmlSTL"								CAC
 set (MYGUI_MYGUIENGINE_INCLUDE_DIR			"e:/dev/tools/MyGUI_3.2.0/MyGUIEngine/include/"							CACHE FILEPATH "")
 set (MYGUI_OGREPLATFORM_INCLUDE_DIR			"e:/dev/tools/MyGUI_3.2.0/Platforms/Ogre/OgrePlatform/include/"			CACHE FILEPATH "")
 set (MYGUI_LIBRARY_DIR						"e:/dev/tools/MyGUI_3.2.0/build/lib/Debug/"								CACHE FILEPATH "")
+set (FREETYPE_LIBRARY_DIR					"e:/dev/tools/MyGUI_3.2.0/Dependencies/freetype-2.8.1/cmake_out/Debug/" CACHE FILEPATH "")
 
 # set include and library directories
 include_directories (${OGRE_ROOT}/include/OGRE)
@@ -73,6 +74,7 @@ link_directories (${TINYXMLSTL_LIBRARY})
 include_directories (${MYGUI_MYGUIENGINE_INCLUDE_DIR})
 include_directories (${MYGUI_OGREPLATFORM_INCLUDE_DIR})
 link_directories (${MYGUI_LIBRARY_DIR})
+link_directories (${FREETYPE_LIBRARY_DIR})
 
 if (WIN32)
 	set (ADDITIONAL_LIBS_DEBUG "winmm.${STATIC_LIB_EXTENSION}")
@@ -93,6 +95,7 @@ set (LIBRARIES_DEBUG	"OgreMain${CONFIG_SUFFIX}.${STATIC_LIB_EXTENSION}"
 						"tinyxmlSTL.${STATIC_LIB_EXTENSION}"
 						"MyGUIEngine${CONFIG_SUFFIX}.${STATIC_LIB_EXTENSION}"
 						"MyGUI.OgrePlatform${CONFIG_SUFFIX}.${STATIC_LIB_EXTENSION}"
+						"freetyped.${STATIC_LIB_EXTENSION}"
 						"${ADDITIONAL_LIBS_DEBUG}")
 
 add_subdirectory (Engine)

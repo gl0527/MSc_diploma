@@ -7,6 +7,7 @@
 
 #include "System.h"
 #include "Ogre.h"
+#include <OIS.h>
 #include "Overlay\OgreOverlayManager.h"
 #include "MyGUI.h"
 #include "stdafx.h"
@@ -24,14 +25,26 @@ namespace Engine {
 
 // ============================= class RenderSystem =============================
 
-class RenderSystem : public System
+class RenderSystem :	public System,
+						public OIS::MouseListener,
+						public OIS::KeyListener
 {
 public:
 									RenderSystem (const char* wName, size_t w = 800, size_t h = 600);
 
 	virtual bool					init () override;
+	bool							Start ();
 	virtual bool					update (float t, float dt) override;
 	virtual void					destroy () override;
+
+	// inherited from OIS::MouseListener
+	bool							mouseMoved (const OIS::MouseEvent& me) override;
+	bool							mousePressed (const OIS::MouseEvent& me, OIS::MouseButtonID id) override;
+	bool							mouseReleased (const OIS::MouseEvent& me, OIS::MouseButtonID id) override;
+
+	// inherited from OIS::KeyListener
+	bool							keyPressed (const OIS::KeyEvent& ke) override;
+	bool							keyReleased (const OIS::KeyEvent& ke) override;
 
 	static	Ogre::MeshPtr			CreatePlaneMeshXZ (const char* planeMeshName, float y, unsigned int u = 1, unsigned int v = 1);
 	static	Ogre::TexturePtr		CreateTexture (const char* texName, unsigned int w, unsigned int h);
@@ -55,6 +68,8 @@ public:
 
 	template<typename T>
 	T*								GetWidget (const std::string& widgetName);
+
+	void							SetOgrePlatform ();
 
 private:
 	Ogre::Root*				m_pOgreRoot;

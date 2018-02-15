@@ -1,6 +1,7 @@
 #include "RenderSystem.h"
 #include "Overlay\OgreOverlaySystem.h"
 #include "MyGUI_OgrePlatform.h"
+#include "InputManager.h"
 
 
 namespace Engine {
@@ -22,14 +23,12 @@ RenderSystem::RenderSystem (const char* wName, size_t w, size_t h)
 
 bool RenderSystem::init ()
 {
-	std::string resourceCfg, pluginCfg;
-
 #ifdef _DEBUG
-	resourceCfg = "resources_d.cfg";
-	pluginCfg = "plugins_d.cfg";
+	std::string resourceCfg ("resources_d.cfg");
+	std::string pluginCfg ("plugins_d.cfg");
 #else
-	resourceCfg = "resources.cfg";
-	pluginCfg = "plugins.cfg";
+	std::string resourceCfg ("resources.cfg");
+	std::string pluginCfg ("plugins.cfg");
 #endif
 
 	m_pOgreRoot = new Ogre::Root (pluginCfg);
@@ -76,6 +75,21 @@ bool RenderSystem::init ()
 }
 
 
+bool RenderSystem::Start ()
+{
+	InputManager::GetInstance ().AddKeyListener (this, "RenderSystemKL");
+	InputManager::GetInstance ().AddMouseListener (this, "RenderSystemML");
+
+	return true;
+}
+
+
+void RenderSystem::SetOgrePlatform ()
+{
+	m_pOgrePlatform->getRenderManagerPtr ()->setActiveViewport (0);
+}
+
+
 bool RenderSystem::update (float t, float dt)
 {
 	if (m_pRenderWnd->isClosed ()) {
@@ -119,6 +133,46 @@ void RenderSystem::destroy ()
 		delete m_pOgreRoot;
 		m_pOgreRoot = nullptr;
 	}
+}
+
+
+bool RenderSystem::mouseMoved (const OIS::MouseEvent& me)
+{
+	MyGUI::InputManager::getInstance().injectMouseMove (me.state.X.abs, me.state.Y.abs, me.state.Z.abs);
+
+	return true;
+}
+
+
+bool RenderSystem::mousePressed (const OIS::MouseEvent& me, OIS::MouseButtonID id)
+{
+	MyGUI::InputManager::getInstance().injectMousePress (me.state.X.abs, me.state.Y.abs, MyGUI::MouseButton::Enum(id));
+
+	return true;
+}
+
+
+bool RenderSystem::mouseReleased (const OIS::MouseEvent& me, OIS::MouseButtonID id)
+{
+	MyGUI::InputManager::getInstance().injectMouseRelease (me.state.X.abs, me.state.Y.abs, MyGUI::MouseButton::Enum(id));
+
+	return true;
+}
+
+
+bool RenderSystem::keyPressed (const OIS::KeyEvent& ke)
+{
+	MyGUI::InputManager::getInstance().injectKeyPress (MyGUI::KeyCode::Enum(ke.key), ke.text);
+
+	return true;
+}
+
+
+bool RenderSystem::keyReleased (const OIS::KeyEvent& ke)
+{
+	MyGUI::InputManager::getInstance().injectKeyRelease (MyGUI::KeyCode::Enum(ke.key));
+
+	return true;
 }
 
 

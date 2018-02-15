@@ -3,10 +3,10 @@
 #include "Ticker.h"
 #include "RenderSystem.h"
 #include "PhysicsSystem.h"
-#include "InputHandler.h"
 #include "AudioSystem.h"
 #include "XML/XMLParser.h"
 #include "ObjectManager.h"
+#include "InputManager.h"
 
 
 namespace Engine {
@@ -21,7 +21,6 @@ Game::Game (const char* title)
 	m_pAudioSystem (new AudioSystem),
 	m_pTimer (new Ticker)
 {
-
 }
 
 
@@ -39,7 +38,7 @@ void Game::DeleteInstance ()
 		delete s_pInstance;
 		s_pInstance = nullptr;
 		ObjectManager::GetInstance ().DeleteInstance ();
-		InputHandler::DeleteInstance ();
+		InputManager::GetInstance ().DeleteInstance ();
 	}
 }
 
@@ -54,8 +53,9 @@ bool Game::Init ()
 {
 	if (!m_pRenderSystem->init ())
 		return false;
-	if (!InputHandler::GetInstance ().init ())
-		return false;
+
+	InputManager::GetInstance ().Init ();
+	
 	if (!m_pPhysicsSystem->init ())
 		return false;
 	if (!m_pAudioSystem->init ())
@@ -83,6 +83,7 @@ void Game::Start ()
 			m_pTimer->Pause ();
 	}
 
+	m_pRenderSystem->Start ();
 	ObjectManager::GetInstance ().Start ();
 
 	m_state = State::Running;
@@ -125,8 +126,7 @@ void Game::MainLoop ()
 
 bool Game::Update (float t, float dt)
 {
-	if (!InputHandler::GetInstance ().update (t, dt))
-		return false;
+	InputManager::GetInstance ().Capture ();
 
 	ObjectManager::GetInstance ().PreUpdate (t, dt); // fizika elotti teendok befrissitese
 
@@ -157,7 +157,7 @@ void Game::Destroy ()
 
 	XML::XMLParser::GetInstance ().Destroy ();
 	ObjectManager::GetInstance ().Destroy ();
-	InputHandler::GetInstance ().destroy ();
+	InputManager::GetInstance ().Destroy ();
 	m_pPhysicsSystem->destroy ();
 	m_pRenderSystem->destroy ();
 	m_pAudioSystem->destroy ();

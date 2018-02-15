@@ -6,7 +6,6 @@
 // ---------------------------------- includes ----------------------------------
 
 #include "Component.h"
-#include "InputHandler.h"
 
 using namespace Engine;
 

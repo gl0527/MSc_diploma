@@ -1,7 +1,7 @@
 #include "SoldierAnimComponent.h"
 #include "GameObject.h"
 #include "MeshComponent.h"
-#include "InputHandler.h"
+#include "InputManager.h"
 #include "PhysicsComponent.h"
 #include "TransformComponent.h"
 #include "Ogre.h"
@@ -94,9 +94,9 @@ void SoldierAnimComponent::IdleState::PostExecute (Stateable* stateable, float t
 	static bool switchToRunState = false;
 	static bool switchToShootState = false;
 	
-	const InputHandler& inputHandler = InputHandler::GetInstance ();
+	const InputManager& inputManager = InputManager::GetInstance ();
 
-	if (!switchToShootState && (inputHandler.IsButtonDown (OIS::KC_LSHIFT) || inputHandler.IsButtonDown (OIS::KC_RSHIFT))) {
+	if (!switchToShootState && (inputManager.IsButtonDown (OIS::KC_LSHIFT) || inputManager.IsButtonDown (OIS::KC_RSHIFT))) {
 		switchToRunState = true;
 	}
 
@@ -119,7 +119,7 @@ void SoldierAnimComponent::IdleState::PostExecute (Stateable* stateable, float t
 		return;
 	}
 	
-	if (!switchToRunState && inputHandler.IsLeftMouseButtonDown ())
+	if (!switchToRunState && inputManager.IsLeftMouseButtonDown ())
 		switchToShootState = true;
 
 	if (switchToShootState) {
@@ -199,9 +199,9 @@ void SoldierAnimComponent::RunState::PostExecute (Stateable* stateable, float t,
 	static bool toIdle = false;
 	static bool toShoot = false;
 	
-	const InputHandler& inputHandler = InputHandler::GetInstance ();
+	const InputManager& inputManager = InputManager::GetInstance ();
 
-	if (!toShoot && !inputHandler.IsButtonDown (OIS::KC_LSHIFT) && !inputHandler.IsButtonDown (OIS::KC_RSHIFT)) {
+	if (!toShoot && !inputManager.IsButtonDown (OIS::KC_LSHIFT) && !inputManager.IsButtonDown (OIS::KC_RSHIFT)) {
 		toIdle = true;
 	} else if (HasEnded ("leg_run")) {
 		toIdle = false;
@@ -239,7 +239,7 @@ void SoldierAnimComponent::RunState::PostExecute (Stateable* stateable, float t,
 		phy->AddForce (4'000.0f * forward.x, 4'000.0f * forward.y, 4'000.0f * forward.z);
 	}
 
-	if (!toIdle && inputHandler.IsLeftMouseButtonDown ())
+	if (!toIdle && inputManager.IsLeftMouseButtonDown ())
 		toShoot = true;
 
 	if (toShoot) {

@@ -2,6 +2,7 @@
 #include "GameObject.h"
 #include "Game.h"
 #include "TransformComponent.h"
+#include "InputManager.h"
 
 
 DynamicMovementComponent::DynamicMovementComponent(const std::string& name)
@@ -28,39 +29,39 @@ void DynamicMovementComponent::Start()
 void DynamicMovementComponent::PreUpdate(float t, float dt)
 {
 	Ogre::Vector3 force = Ogre::Vector3::ZERO;
-	InputHandler& inputHandler = InputHandler::GetInstance ();
+	InputManager& inputManager = InputManager::GetInstance ();
 
-	if (inputHandler.IsButtonDown(OIS::KC_ESCAPE))
+	if (inputManager.IsButtonDown(OIS::KC_ESCAPE))
 	{
 		Game::GetInstance().Destroy();
 		return;
 	}
-	if (inputHandler.IsButtonDown(OIS::KC_D))
+	if (inputManager.IsButtonDown(OIS::KC_D))
 	{
 		force += Ogre::Vector3(1.0f, 0.0f, 0.0f);
 		if (auto soldierComp = ownerSoldierComp.lock());
 			//soldierComp->setAction(SoldierComponent::PlayerAction::PA_RUN);
 	}
-	if (inputHandler.IsButtonDown(OIS::KC_A))
+	if (inputManager.IsButtonDown(OIS::KC_A))
 	{
 		force += Ogre::Vector3(-1.0f, 0.0f, 0.0f);
 		if (auto soldierComp = ownerSoldierComp.lock());
 			//soldierComp->setAction(SoldierComponent::PlayerAction::PA_RUN);
 	}
-	if (inputHandler.IsButtonDown(OIS::KC_W))
+	if (inputManager.IsButtonDown(OIS::KC_W))
 	{
 		force += Ogre::Vector3(0.0f, 0.0f, -1.0f);
 		if (auto soldierComp = ownerSoldierComp.lock());
 			//soldierComp->setAction(SoldierComponent::PlayerAction::PA_RUN);
 	}
-	if (inputHandler.IsButtonDown(OIS::KC_S))
+	if (inputManager.IsButtonDown(OIS::KC_S))
 	{
 		force += Ogre::Vector3(0.0f, 0.0f, 1.0f);
 		if (auto soldierComp = ownerSoldierComp.lock());
 			//soldierComp->setAction(SoldierComponent::PlayerAction::PA_RUN);
 	}
 
-	if (inputHandler.IsLeftMouseButtonDown ())
+	if (inputManager.IsLeftMouseButtonDown ())
 		if (auto soldierComp = ownerSoldierComp.lock());
 			//soldierComp->setAction(SoldierComponent::PlayerAction::PA_SHOOT);
 

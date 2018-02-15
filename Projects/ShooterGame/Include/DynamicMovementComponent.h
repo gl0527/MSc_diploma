@@ -6,7 +6,6 @@
 // ---------------------------------- includes ----------------------------------
 
 #include "PhysicsComponent.h"
-#include "InputHandler.h"
 #include "SoldierAnimComponent.h"
 #include <memory>
 

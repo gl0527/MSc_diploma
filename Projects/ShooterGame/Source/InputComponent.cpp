@@ -1,6 +1,6 @@
 #include "InputComponent.h"
 #include "GameObject.h"
-#include "InputHandler.h"
+#include "InputManager.h"
 #include <Ogre.h>
 #include "TransformComponent.h"
 
@@ -50,7 +50,7 @@ void InputComponent::PreUpdate(float t, float dt)
 	
 	int mouseRelX, mouseRelY;
 
-	if (InputHandler::GetInstance ().GetRelativeMouseX (&mouseRelX)) {
+	if (InputManager::GetInstance ().GetRelativeMouseX (&mouseRelX)) {
 		Ogre::Radian yaw (-turnSpeed * mouseRelX);
 		Ogre::Quaternion Qyaw (yaw, Ogre::Vector3::UNIT_Y);
 		m_owner->Transform ()->SetWorldRotation (Qyaw * m_owner->Transform ()->GetRotationInWorldSpace ());
@@ -58,7 +58,7 @@ void InputComponent::PreUpdate(float t, float dt)
 
 	const Ogre::Vector3& right = m_owner->Transform()->GetRightVecInWorldSpace();
 	
-	if (InputHandler::GetInstance ().GetRelativeMouseY (&mouseRelY)) {
+	if (InputManager::GetInstance ().GetRelativeMouseY (&mouseRelY)) {
 		Ogre::Radian pitch (-turnSpeed * mouseRelY);
 		Ogre::Quaternion Qpitch (pitch, right);
 		m_owner->Transform ()->SetWorldRotation (Qpitch * m_owner->Transform ()->GetRotationInWorldSpace ());

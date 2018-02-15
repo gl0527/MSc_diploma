@@ -47,11 +47,14 @@ void CameraComponent::PostInit (GameObject* obj)
 	m_pCamera = m_pSceneManager->createCamera (obj->GetName () + Ogre::StringConverter::toString (m_zOrder));
 
 	m_pViewport = m_pRenderWnd->addViewport (m_pCamera, m_zOrder);
+	m_pViewport->setOverlaysEnabled (true);
 	m_pCamera->setAspectRatio (Ogre::Real (m_pViewport->getActualWidth ()) / Ogre::Real (m_pViewport->getActualHeight ()));
 	m_pObject = m_pCamera;
 
 	CreateNode ();
 	m_pCurrentNode->attachObject (m_pObject);
+
+	Game::GetInstance ().GetRenderSystem ()->SetOgrePlatform ();
 }
 
 
