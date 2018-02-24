@@ -38,15 +38,17 @@ bool RenderSystem::init ()
 
 	Ogre::ResourceGroupManager* resGroupManager = Ogre::ResourceGroupManager::getSingletonPtr ();
 
-	Ogre::String name, locType;
+	Ogre::String resourcePath, resourceType;
+
 	for (auto it = configFile.getSectionIterator (); it.hasMoreElements (); ) {
+		Ogre::String resourceGroupName = it.peekNextKey ();
 		auto* settings = it.getNext ();
 
 		for (auto setIt = settings->begin (); setIt != settings->end (); ++setIt) {
-			locType = setIt->first;
-			name = setIt->second;
+			resourceType = setIt->first;
+			resourcePath = setIt->second;
 
-			resGroupManager->addResourceLocation (name, locType);
+			resGroupManager->addResourceLocation (resourcePath, resourceType, resourceGroupName);
 		}
 	}
 
@@ -77,8 +79,8 @@ bool RenderSystem::init ()
 
 bool RenderSystem::Start ()
 {
-	InputManager::GetInstance ().AddKeyListener (this, "RenderSystemKL");
-	InputManager::GetInstance ().AddMouseListener (this, "RenderSystemML");
+	InputManager::GetInstance ().AddGUIAsKeyListener (this);
+	InputManager::GetInstance ().AddGUIAsMouseListener (this);
 
 	return true;
 }
@@ -138,41 +140,31 @@ void RenderSystem::destroy ()
 
 bool RenderSystem::mouseMoved (const OIS::MouseEvent& me)
 {
-	MyGUI::InputManager::getInstance().injectMouseMove (me.state.X.abs, me.state.Y.abs, me.state.Z.abs);
-
-	return true;
+	return MyGUI::InputManager::getInstance().injectMouseMove (me.state.X.abs, me.state.Y.abs, me.state.Z.abs);
 }
 
 
 bool RenderSystem::mousePressed (const OIS::MouseEvent& me, OIS::MouseButtonID id)
 {
-	MyGUI::InputManager::getInstance().injectMousePress (me.state.X.abs, me.state.Y.abs, MyGUI::MouseButton::Enum(id));
-
-	return true;
+	return MyGUI::InputManager::getInstance().injectMousePress (me.state.X.abs, me.state.Y.abs, MyGUI::MouseButton::Enum(id));
 }
 
 
 bool RenderSystem::mouseReleased (const OIS::MouseEvent& me, OIS::MouseButtonID id)
 {
-	MyGUI::InputManager::getInstance().injectMouseRelease (me.state.X.abs, me.state.Y.abs, MyGUI::MouseButton::Enum(id));
-
-	return true;
+	return MyGUI::InputManager::getInstance().injectMouseRelease (me.state.X.abs, me.state.Y.abs, MyGUI::MouseButton::Enum(id));
 }
 
 
 bool RenderSystem::keyPressed (const OIS::KeyEvent& ke)
 {
-	MyGUI::InputManager::getInstance().injectKeyPress (MyGUI::KeyCode::Enum(ke.key), ke.text);
-
-	return true;
+	return MyGUI::InputManager::getInstance().injectKeyPress (MyGUI::KeyCode::Enum(ke.key), ke.text);
 }
 
 
 bool RenderSystem::keyReleased (const OIS::KeyEvent& ke)
 {
-	MyGUI::InputManager::getInstance().injectKeyRelease (MyGUI::KeyCode::Enum(ke.key));
-
-	return true;
+	return MyGUI::InputManager::getInstance().injectKeyRelease (MyGUI::KeyCode::Enum(ke.key));
 }
 
 

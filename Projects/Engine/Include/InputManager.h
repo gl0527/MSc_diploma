@@ -31,18 +31,20 @@ public:
 	void							Capture ();
 	void 							Destroy ();
 	
+	bool							AddGUIAsKeyListener (OIS::KeyListener* keyListener);
+	bool							AddGUIAsMouseListener (OIS::MouseListener* mouseListener);
 	bool 							AddKeyListener (OIS::KeyListener* keyListener, const std::string& instanceName);
     bool 							AddMouseListener (OIS::MouseListener* mouseListener, const std::string& instanceName);
 	
-	void 							RemoveKeyListener (const std::string& instanceName);
-	void 							RemoveKeyListener (OIS::KeyListener* keyListener);
-    void 							RemoveMouseListener (const std::string& instanceName);
-    void 							RemoveMouseListener (OIS::MouseListener *mouseListener);
+	bool 							RemoveKeyListener (const std::string& instanceName);
+	bool 							RemoveKeyListener (OIS::KeyListener* keyListener);
+    bool 							RemoveMouseListener (const std::string& instanceName);
+    bool 							RemoveMouseListener (OIS::MouseListener* mouseListener);
 	void 							RemoveAllListeners ();
     void 							RemoveAllKeyListeners ();
     void 							RemoveAllMouseListeners ();
 
-	DLL_EXPORT bool					IsButtonDown (OIS::KeyCode key) const;
+	DLL_EXPORT bool					IsKeyDown (OIS::KeyCode key) const;
 	DLL_EXPORT bool					IsLeftMouseButtonDown () const;
 	bool							IsRightMouseButtonDown () const;
 	bool							IsMiddleMouseButtonDown () const;
@@ -64,9 +66,30 @@ private:
 	OIS::Mouse*			m_pMouse;
 	OIS::InputManager*	m_pInputSystem;
 	Ogre::RenderWindow* m_pRenderWnd;
+	
+	OIS::KeyListener*	m_pGUIAsKeyListener;
+	OIS::MouseListener*	m_pGUIAsMouseListener;
 	KeyListenerMap 		m_keyListeners;
     MouseListenerMap 	m_mouseListeners;
-	
+
+	enum class MouseEventProcessedByGUI : unsigned char
+	{
+		None,
+		LeftMouseButtonPushed,
+		RightMouseButtonPushed,
+		MiddleMouseButtonPushed,
+		MouseMoved
+	};
+
+	enum class KeyEventProcessedByGUI : unsigned char
+	{
+		None,
+		Any
+	};
+
+	MouseEventProcessedByGUI	m_mouseEventProcessedByGUI;
+	KeyEventProcessedByGUI		m_keyEventProcessedByGUI;
+
 	
 	InputManager ();
 	~InputManager () = default;

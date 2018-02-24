@@ -29,32 +29,32 @@ void DynamicMovementComponent::Start()
 void DynamicMovementComponent::PreUpdate(float t, float dt)
 {
 	Ogre::Vector3 force = Ogre::Vector3::ZERO;
-	InputManager& inputManager = InputManager::GetInstance ();
+	const InputManager& inputManager = InputManager::GetInstance ();
 
-	if (inputManager.IsButtonDown(OIS::KC_ESCAPE))
+	if (inputManager.IsKeyDown(OIS::KC_ESCAPE))
 	{
 		Game::GetInstance().Destroy();
 		return;
 	}
-	if (inputManager.IsButtonDown(OIS::KC_D))
+	if (inputManager.IsKeyDown(OIS::KC_D))
 	{
 		force += Ogre::Vector3(1.0f, 0.0f, 0.0f);
 		if (auto soldierComp = ownerSoldierComp.lock());
 			//soldierComp->setAction(SoldierComponent::PlayerAction::PA_RUN);
 	}
-	if (inputManager.IsButtonDown(OIS::KC_A))
+	if (inputManager.IsKeyDown(OIS::KC_A))
 	{
 		force += Ogre::Vector3(-1.0f, 0.0f, 0.0f);
 		if (auto soldierComp = ownerSoldierComp.lock());
 			//soldierComp->setAction(SoldierComponent::PlayerAction::PA_RUN);
 	}
-	if (inputManager.IsButtonDown(OIS::KC_W))
+	if (inputManager.IsKeyDown(OIS::KC_W))
 	{
 		force += Ogre::Vector3(0.0f, 0.0f, -1.0f);
 		if (auto soldierComp = ownerSoldierComp.lock());
 			//soldierComp->setAction(SoldierComponent::PlayerAction::PA_RUN);
 	}
-	if (inputManager.IsButtonDown(OIS::KC_S))
+	if (inputManager.IsKeyDown(OIS::KC_S))
 	{
 		force += Ogre::Vector3(0.0f, 0.0f, 1.0f);
 		if (auto soldierComp = ownerSoldierComp.lock());

@@ -37,8 +37,8 @@ void CameraControlComponent::PostUpdate(float t, float dt)
 	{
 		if (auto parent = m_owner->GetParent().lock())
 		{
-			const auto& ownerPos = m_owner->Transform()->GetPositionInWorldSpace();
-			const auto& parentPos = parent->Transform()->GetPositionInWorldSpace();
+			//const auto& ownerPos = m_owner->Transform()->GetPositionInWorldSpace();
+			//const auto& parentPos = parent->Transform()->GetPositionInWorldSpace();
 
 			/*btVector3 btOwnerPos(ownerPos.x, ownerPos.y, ownerPos.z);
 			btVector3 btParentPos(parentPos.x, parentPos.y, parentPos.z);

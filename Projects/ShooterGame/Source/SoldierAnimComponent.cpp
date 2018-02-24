@@ -96,7 +96,7 @@ void SoldierAnimComponent::IdleState::PostExecute (Stateable* stateable, float t
 	
 	const InputManager& inputManager = InputManager::GetInstance ();
 
-	if (!switchToShootState && (inputManager.IsButtonDown (OIS::KC_LSHIFT) || inputManager.IsButtonDown (OIS::KC_RSHIFT))) {
+	if (!switchToShootState && (inputManager.IsKeyDown (OIS::KC_LSHIFT) || inputManager.IsKeyDown (OIS::KC_RSHIFT))) {
 		switchToRunState = true;
 	}
 
@@ -118,9 +118,12 @@ void SoldierAnimComponent::IdleState::PostExecute (Stateable* stateable, float t
 
 		return;
 	}
-	
-	if (!switchToRunState && inputManager.IsLeftMouseButtonDown ())
-		switchToShootState = true;
+
+	if (!switchToRunState) {
+		bool b = inputManager.IsLeftMouseButtonDown ();
+		if (b)
+			switchToShootState = true;
+	}
 
 	if (switchToShootState) {
 		const auto& nextState = ShootState::GetInstance (m_pParent);
@@ -201,7 +204,7 @@ void SoldierAnimComponent::RunState::PostExecute (Stateable* stateable, float t,
 	
 	const InputManager& inputManager = InputManager::GetInstance ();
 
-	if (!toShoot && !inputManager.IsButtonDown (OIS::KC_LSHIFT) && !inputManager.IsButtonDown (OIS::KC_RSHIFT)) {
+	if (!toShoot && !inputManager.IsKeyDown (OIS::KC_LSHIFT) && !inputManager.IsKeyDown (OIS::KC_RSHIFT)) {
 		toIdle = true;
 	} else if (HasEnded ("leg_run")) {
 		toIdle = false;

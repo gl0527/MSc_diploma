@@ -11,7 +11,10 @@ InputManager::InputManager ()
 	: m_pKeyboard (nullptr),
 	m_pMouse (nullptr),
 	m_pInputSystem (nullptr),
-	m_pRenderWnd (nullptr)
+	m_pRenderWnd (nullptr),
+	m_pGUIAsKeyListener (nullptr),
+	m_pGUIAsMouseListener (nullptr),
+	m_mouseEventProcessedByGUI (MouseEventProcessedByGUI::None)
 {
 }
 
@@ -82,14 +85,46 @@ void InputManager::Destroy ()
 		m_pInputSystem->destroyInputSystem (m_pInputSystem);
 		m_pInputSystem = nullptr;
 
-		m_keyListeners.clear();
-		m_mouseListeners.clear();
+		RemoveAllListeners ();
     }
+}
+
+
+bool InputManager::AddGUIAsKeyListener (OIS::KeyListener* keyListener)
+{
+	if (keyListener == nullptr)
+		return false;
+
+	if (m_pGUIAsKeyListener == nullptr) {
+		m_pGUIAsKeyListener = keyListener;
+
+		return true;
+	}
+
+	return false;
+}
+
+
+bool InputManager::AddGUIAsMouseListener (OIS::MouseListener* mouseListener)
+{
+	if (mouseListener == nullptr)
+		return false;
+
+	if (m_pGUIAsMouseListener == nullptr) {
+		m_pGUIAsMouseListener = mouseListener;
+
+		return true;
+	}
+
+	return false;
 }
 
 
 bool InputManager::AddKeyListener (OIS::KeyListener* keyListener, const std::string& instanceName)
 {
+	if (keyListener == nullptr)
+		return false;
+
 	auto it = m_keyListeners.find (instanceName);
 	if (it == m_keyListeners.end ()) {
 		m_keyListeners[instanceName] = keyListener;
@@ -103,6 +138,9 @@ bool InputManager::AddKeyListener (OIS::KeyListener* keyListener, const std::str
 
 bool InputManager::AddMouseListener (OIS::MouseListener* mouseListener, const std::string& instanceName)
 {
+	if (mouseListener == nullptr)
+		return false;
+	
 	auto it = m_mouseListeners.find (instanceName);
 	if (it == m_mouseListeners.end ()) {
 		m_mouseListeners[instanceName] = mouseListener;
@@ -111,6 +149,85 @@ bool InputManager::AddMouseListener (OIS::MouseListener* mouseListener, const st
 	}
 
 	return false;
+}
+
+
+bool InputManager::RemoveKeyListener (const std::string& instanceName)
+{
+	auto it = m_keyListeners.find (instanceName);
+	if (it != m_keyListeners.end ()) {
+		m_keyListeners.erase (it);
+
+		return true;
+	}
+
+	return false;
+}
+
+
+bool InputManager::RemoveKeyListener (OIS::KeyListener* keyListener)
+{
+	if (keyListener == nullptr)
+		return false;
+	
+	for (auto it = m_keyListeners.begin (), itEnd = m_keyListeners.end (); it != itEnd; ++it) {
+		if (it->second == keyListener) {
+			m_keyListeners.erase (it);
+			
+			return true;
+		}
+	}
+
+	return false;
+}
+
+
+bool InputManager::RemoveMouseListener (const std::string& instanceName)
+{
+	auto it = m_mouseListeners.find (instanceName);
+	if (it != m_mouseListeners.end ()) {
+		m_mouseListeners.erase (it);
+
+		return true;
+	}
+
+	return false;
+}
+
+
+bool InputManager::RemoveMouseListener (OIS::MouseListener* mouseListener)
+{
+	if (mouseListener == nullptr)
+		return false;
+
+	for (auto it = m_mouseListeners.begin (), itEnd = m_mouseListeners.end (); it != itEnd; ++it) {
+		if (it->second == mouseListener) {
+			m_mouseListeners.erase (it);
+			
+			return true;
+		}
+	}
+
+	return false;
+}
+
+
+void InputManager::RemoveAllListeners ()
+{
+	m_keyListeners.clear ();
+	m_mouseListeners.clear ();
+}
+
+
+void InputManager::RemoveAllKeyListeners ()
+{
+	m_keyListeners.clear ();
+}
+
+
+void InputManager::RemoveAllMouseListeners ()
+{
+	m_mouseListeners.clear ();
 }
 
 
@@ -124,8 +241,14 @@ void InputManager::SetWindowExtents (int width, int height)
 
 bool InputManager::mouseMoved (const OIS::MouseEvent& me)
 {
-	// TODO eloszor a gui-nak kell odaadni az esemenyt, aztan ha az nem kezelte le, csak akkor
-	// kell odaadni a tobbi listenernek!!!
+	if (m_pGUIAsMouseListener->mouseMoved (me)) {
+		m_mouseEventProcessedByGUI = MouseEventProcessedByGUI::MouseMoved;
+
+		return true;
+	} else {
+		m_mouseEventProcessedByGUI = MouseEventProcessedByGUI::None;
+	}
+
 	for (auto it = m_mouseListeners.begin (), itEnd = m_mouseListeners.end (); it != itEnd; ++it) {
 		if (!it->second->mouseMoved (me))
 			return false;
@@ -137,6 +260,19 @@ bool InputManager::mouseMoved (const OIS::MouseEvent& me)
 
 bool InputManager::mousePressed (const OIS::MouseEvent& me, OIS::MouseButtonID id)
 {
+	if (m_pGUIAsMouseListener->mousePressed (me, id)) {
+		if (id == OIS::MB_Left)
+			m_mouseEventProcessedByGUI = MouseEventProcessedByGUI::LeftMouseButtonPushed;
+		else if (id == OIS::MB_Right)
+			m_mouseEventProcessedByGUI = MouseEventProcessedByGUI::RightMouseButtonPushed;
+		else if (id == OIS::MB_Middle)
+			m_mouseEventProcessedByGUI = MouseEventProcessedByGUI::MiddleMouseButtonPushed;
+
+		return true;
+	} else {
+		m_mouseEventProcessedByGUI = MouseEventProcessedByGUI::None;
+	}
+
 	for (auto it = m_mouseListeners.begin (), itEnd = m_mouseListeners.end (); it != itEnd; ++it) {
 		if (!it->second->mousePressed (me, id))
 			return false;
@@ -148,6 +284,9 @@ bool InputManager::mousePressed (const OIS::MouseEvent& me, OIS::MouseButtonID i
 
 bool InputManager::mouseReleased (const OIS::MouseEvent& me, OIS::MouseButtonID id)
 {
+	if (m_pGUIAsMouseListener->mouseReleased (me, id))
+		return true;
+
 	for (auto it = m_mouseListeners.begin (), itEnd = m_mouseListeners.end (); it != itEnd; ++it) {
 		if (!it->second->mouseReleased (me, id))
 			return false;
@@ -159,6 +298,14 @@ bool InputManager::mouseReleased (const OIS::MouseEvent& me, OIS::MouseButtonID 
 
 bool InputManager::keyPressed (const OIS::KeyEvent& ke)
 {
+	if (m_pGUIAsKeyListener->keyPressed (ke)) {
+		m_keyEventProcessedByGUI = KeyEventProcessedByGUI::Any;
+		
+		return true;
+	} else {
+		m_keyEventProcessedByGUI = KeyEventProcessedByGUI::None;
+	}
+
 	for (auto it = m_keyListeners.begin (), itEnd = m_keyListeners.end (); it != itEnd; ++it) {
 		if (!it->second->keyPressed (ke))
 			return false;
@@ -170,6 +317,9 @@ bool InputManager::keyPressed (const OIS::KeyEvent& ke)
 
 bool InputManager::keyReleased (const OIS::KeyEvent& ke)
 {
+	if (m_pGUIAsKeyListener->keyReleased (ke))
+		return true;
+
 	for (auto it = m_keyListeners.begin (), itEnd = m_keyListeners.end (); it != itEnd; ++it) {
 		if (!it->second->keyReleased (ke))
 			return false;
@@ -179,8 +329,11 @@ bool InputManager::keyReleased (const OIS::KeyEvent& ke)
 }
 
 
-bool InputManager::IsButtonDown (OIS::KeyCode key) const
+bool InputManager::IsKeyDown (OIS::KeyCode key) const
 {
+	if (m_keyEventProcessedByGUI == KeyEventProcessedByGUI::Any)
+		return false;
+	
 	if (m_pKeyboard != nullptr)
 		return m_pKeyboard->isKeyDown (key);
 	else
@@ -190,6 +343,10 @@ bool InputManager::IsButtonDown (OIS::KeyCode key) const
 
 bool InputManager::IsLeftMouseButtonDown () const
 {
+	if (m_mouseEventProcessedByGUI == MouseEventProcessedByGUI::LeftMouseButtonPushed ||
+		m_mouseEventProcessedByGUI == MouseEventProcessedByGUI::MouseMoved)
+		return false;
+	
 	if (m_pMouse != nullptr)
 		return m_pMouse->getMouseState ().buttonDown (OIS::MB_Left);
 	else 
@@ -199,6 +356,10 @@ bool InputManager::IsLeftMouseButtonDown () const
 
 bool InputManager::IsRightMouseButtonDown () const
 {
+	if (m_mouseEventProcessedByGUI == MouseEventProcessedByGUI::RightMouseButtonPushed ||
+		m_mouseEventProcessedByGUI == MouseEventProcessedByGUI::MouseMoved)
+		return false;
+
 	if (m_pMouse != nullptr)
 		return m_pMouse->getMouseState ().buttonDown (OIS::MB_Right);
 	else
@@ -208,6 +369,10 @@ bool InputManager::IsRightMouseButtonDown () const
 
 bool InputManager::IsMiddleMouseButtonDown () const
 {
+	if (m_mouseEventProcessedByGUI == MouseEventProcessedByGUI::MiddleMouseButtonPushed ||
+		m_mouseEventProcessedByGUI == MouseEventProcessedByGUI::MouseMoved)
+		return false;
+
 	if (m_pMouse != nullptr)
 		return m_pMouse->getMouseState ().buttonDown (OIS::MB_Middle);
 	else
@@ -217,6 +382,9 @@ bool InputManager::IsMiddleMouseButtonDown () const
 
 bool InputManager::GetAbsoluteMouseX (int* outAbsoluteMouseX) const
 {
+	if (m_mouseEventProcessedByGUI == MouseEventProcessedByGUI::MouseMoved)
+		return false;
+
 	if (m_pMouse != nullptr) {
 		*outAbsoluteMouseX = m_pMouse->getMouseState ().X.abs;
 
@@ -229,6 +397,9 @@ bool InputManager::GetAbsoluteMouseX (int* outAbsoluteMouseX) const
 
 bool InputManager::GetAbsoluteMouseY (int* outAbsoluteMouseY) const
 {
+	if (m_mouseEventProcessedByGUI == MouseEventProcessedByGUI::MouseMoved)
+		return false;
+
 	if (m_pMouse != nullptr) {
 		*outAbsoluteMouseY = m_pMouse->getMouseState ().Y.abs;
 
@@ -241,6 +412,9 @@ bool InputManager::GetAbsoluteMouseY (int* outAbsoluteMouseY) const
 
 bool InputManager::GetRelativeMouseX (int* outRelativeMouseX) const
 {
+	if (m_mouseEventProcessedByGUI == MouseEventProcessedByGUI::MouseMoved)
+		return false;
+	
 	if (m_pMouse != nullptr) {
 		*outRelativeMouseX = m_pMouse->getMouseState ().X.rel;
 
@@ -253,6 +427,9 @@ bool InputManager::GetRelativeMouseX (int* outRelativeMouseX) const
 
 bool InputManager::GetRelativeMouseY (int* outRelativeMouseY) const
 {
+	if (m_mouseEventProcessedByGUI == MouseEventProcessedByGUI::MouseMoved)
+		return false;
+
 	if (m_pMouse != nullptr) {
 		*outRelativeMouseY = m_pMouse->getMouseState ().Y.rel;
 

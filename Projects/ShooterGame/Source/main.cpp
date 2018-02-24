@@ -20,7 +20,7 @@ using namespace Engine;
 
 static void GLOBAL_FUNC_NAME (MyGUI::Widget* _sender)
 {
-	std::cout << "GLOBAL_FUNC_NAME\n";
+	std::cout << "Button pressed.\n";
 }
 
 
@@ -35,26 +35,21 @@ int main(int argc, char** argv)
 	auto& xmlParser = XML::XMLParser::GetInstance ();
 	auto& objectMgr = ObjectManager::GetInstance ();
 	
-	if (!game.Init())
+	if (!game.Init ())
 		return -1;
 
 	new InputProcessor;
 	new DynamicMovementProcessor;
 
-	if (!xmlParser.LoadXMLFromFile ("media\\map\\test.xml"))
+	if (!xmlParser.LoadXMLFromFile ("media\\level01-arrival\\map\\test.xml"))
 		return -1;
 
 	renderSys->LoadGUILayout ("EditPanel.layout");
-
-	renderSys->LoadGUILayout ("MainPanel.layout");	// xml parserben
+	renderSys->LoadGUILayout ("MainPanel.layout");
 	auto button = renderSys->GetWidget<MyGUI::Button> ("New");
 	button->eventMouseButtonClick = MyGUI::newDelegate (GLOBAL_FUNC_NAME);
 
-	renderSys->LoadGUILayout ("ColourPanel.layout");
-
-
-	if (auto exp = objectMgr.GetGameObjectByName("explosive").lock())
-	{
+	if (auto exp = objectMgr.GetGameObjectByName ("explosive").lock ()) {
 		if (auto explosivePhysx = exp->GetFirstComponentByType<PhysicsComponent> ().lock ()) {
 			explosivePhysx->onTriggerEnter += [] (PhysicsComponent* otherPhyComp) {
 				if (otherPhyComp != nullptr)
@@ -69,45 +64,41 @@ int main(int argc, char** argv)
 		soldierGO->AddComponent (soldierAnimComp);
 	}
 
-	if (auto lvl = objectMgr.GetGameObjectByName("level").lock())
-	{
-		if(auto levelSound = lvl->GetFirstComponentByType<AudioComponent>().lock())
-			levelSound->Play();
+	if (auto lvl = objectMgr.GetGameObjectByName ("level").lock ()) {
+		if (auto levelSound = lvl->GetFirstComponentByType<AudioComponent> ().lock ())
+			levelSound->Play ();
 	}
 
-	if (auto frames = objectMgr.CreateGameObject("fps").lock())
-	{
-		std::shared_ptr<FPSComponent> fpsc(new FPSComponent("FPS"));
-		frames->AddComponent(fpsc);
+	if (auto frames = objectMgr.CreateGameObject ("fps").lock ()) {
+		std::shared_ptr<FPSComponent> fpsc (new FPSComponent ("FPS"));
+		frames->AddComponent (fpsc);
 	}
 
-	if (auto gijoecam = objectMgr.GetGameObjectByName("gijoecamera").lock())
-	{
-		std::shared_ptr<CameraControlComponent> camControl(new CameraControlComponent("camc"));
-		gijoecam->AddComponent(camControl);
+	if (auto gijoecam = objectMgr.GetGameObjectByName ("gijoecamera").lock ()) {
+		std::shared_ptr<CameraControlComponent> camControl (new CameraControlComponent ("camc"));
+		gijoecam->AddComponent (camControl);
 	}
-	if (auto weapon = objectMgr.GetGameObjectByName("weapon").lock())
-	{
+	if (auto weapon = objectMgr.GetGameObjectByName ("weapon").lock ()) {
 		//Factory<WeaponComponent> weaponFactory;
 
 		//weaponFactory.SetCtorParams ("weap");
 		//weaponFactory.SetAllNonCtorParams ();
 
 		//Factory<WeaponComponent>::SPtr weaponComponent = weaponFactory.Create ();
-		
+
 		//weapon->AddComponent (weaponComponent);
 	}
-	
+
 	// setting up environment
 	auto sceneMgr = renderSys->GetSceneManager ();
 
-	sceneMgr->setAmbientLight(Ogre::ColourValue(0.3f, 0.3f, 0.3f, 1.0f)); // ez is kellene az xml-be
+	sceneMgr->setAmbientLight (Ogre::ColourValue (0.2f, 0.2f, 0.2f, 1.0f)); // ez is kellene az xml-be
 	//sceneMgr->setShadowTechnique(Ogre::SHADOWTYPE_STENCIL_MODULATIVE);
 	//sceneMgr->setShadowColour(Ogre::ColourValue(0.3f, 0.3f, 0.3f));
-	sceneMgr->setSkyBox(true, "Stormy");
+	sceneMgr->setSkyBox (true, "Stormy");
 
-	game.Start();
-	game.DeleteInstance();
+	game.Start ();
+	game.DeleteInstance ();
 
 	return 0;
 }
