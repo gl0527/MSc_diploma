@@ -59,49 +59,31 @@ public:
 private:
 	friend class SingletonBase<InputManager>;
 	
-	using KeyListenerMap = std::map<std::string, OIS::KeyListener*>;
-	using MouseListenerMap = std::map<std::string, OIS::MouseListener*>;
+	using KeyListenerMap	= std::map<std::string, OIS::KeyListener*>;
+	using MouseListenerMap	= std::map<std::string, OIS::MouseListener*>;
 	
-	OIS::Keyboard*		m_pKeyboard;
-	OIS::Mouse*			m_pMouse;
-	OIS::InputManager*	m_pInputSystem;
-	Ogre::RenderWindow* m_pRenderWnd;
+	OIS::Keyboard*					m_pKeyboard;
+	OIS::Mouse*						m_pMouse;
+	OIS::InputManager*				m_pInputSystem;
+	Ogre::RenderWindow*				m_pRenderWnd;
 	
-	OIS::KeyListener*	m_pGUIAsKeyListener;
-	OIS::MouseListener*	m_pGUIAsMouseListener;
-	KeyListenerMap 		m_keyListeners;
-    MouseListenerMap 	m_mouseListeners;
+	OIS::KeyListener*				m_pGUIAsKeyListener;
+	OIS::MouseListener*				m_pGUIAsMouseListener;
+	KeyListenerMap 					m_keyListeners;
+    MouseListenerMap 				m_mouseListeners;
 
-	enum class MouseEventProcessedByGUI : unsigned char
-	{
-		None,
-		LeftMouseButtonPushed,
-		RightMouseButtonPushed,
-		MiddleMouseButtonPushed,
-		MouseMoved
-	};
 
-	enum class KeyEventProcessedByGUI : unsigned char
-	{
-		None,
-		Any
-	};
-
-	MouseEventProcessedByGUI	m_mouseEventProcessedByGUI;
-	KeyEventProcessedByGUI		m_keyEventProcessedByGUI;
-
-	
 	InputManager ();
 	~InputManager () = default;
 
 	// inherited from OIS::MouseListener
-	bool mouseMoved (const OIS::MouseEvent& me) override;
-	bool mousePressed (const OIS::MouseEvent& me, OIS::MouseButtonID id) override;
-	bool mouseReleased (const OIS::MouseEvent& me, OIS::MouseButtonID id) override;
+	bool							mouseMoved (const OIS::MouseEvent& me) override;
+	bool							mousePressed (const OIS::MouseEvent& me, OIS::MouseButtonID id) override;
+	bool							mouseReleased (const OIS::MouseEvent& me, OIS::MouseButtonID id) override;
 	
 	// inherited from OIS::KeyListener
-	bool keyPressed (const OIS::KeyEvent& ke) override;
-	bool keyReleased (const OIS::KeyEvent& ke) override;
+	bool							keyPressed (const OIS::KeyEvent& ke) override;
+	bool							keyReleased (const OIS::KeyEvent& ke) override;
 };
 
 }	// namespace Engine

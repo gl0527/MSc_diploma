@@ -2,6 +2,7 @@
 #include "Overlay\OgreOverlaySystem.h"
 #include "MyGUI_OgrePlatform.h"
 #include "InputManager.h"
+#include "ErrorMessage.h"
 
 
 namespace Engine {
@@ -74,6 +75,26 @@ bool RenderSystem::init ()
 	m_pGUI->initialise ();
 
 	return true;
+}
+
+
+void RenderSystem::LoadResourceGroup (const std::string& resGroupName)
+{
+	try {
+		Ogre::ResourceGroupManager::getSingletonPtr ()->loadResourceGroup (resGroupName);
+	} catch (const Ogre::ItemIdentityException& iie) {
+		ERR_LOG (std::cerr, iie.what ());
+	}
+}
+
+
+void RenderSystem::UnloadResourceGroup (const std::string& resGroupName)
+{
+	try {
+		Ogre::ResourceGroupManager::getSingletonPtr ()->unloadResourceGroup (resGroupName);
+	} catch (const Ogre::ItemIdentityException& iie) {
+		ERR_LOG (std::cerr, iie.what());
+	}
 }
 
 

@@ -6,15 +6,25 @@
 #include "RenderSystem.h"
 
 namespace Engine {
-	
+
+namespace {
+
+bool leftMouseBtnPushedOnGUI = false;
+bool rightMouseBtnPushedOnGUI = false;
+bool middleMouseBtnPushedOnGUI = false;
+bool mouseMovedOnGUI = false;
+bool anyKeyPressedOnGUI = false;
+
+}
+
+
 InputManager::InputManager ()
 	: m_pKeyboard (nullptr),
 	m_pMouse (nullptr),
 	m_pInputSystem (nullptr),
 	m_pRenderWnd (nullptr),
 	m_pGUIAsKeyListener (nullptr),
-	m_pGUIAsMouseListener (nullptr),
-	m_mouseEventProcessedByGUI (MouseEventProcessedByGUI::None)
+	m_pGUIAsMouseListener (nullptr)
 {
 }
 
@@ -242,11 +252,11 @@ void InputManager::SetWindowExtents (int width, int height)
 bool InputManager::mouseMoved (const OIS::MouseEvent& me)
 {
 	if (m_pGUIAsMouseListener->mouseMoved (me)) {
-		m_mouseEventProcessedByGUI = MouseEventProcessedByGUI::MouseMoved;
+		mouseMovedOnGUI = true;
 
 		return true;
 	} else {
-		m_mouseEventProcessedByGUI = MouseEventProcessedByGUI::None;
+		mouseMovedOnGUI = false;
 	}
 
 	for (auto it = m_mouseListeners.begin (), itEnd = m_mouseListeners.end (); it != itEnd; ++it) {
@@ -262,15 +272,17 @@ bool InputManager::mousePressed (const OIS::MouseEvent& me, OIS::MouseButtonID i
 {
 	if (m_pGUIAsMouseListener->mousePressed (me, id)) {
 		if (id == OIS::MB_Left)
-			m_mouseEventProcessedByGUI = MouseEventProcessedByGUI::LeftMouseButtonPushed;
+			leftMouseBtnPushedOnGUI = true;
 		else if (id == OIS::MB_Right)
-			m_mouseEventProcessedByGUI = MouseEventProcessedByGUI::RightMouseButtonPushed;
+			rightMouseBtnPushedOnGUI = true;
 		else if (id == OIS::MB_Middle)
-			m_mouseEventProcessedByGUI = MouseEventProcessedByGUI::MiddleMouseButtonPushed;
+			middleMouseBtnPushedOnGUI = true;
 
 		return true;
 	} else {
-		m_mouseEventProcessedByGUI = MouseEventProcessedByGUI::None;
+		leftMouseBtnPushedOnGUI = false;
+		rightMouseBtnPushedOnGUI = false;
+		middleMouseBtnPushedOnGUI = false;
 	}
 
 	for (auto it = m_mouseListeners.begin (), itEnd = m_mouseListeners.end (); it != itEnd; ++it) {
@@ -299,11 +311,11 @@ bool InputManager::mouseReleased (const OIS::MouseEvent& me, OIS::MouseButtonID 
 bool InputManager::keyPressed (const OIS::KeyEvent& ke)
 {
 	if (m_pGUIAsKeyListener->keyPressed (ke)) {
-		m_keyEventProcessedByGUI = KeyEventProcessedByGUI::Any;
+		anyKeyPressedOnGUI = true;
 		
 		return true;
 	} else {
-		m_keyEventProcessedByGUI = KeyEventProcessedByGUI::None;
+		anyKeyPressedOnGUI = false;
 	}
 
 	for (auto it = m_keyListeners.begin (), itEnd = m_keyListeners.end (); it != itEnd; ++it) {
@@ -331,7 +343,7 @@ bool InputManager::keyReleased (const OIS::KeyEvent& ke)
 
 bool InputManager::IsKeyDown (OIS::KeyCode key) const
 {
-	if (m_keyEventProcessedByGUI == KeyEventProcessedByGUI::Any)
+	if (anyKeyPressedOnGUI)
 		return false;
 	
 	if (m_pKeyboard != nullptr)
@@ -343,8 +355,7 @@ bool InputManager::IsKeyDown (OIS::KeyCode key) const
 
 bool InputManager::IsLeftMouseButtonDown () const
 {
-	if (m_mouseEventProcessedByGUI == MouseEventProcessedByGUI::LeftMouseButtonPushed ||
-		m_mouseEventProcessedByGUI == MouseEventProcessedByGUI::MouseMoved)
+	if (leftMouseBtnPushedOnGUI || mouseMovedOnGUI)
 		return false;
 	
 	if (m_pMouse != nullptr)
@@ -356,8 +367,7 @@ bool InputManager::IsLeftMouseButtonDown () const
 
 bool InputManager::IsRightMouseButtonDown () const
 {
-	if (m_mouseEventProcessedByGUI == MouseEventProcessedByGUI::RightMouseButtonPushed ||
-		m_mouseEventProcessedByGUI == MouseEventProcessedByGUI::MouseMoved)
+	if (rightMouseBtnPushedOnGUI || mouseMovedOnGUI)
 		return false;
 
 	if (m_pMouse != nullptr)
@@ -369,8 +379,7 @@ bool InputManager::IsRightMouseButtonDown () const
 
 bool InputManager::IsMiddleMouseButtonDown () const
 {
-	if (m_mouseEventProcessedByGUI == MouseEventProcessedByGUI::MiddleMouseButtonPushed ||
-		m_mouseEventProcessedByGUI == MouseEventProcessedByGUI::MouseMoved)
+	if (middleMouseBtnPushedOnGUI || mouseMovedOnGUI)
 		return false;
 
 	if (m_pMouse != nullptr)
@@ -382,7 +391,7 @@ bool InputManager::IsMiddleMouseButtonDown () const
 
 bool InputManager::GetAbsoluteMouseX (int* outAbsoluteMouseX) const
 {
-	if (m_mouseEventProcessedByGUI == MouseEventProcessedByGUI::MouseMoved)
+	if (mouseMovedOnGUI)
 		return false;
 
 	if (m_pMouse != nullptr) {
@@ -397,7 +406,7 @@ bool InputManager::GetAbsoluteMouseX (int* outAbsoluteMouseX) const
 
 bool InputManager::GetAbsoluteMouseY (int* outAbsoluteMouseY) const
 {
-	if (m_mouseEventProcessedByGUI == MouseEventProcessedByGUI::MouseMoved)
+	if (mouseMovedOnGUI)
 		return false;
 
 	if (m_pMouse != nullptr) {
@@ -412,7 +421,7 @@ bool InputManager::GetAbsoluteMouseY (int* outAbsoluteMouseY) const
 
 bool InputManager::GetRelativeMouseX (int* outRelativeMouseX) const
 {
-	if (m_mouseEventProcessedByGUI == MouseEventProcessedByGUI::MouseMoved)
+	if (mouseMovedOnGUI)
 		return false;
 	
 	if (m_pMouse != nullptr) {
@@ -427,7 +436,7 @@ bool InputManager::GetRelativeMouseX (int* outRelativeMouseX) const
 
 bool InputManager::GetRelativeMouseY (int* outRelativeMouseY) const
 {
-	if (m_mouseEventProcessedByGUI == MouseEventProcessedByGUI::MouseMoved)
+	if (mouseMovedOnGUI)
 		return false;
 
 	if (m_pMouse != nullptr) {

@@ -21,6 +21,7 @@ using namespace Engine;
 static void GLOBAL_FUNC_NAME (MyGUI::Widget* _sender)
 {
 	std::cout << "Button pressed.\n";
+	//Game::GetInstance().GetRenderSystem ()->UnloadResourceGroup ("General");
 }
 
 

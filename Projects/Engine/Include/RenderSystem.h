@@ -49,6 +49,9 @@ public:
 	static	Ogre::MeshPtr			CreatePlaneMeshXZ (const char* planeMeshName, float y, unsigned int u = 1, unsigned int v = 1);
 	static	Ogre::TexturePtr		CreateTexture (const char* texName, unsigned int w, unsigned int h);
 
+	void							LoadResourceGroup (const std::string& resGroupName);
+	DLL_EXPORT void					UnloadResourceGroup (const std::string& resGroupName);
+
 	Ogre::Root*						GetRoot () const;
  	DLL_EXPORT Ogre::SceneNode*		GetRootNode () const;
 	DLL_EXPORT Ogre::SceneManager*	GetSceneManager () const;
