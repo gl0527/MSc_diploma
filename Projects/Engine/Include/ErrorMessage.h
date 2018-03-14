@@ -13,4 +13,6 @@
 #define ERR_LOG(os, msg) os << ERR_PREFIX << ": " << msg
 #define ERR_THROW(exceptionType, errMsg) throw exceptionType (ERR_PREFIX + std::string (": ") + errMsg)
 
+#define ASSERT(b) if (!(b)) ERR_THROW (std::runtime_error, TOSTRING (b) " was false!\n");
+
 #endif	// ERROR_MESSAGE_H

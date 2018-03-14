@@ -53,15 +53,15 @@ void InputComponent::PreUpdate(float t, float dt)
 	if (InputManager::GetInstance ().GetRelativeMouseX (&mouseRelX)) {
 		Ogre::Radian yaw (-turnSpeed * mouseRelX);
 		Ogre::Quaternion Qyaw (yaw, Ogre::Vector3::UNIT_Y);
-		m_owner->Transform ()->SetWorldRotation (Qyaw * m_owner->Transform ()->GetRotationInWorldSpace ());
+		m_owner->Transform ()->SetGlobalRotation (Qyaw * m_owner->Transform ()->GetGlobalRotation ());
 	}
 
-	const Ogre::Vector3& right = m_owner->Transform()->GetRightVecInWorldSpace();
+	const Ogre::Vector3& right = m_owner->Transform()->Right();
 	
 	if (InputManager::GetInstance ().GetRelativeMouseY (&mouseRelY)) {
 		Ogre::Radian pitch (-turnSpeed * mouseRelY);
 		Ogre::Quaternion Qpitch (pitch, right);
-		m_owner->Transform ()->SetWorldRotation (Qpitch * m_owner->Transform ()->GetRotationInWorldSpace ());
+		m_owner->Transform ()->SetGlobalRotation (Qpitch * m_owner->Transform ()->GetGlobalRotation ());
 	}
 
 	/*moveDir.normalise();

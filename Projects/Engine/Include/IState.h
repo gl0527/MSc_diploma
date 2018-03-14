@@ -6,6 +6,7 @@
 // ---------------------------------- includes ----------------------------------
 
 #include "stdafx.h"
+#include "NonCopyable.h"
 #include <string>
 
 
@@ -17,14 +18,11 @@ class Stateable;
 
 // ================================ class IState ================================
 
-class IState
+class IState : public NonCopyable
 {
 public:
 	explicit DLL_EXPORT			IState (const std::string& name);
-								IState (const IState&) = delete;
 	virtual DLL_EXPORT			~IState ();
-
-	IState&						operator= (const IState&) = delete;
 
 	virtual DLL_EXPORT void		Enter (Stateable* stateable) = 0;
 	virtual DLL_EXPORT void		Execute (Stateable* stateable, float t, float dt) = 0;

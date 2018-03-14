@@ -18,49 +18,50 @@ class TransformComponent : public Component
 public:
 										TransformComponent (const std::string& name);
 
-	virtual void						Start () override;
+	void								PostInit (GameObject* /*owner*/) override;
 
-	DLL_EXPORT const Ogre::Vector3&		GetPositionInWorldSpace () const;
-	DLL_EXPORT const Ogre::Quaternion&	GetRotationInWorldSpace () const;
-	DLL_EXPORT const Ogre::Vector3&		GetScaleInWorldSpace () const;
+	DLL_EXPORT Ogre::Vector3			Forward () const;
+	DLL_EXPORT Ogre::Vector3			Right () const;
+	DLL_EXPORT Ogre::Vector3			Up () const;
+	
+	DLL_EXPORT const Ogre::Vector3&		GetGlobalPosition () const;
+	DLL_EXPORT const Ogre::Quaternion&	GetGlobalRotation () const;
+	DLL_EXPORT const Ogre::Vector3&		GetGlobalScale () const;
 
-	Ogre::Vector3						GetPositionInCameraSpace (const Ogre::Matrix4& camViewMat) const;	// TODO lehet, hogy a parameteratadas helyett lekerdezek kene a fuggveny torzseben
-	Ogre::Quaternion					GetRotationInCameraSpace (const Ogre::Matrix4& camViewMat) const;
-	Ogre::Vector3						GetScaleInCameraSpace (const Ogre::Matrix4& camViewMat) const;
+	DLL_EXPORT const Ogre::Vector3&		GetLocalPosition () const;
+	DLL_EXPORT const Ogre::Quaternion&	GetLocalRotation () const;
+	DLL_EXPORT const Ogre::Vector3&		GetLocalScale () const;
 
-	Ogre::Vector2						GetPositionInNDC (const Ogre::Matrix4& camViewProjMat) const;
-	Ogre::Quaternion					GetRotationInNDC (const Ogre::Matrix4& camViewProjMat) const;
-	Ogre::Vector2						GetScaleInNDC (const Ogre::Matrix4& camViewProjMat) const;
+	DLL_EXPORT void						SetGlobalPosition (const Ogre::Vector3& globalPosition);
+	DLL_EXPORT void						SetGlobalRotation (const Ogre::Quaternion& globalRotation);
+	DLL_EXPORT void						SetGlobalScale (const Ogre::Vector3& globalScale);
 
-	DLL_EXPORT Ogre::Vector3			GetForwardVecInWorldSpace () const;
-	Ogre::Vector3						GetUpVecInWorldSpace () const;
-	DLL_EXPORT Ogre::Vector3			GetRightVecInWorldSpace () const;
+	DLL_EXPORT void						SetLocalPosition (const Ogre::Vector3& localPosition);
+	DLL_EXPORT void						SetLocalRotation (const Ogre::Quaternion& localRotation);
+	DLL_EXPORT void						SetLocalScale (const Ogre::Vector3& localScale);
 
-	DLL_EXPORT void						SetWorldPosition (const Ogre::Vector3& p);
-	DLL_EXPORT void						SetWorldRotation (const Ogre::Quaternion& q);
-	DLL_EXPORT void						SetWorldScale (const Ogre::Vector3& s);
-
-	// TODO XML-ben mindent parent space-ben adok meg, ami megegyezik a world space-szel akkor, ha nincs parent
-	void								SetPosInParentSpace (const Ogre::Vector3& pos);
-	void								SetRotInParentSpace (const Ogre::Quaternion& rot);
-	void								SetScaleInParentSpace (const Ogre::Vector3& scale);
-
-	void								AddToWorldPosition (const Ogre::Vector3& p);
-	void								AddToWorldRotation (const Ogre::Quaternion& q);
-	void								AddToWorldScale (const Ogre::Vector3& s);
+	void								Translate (const Ogre::Vector3& translateVec);
+	void								Rotate (const Ogre::Quaternion& rotQ);
+	void								Rotate (float angleInRad, const Ogre::Vector3& axis);
+	void								Scale (const Ogre::Vector3& scaleVec);
 
 private:
-	Ogre::Vector3		m_posInWorldSpace;
-	Ogre::Quaternion	m_rotInWorldSpace;
-	Ogre::Vector3		m_scaleInWorldSpace;
-	Ogre::Matrix4		m_modelTransform;
+	// values in world space
+	Ogre::Vector3		m_globalPosition;
+	Ogre::Quaternion	m_globalRotation;
+	Ogre::Vector3		m_globalScale;
+	Ogre::Matrix4		m_globalTransform;
 
-	Ogre::Vector3		m_posInParentSpace;
-	Ogre::Quaternion	m_rotInParentSpace;
-	Ogre::Vector3		m_scaleInParentSpace;
+	// values relative to the parent game object
+	Ogre::Vector3		m_localPosition;
+	Ogre::Quaternion	m_localRotation;
+	Ogre::Vector3		m_localScale;
 	Ogre::Matrix4		m_localTransform;
 
-	bool				m_hasParent;
+	TransformComponent* m_pParentTransform;
+
+	void								UpdateGlobalTransform ();
+	void								UpdateLocalTransform ();
 };
 
 }	// namespace Engine

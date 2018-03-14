@@ -3,7 +3,8 @@
 #include "Ticker.h"
 #include "RenderSystem.h"
 #include "PhysicsSystem.h"
-#include "AudioSystem.h"
+//#include "AudioSystem.h"
+#include "AudioManager.h"
 #include "XML/XMLParser.h"
 #include "ObjectManager.h"
 #include "InputManager.h"
@@ -18,7 +19,7 @@ Game::Game (const char* title)
 	: m_state (State::UnInited),
 	m_pRenderSystem (new RenderSystem (title)),
 	m_pPhysicsSystem (new PhysicsSystem),
-	m_pAudioSystem (new AudioSystem),
+	//m_pAudioSystem (new AudioSystem),
 	m_pTimer (new Ticker)
 {
 }
@@ -39,6 +40,7 @@ void Game::DeleteInstance ()
 		s_pInstance = nullptr;
 		ObjectManager::GetInstance ().DeleteInstance ();
 		InputManager::GetInstance ().DeleteInstance ();
+		AudioManager::GetInstance ().DeleteInstance ();
 	}
 }
 
@@ -51,6 +53,8 @@ bool Game::IsExist ()
 
 bool Game::Init ()
 {
+	srand (time (nullptr));
+	
 	if (!m_pRenderSystem->init ())
 		return false;
 
@@ -58,8 +62,9 @@ bool Game::Init ()
 	
 	if (!m_pPhysicsSystem->init ())
 		return false;
-	if (!m_pAudioSystem->init ())
-		return false;
+	//if (!m_pAudioSystem->init ())
+		//return false;
+	AudioManager::GetInstance ().Init ();
 	if (!XML::XMLParser::GetInstance ().Init ())
 		return false;
 
@@ -137,8 +142,10 @@ bool Game::Update (float t, float dt)
 
 	ObjectManager::GetInstance ().PostUpdate (t, dt); // fizika utani teendok elvegzese
 
-	if (!m_pAudioSystem->update (t, dt))
-		return false;
+	//if (!m_pAudioSystem->update (t, dt))
+		//return false;
+
+	AudioManager::GetInstance ().Update ();
 
 	if (!m_pRenderSystem->update (t, dt)) // kirajzolas
 		return false;
@@ -158,9 +165,10 @@ void Game::Destroy ()
 	XML::XMLParser::GetInstance ().Destroy ();
 	ObjectManager::GetInstance ().Destroy ();
 	InputManager::GetInstance ().Destroy ();
+	AudioManager::GetInstance ().Destroy ();
 	m_pPhysicsSystem->destroy ();
 	m_pRenderSystem->destroy ();
-	m_pAudioSystem->destroy ();
+	//m_pAudioSystem->destroy ();
 }
 
 }	// namespace Engine

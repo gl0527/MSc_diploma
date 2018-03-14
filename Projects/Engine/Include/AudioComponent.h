@@ -7,7 +7,7 @@
 
 #include "Component.h"
 
-#include <AL\alut.h>
+#include <AL/alut.h>
 #include <memory>
 
 

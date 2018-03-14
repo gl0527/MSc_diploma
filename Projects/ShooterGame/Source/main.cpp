@@ -13,6 +13,8 @@
 #include "CameraControlComponent.h"
 #include "WeaponComponent.h"
 #include "SoldierAnimComponent.h"
+#include "AudioManager.h"
+#include "AudioSourceComponent.h"
 
 
 using namespace Engine;
@@ -50,11 +52,16 @@ int main(int argc, char** argv)
 	auto button = renderSys->GetWidget<MyGUI::Button> ("New");
 	button->eventMouseButtonClick = MyGUI::newDelegate (GLOBAL_FUNC_NAME);
 
+	AudioManager::GetInstance ().AddBuffer ("media\\level01-arrival\\sound\\churchbell.wav");
+	AudioManager::GetInstance ().AddBuffer ("media\\level01-arrival\\sound\\bounce.wav");
+	AudioManager::GetInstance ().AddBuffer ("media\\level01-arrival\\sound\\ghostbirth.wav");
+
 	if (auto exp = objectMgr.GetGameObjectByName ("explosive").lock ()) {
 		if (auto explosivePhysx = exp->GetFirstComponentByType<PhysicsComponent> ().lock ()) {
 			explosivePhysx->onTriggerEnter += [] (PhysicsComponent* otherPhyComp) {
-				if (otherPhyComp != nullptr)
+				if (otherPhyComp != nullptr) {
 					otherPhyComp->AddForce (2'000, 1'000, -20'000);
+				}
 			};
 		}
 	}
@@ -65,9 +72,14 @@ int main(int argc, char** argv)
 		soldierGO->AddComponent (soldierAnimComp);
 	}
 
-	if (auto lvl = objectMgr.GetGameObjectByName ("level").lock ()) {
-		if (auto levelSound = lvl->GetFirstComponentByType<AudioComponent> ().lock ())
-			levelSound->Play ();
+	if (auto lvl = objectMgr.GetGameObjectByName ("ball").lock ()) {
+		std::shared_ptr<AudioSourceComponent> audio (new AudioSourceComponent ("levelKeszo", AudioSourceComponent::SoundEffect));
+		//audio->AddBuffer ("media\\level01-arrival\\sound\\main_theme.wav");
+		audio->AddBuffer ("media\\level01-arrival\\sound\\bounce.wav");
+
+		lvl->AddComponent (audio);
+		audio->SetLooping (true);
+		audio->Play ();
 	}
 
 	if (auto frames = objectMgr.CreateGameObject ("fps").lock ()) {
@@ -78,6 +90,7 @@ int main(int argc, char** argv)
 	if (auto gijoecam = objectMgr.GetGameObjectByName ("gijoecamera").lock ()) {
 		std::shared_ptr<CameraControlComponent> camControl (new CameraControlComponent ("camc"));
 		gijoecam->AddComponent (camControl);
+		AudioManager::GetInstance ().SetListener ("gijoecamera");
 	}
 	if (auto weapon = objectMgr.GetGameObjectByName ("weapon").lock ()) {
 		//Factory<WeaponComponent> weaponFactory;

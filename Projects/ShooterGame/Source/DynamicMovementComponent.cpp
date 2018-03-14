@@ -75,7 +75,7 @@ void DynamicMovementComponent::PreUpdate(float t, float dt)
 	ownerObject->transform()->setRotation(Qpitch * ownerObject->transform()->rotation());*/
 
 	force.normalise();
-	force = m_owner->Transform()->GetRotationInWorldSpace() * force; // azert, hogy a movedir az ownerObject koordinata-rendszereben legyen ertve
+	force = m_owner->Transform()->GetGlobalRotation() * force; // azert, hogy a movedir az ownerObject koordinata-rendszereben legyen ertve
 
 	if (auto phy = ownerPhysics.lock())
 	{

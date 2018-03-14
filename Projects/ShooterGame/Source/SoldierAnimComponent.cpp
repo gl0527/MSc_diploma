@@ -232,7 +232,7 @@ void SoldierAnimComponent::RunState::PostExecute (Stateable* stateable, float t,
 		return;
 	}
 
-	const Ogre::Vector3& forward = -1.0f * m_pParent->m_owner->Transform()->GetForwardVecInWorldSpace ();	// a -1-es szorzo csak azert kell, mert a katona alap nezeti iranya a z=+1, s nem z=-1
+	const Ogre::Vector3& forward = -1.0f * m_pParent->m_owner->Transform()->Forward ();	// a -1-es szorzo csak azert kell, mert a katona alap nezeti iranya a z=+1, s nem z=-1
 
  	auto ownerPhysics = m_pParent->m_owner->GetFirstComponentByType<PhysicsComponent>();
 

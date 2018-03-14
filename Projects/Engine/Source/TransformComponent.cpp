@@ -6,132 +6,179 @@ namespace Engine {
 
 TransformComponent::TransformComponent (const std::string& name) :
 	Component (name, true),
-	m_posInWorldSpace (Ogre::Vector3::ZERO),
-	m_rotInWorldSpace (Ogre::Quaternion::IDENTITY),
-	m_scaleInWorldSpace (Ogre::Vector3::UNIT_SCALE),
-	m_hasParent (false)
+	m_globalPosition (Ogre::Vector3::ZERO),
+	m_globalRotation (Ogre::Quaternion::IDENTITY),
+	m_globalScale (Ogre::Vector3::UNIT_SCALE),
+	m_globalTransform (Ogre::Matrix4::IDENTITY),
+	m_localPosition (Ogre::Vector3::ZERO),
+	m_localRotation (Ogre::Quaternion::IDENTITY),
+	m_localScale (Ogre::Vector3::UNIT_SCALE),
+	m_localTransform (Ogre::Matrix4::IDENTITY),
+	m_pParentTransform (nullptr)
 {
 }
 
 
-void TransformComponent::Start ()
+void TransformComponent::PostInit (GameObject* /*owner*/)
 {
 	if (auto parent = m_owner->GetParent ().lock ()) {
-		m_hasParent = true;
-		
-		auto parentTrans = parent->Transform ();
-		auto parentPos = parentTrans->GetPositionInWorldSpace ();
-
-		m_posInParentSpace = m_posInWorldSpace - parentPos;
-		m_rotInParentSpace = parentTrans->GetRotationInWorldSpace ().Inverse () * m_rotInWorldSpace;
-		m_scaleInParentSpace = m_scaleInWorldSpace / parentTrans->GetScaleInWorldSpace ();
-	} else {
-		m_posInParentSpace = m_posInWorldSpace;
-		m_rotInParentSpace = m_rotInWorldSpace;
-		m_scaleInParentSpace = m_scaleInWorldSpace;
+		m_pParentTransform = parent->Transform ();
 	}
 }
 
 
-const Ogre::Vector3& TransformComponent::GetPositionInWorldSpace () const
+const Ogre::Vector3& TransformComponent::GetGlobalPosition () const
 {
-	return m_posInWorldSpace;
+	return m_globalPosition;
 }
 
 
-const Ogre::Quaternion& TransformComponent::GetRotationInWorldSpace () const
+const Ogre::Quaternion& TransformComponent::GetGlobalRotation () const
 {
-	return m_rotInWorldSpace;
+	return m_globalRotation;
 }
 
 
-const Ogre::Vector3& TransformComponent::GetScaleInWorldSpace () const
+const Ogre::Vector3& TransformComponent::GetGlobalScale () const
 {
-	return m_scaleInWorldSpace;
+	return m_globalScale;
 }
 
 
-Ogre::Vector3 TransformComponent::GetPositionInCameraSpace (const Ogre::Matrix4& camViewMat) const
+const Ogre::Vector3& TransformComponent::GetLocalPosition () const
 {
-	return camViewMat * m_posInWorldSpace;
+	return m_localPosition;
 }
 
 
-Ogre::Vector3 TransformComponent::GetForwardVecInWorldSpace () const
+const Ogre::Quaternion& TransformComponent::GetLocalRotation () const
 {
-	return m_rotInWorldSpace * Ogre::Vector3::NEGATIVE_UNIT_Z;
+	return m_localRotation;
 }
 
 
-Ogre::Vector3 TransformComponent::GetUpVecInWorldSpace () const
+const Ogre::Vector3& TransformComponent::GetLocalScale () const
 {
-	return m_rotInWorldSpace * Ogre::Vector3::UNIT_Y;
+	return m_localScale;
 }
 
 
-Ogre::Vector3 TransformComponent::GetRightVecInWorldSpace () const
+Ogre::Vector3 TransformComponent::Forward () const
 {
-	return m_rotInWorldSpace * Ogre::Vector3::UNIT_X;
+	return m_globalRotation * Ogre::Vector3::NEGATIVE_UNIT_Z;
 }
 
 
-void TransformComponent::SetWorldPosition (const Ogre::Vector3& p)
+Ogre::Vector3 TransformComponent::Right () const
 {
-	m_posInWorldSpace = p;
+	return m_globalRotation * Ogre::Vector3::UNIT_X;
 }
 
 
-void TransformComponent::SetWorldRotation (const Ogre::Quaternion& q)
+Ogre::Vector3 TransformComponent::Up () const
 {
-	m_rotInWorldSpace = q;
+	return m_globalRotation * Ogre::Vector3::UNIT_Y;
 }
 
 
-void TransformComponent::SetWorldScale (const Ogre::Vector3& s)
+void TransformComponent::SetGlobalPosition (const Ogre::Vector3& globalPosition)
 {
-	m_scaleInWorldSpace = s;
+	m_globalPosition = globalPosition;
+	m_globalTransform.makeTransform (m_globalPosition, m_globalScale, m_globalRotation);
+	UpdateLocalTransform ();
 }
 
 
-void TransformComponent::SetPosInParentSpace (const Ogre::Vector3& pos)
+void TransformComponent::SetGlobalRotation (const Ogre::Quaternion& globalRotation)
 {
-	m_posInParentSpace = pos;
-	if (!m_hasParent)
-		m_posInWorldSpace = m_posInParentSpace;
+	m_globalRotation = globalRotation;
+	m_globalTransform.makeTransform (m_globalPosition, m_globalScale, m_globalRotation);
+	UpdateLocalTransform ();
 }
 
 
-void TransformComponent::SetRotInParentSpace (const Ogre::Quaternion& rot)
+void TransformComponent::SetGlobalScale (const Ogre::Vector3& globalScale)
 {
-	m_rotInParentSpace = rot;
-	if (!m_hasParent)
-		m_rotInWorldSpace = m_rotInParentSpace;
+	m_globalScale = globalScale;
+	m_globalTransform.makeTransform (m_globalPosition, m_globalScale, m_globalRotation);
+	UpdateLocalTransform ();
 }
 
 
-void TransformComponent::SetScaleInParentSpace (const Ogre::Vector3& scale)
+void TransformComponent::SetLocalPosition (const Ogre::Vector3& localPosition)
 {
-	m_scaleInParentSpace = scale;
-	if (!m_hasParent)
-		m_scaleInWorldSpace = m_scaleInParentSpace;
+	m_localPosition = localPosition;
+	m_localTransform.makeTransform (m_localPosition, m_localScale, m_localRotation);
+	UpdateGlobalTransform ();
 }
 
 
-void TransformComponent::AddToWorldPosition (const Ogre::Vector3& p)
+void TransformComponent::SetLocalRotation (const Ogre::Quaternion& localRotation)
 {
-	m_posInWorldSpace += p;
+	m_localRotation = localRotation;
+	m_localTransform.makeTransform (m_localPosition, m_localScale, m_localRotation);
+	UpdateGlobalTransform ();
 }
 
 
-void TransformComponent::AddToWorldRotation (const Ogre::Quaternion& q)
+void TransformComponent::SetLocalScale (const Ogre::Vector3& localScale)
 {
-	m_rotInWorldSpace = m_rotInWorldSpace * q;
+	m_localScale = localScale;
+	m_localTransform.makeTransform (m_localPosition, m_localScale, m_localRotation);
+	UpdateGlobalTransform ();
 }
 
 
-void TransformComponent::AddToWorldScale (const Ogre::Vector3& s)
+void TransformComponent::Translate (const Ogre::Vector3& translateVec)
 {
-	m_scaleInWorldSpace *= s;
+	Ogre::Vector3 newVec = m_localPosition + translateVec;
+	SetLocalPosition (newVec);
+}
+
+
+void TransformComponent::Rotate (const Ogre::Quaternion& rotQ)
+{
+	Ogre::Quaternion newRot = m_localRotation * rotQ;
+	SetLocalRotation (newRot);
+}
+
+
+void TransformComponent::Rotate (float angleInRad, const Ogre::Vector3& axis)
+{
+	Ogre::Quaternion rot (Ogre::Radian (angleInRad), axis);
+	Ogre::Quaternion newRot = m_localRotation * rot;
+	SetLocalRotation (newRot);
+}
+
+
+void TransformComponent::Scale (const Ogre::Vector3& scaleVec)
+{
+	Ogre::Vector3 newScale (m_localScale.x * scaleVec.x, m_localScale.y * scaleVec.y, m_localScale.z * scaleVec.z);
+	SetLocalScale (newScale);
+}
+
+
+void TransformComponent::UpdateGlobalTransform ()
+{
+	if (m_pParentTransform != nullptr) {
+		m_globalTransform = m_pParentTransform->m_globalTransform * m_localTransform;
+	} else {
+		m_globalTransform = m_localTransform;
+	}
+	m_globalTransform.decomposition (m_globalPosition, m_globalScale, m_globalRotation);
+	// TODO gyerekekre is
+}
+
+
+void TransformComponent::UpdateLocalTransform ()
+{
+	if (m_pParentTransform != nullptr) {
+		m_localTransform = m_pParentTransform->m_globalTransform.inverse () * m_globalTransform;
+	} else {
+		m_localTransform = m_globalTransform;
+	}
+	m_localTransform.decomposition (m_localPosition, m_localScale, m_localRotation);
+	// TODO gyerekekre is
 }
 
 }	// namespace Engine

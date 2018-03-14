@@ -27,8 +27,8 @@ void WeaponComponent::PreUpdate(float t, float dt)
 			{
 				if (auto rightHand = parentSkeleton->getBone("hand_r"))
 				{
-					m_owner->Transform()->SetWorldPosition(rightHand->_getDerivedPosition());
-					m_owner->Transform()->SetWorldRotation(rightHand->_getDerivedOrientation());
+					m_owner->Transform()->SetGlobalPosition(rightHand->_getDerivedPosition());
+					m_owner->Transform()->SetGlobalRotation(rightHand->_getDerivedOrientation());
 				}
 			}
 		}

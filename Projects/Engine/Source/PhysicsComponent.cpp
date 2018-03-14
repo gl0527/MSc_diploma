@@ -60,8 +60,8 @@ void PhysicsComponent::CreateRigidBody ()
 		m_pRigidBody = nullptr;
 	}
 
-	const auto& q = m_owner->Transform ()->GetRotationInWorldSpace ();
-	const auto& p = m_owner->Transform ()->GetPositionInWorldSpace ();
+	const auto& q = m_owner->Transform ()->GetGlobalRotation ();
+	const auto& p = m_owner->Transform ()->GetGlobalPosition ();
 
 	btTransform pose (btQuaternion (q.x, q.y, q.z, q.w), btVector3 (p.x, p.y, p.z));
 	m_pMotionState = new btDefaultMotionState (pose);
@@ -95,12 +95,12 @@ void PhysicsComponent::PostInit (GameObject* object)
 void PhysicsComponent::Update (float t, float dt)
 {
 	if (m_rigidBodyType == RigidBodyType::Dynamic) {
-		m_owner->Transform ()->SetWorldPosition (GetPosition ());
-		m_owner->Transform ()->SetWorldRotation (GetOrientation ());
+		m_owner->Transform ()->SetGlobalPosition (GetPosition ());
+		m_owner->Transform ()->SetGlobalRotation (GetOrientation ());
 	}
 	else if (m_rigidBodyType == RigidBodyType::Kinematic) {
-		SetPosition (m_owner->Transform ()->GetPositionInWorldSpace ());
-		SetOrientation (m_owner->Transform ()->GetRotationInWorldSpace ());
+		SetPosition (m_owner->Transform ()->GetGlobalPosition ());
+		SetOrientation (m_owner->Transform ()->GetGlobalRotation ());
 
 		// getshape, atallitas (localscale), setshape
 		// vagy rigidbody lezuzas

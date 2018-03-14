@@ -3,6 +3,8 @@
 
 #pragma once
 
+// ---------------------------------- includes ----------------------------------
+
 #include "stdafx.h"
 
 #include <map>
@@ -73,8 +75,8 @@ private:
     MouseListenerMap 				m_mouseListeners;
 
 
-	InputManager ();
-	~InputManager () = default;
+									InputManager ();
+									~InputManager () = default;
 
 	// inherited from OIS::MouseListener
 	bool							mouseMoved (const OIS::MouseEvent& me) override;

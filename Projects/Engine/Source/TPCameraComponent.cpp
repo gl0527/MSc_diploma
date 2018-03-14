@@ -26,9 +26,9 @@ TPCameraComponent::~TPCameraComponent ()
 void TPCameraComponent::PostInit (GameObject* object)
 {
 	CameraComponent::PostInit (object);
-	auto dir = m_owner->Transform ()->GetForwardVecInWorldSpace ();
+	auto dir = m_owner->Transform ()->Forward ();
 	dir.normalise ();
-	const auto& ownerPos = m_owner->Transform ()->GetPositionInWorldSpace ();
+	const auto& ownerPos = m_owner->Transform ()->GetGlobalPosition ();
 
 	m_pCamera->setPosition (ownerPos - dir*camDist + Ogre::Vector3 (0, camHeight, 0));
 	m_pCamera->lookAt (ownerPos + Ogre::Vector3 (0, targetHeight, 0));
@@ -37,8 +37,8 @@ void TPCameraComponent::PostInit (GameObject* object)
 
 void TPCameraComponent::PostUpdate (float t, float dt)
 {
-	const auto& ownerPos = m_owner->Transform ()->GetPositionInWorldSpace () + Ogre::Vector3 (0, targetHeight, 0);
-	auto dir = m_owner->Transform ()->GetForwardVecInWorldSpace ();
+	const auto& ownerPos = m_owner->Transform ()->GetGlobalPosition () + Ogre::Vector3 (0, targetHeight, 0);
+	auto dir = m_owner->Transform ()->Forward ();
 	dir.normalise ();
 	auto newPos = ownerPos - dir*camDist + Ogre::Vector3 (0, camHeight, 0);
 

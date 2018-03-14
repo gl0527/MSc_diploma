@@ -58,9 +58,9 @@ void AudioComponent::UpdatePose (const Ogre::Vector3& pos, const Ogre::Vector3& 
 void AudioComponent::PreUpdate (float t, float dt)
 {
 	if (m_owner)
-		UpdatePose (m_owner->Transform ()->GetPositionInWorldSpace (), m_owner->Transform ()->GetForwardVecInWorldSpace ());
+		UpdatePose (m_owner->Transform ()->GetGlobalPosition (), m_owner->Transform ()->Forward ());
 	if (auto listenerObj = m_pListener.lock ())
-		UpdatePose (listenerObj->Transform ()->GetPositionInWorldSpace (), listenerObj->Transform ()->GetForwardVecInWorldSpace ());
+		UpdatePose (listenerObj->Transform ()->GetGlobalPosition (), listenerObj->Transform ()->Forward ());
 }
 
 

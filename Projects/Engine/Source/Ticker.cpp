@@ -1,6 +1,6 @@
 #include "Ticker.h"
 
-#ifdef _WIN32
+#ifdef WINDOWS
 #include <windows.h>
 #elif __linux__
 #include <sys/time.h>

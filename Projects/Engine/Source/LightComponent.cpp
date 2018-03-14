@@ -55,9 +55,9 @@ void LightComponent::PostUpdate (float t, float dt)
 	auto ownerTransform = m_owner->Transform ();
 
 	if (m_type != Ogre::Light::LT_DIRECTIONAL)
-		m_pLight->setPosition (ownerTransform->GetPositionInWorldSpace ());
+		m_pLight->setPosition (ownerTransform->GetGlobalPosition ());
 	if (m_type != Ogre::Light::LT_POINT)
-		m_pLight->setDirection (ownerTransform->GetForwardVecInWorldSpace ());
+		m_pLight->setDirection (ownerTransform->Forward ());
 }
 
 

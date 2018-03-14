@@ -46,6 +46,8 @@ bool TransformProcessor::ProcessXMLTag (TiXmlElement* elem)
 
 	AddToParentObject (elem, comp);
 
+	bool isPositionSet = false, isRotationSet = false, isScaleSet = false;
+
 	foreach_child (elem)
 	{
 		std::string childName (child->Value ());
@@ -61,9 +63,9 @@ bool TransformProcessor::ProcessXMLTag (TiXmlElement* elem)
 				return false;
 			}
 
-			comp->SetWorldPosition (position);
-		}
-		else if (childName == "rotation") {
+			comp->SetLocalPosition (position);
+			isPositionSet = true;
+		} else if (childName == "rotation") {
 			Ogre::Quaternion rotation;
 
 			try {
@@ -74,9 +76,9 @@ bool TransformProcessor::ProcessXMLTag (TiXmlElement* elem)
 				return false;
 			}
 
-			comp->SetWorldRotation (rotation);
-		}
-		else if (childName == "scale") {
+			comp->SetLocalRotation (rotation);
+			isRotationSet = true;
+		} else if (childName == "scale") {
 			Ogre::Vector3 scale;
 
 			try {
@@ -87,9 +89,19 @@ bool TransformProcessor::ProcessXMLTag (TiXmlElement* elem)
 				return false;
 			}
 
-			comp->SetWorldScale (scale);
+			comp->SetLocalScale (scale);
+			isScaleSet = true;
 		}
 	}
+
+	if (!isPositionSet)
+		comp->SetLocalPosition (Ogre::Vector3::ZERO);
+
+	if (!isRotationSet)
+		comp->SetLocalRotation (Ogre::Quaternion::IDENTITY);
+	
+	if (!isScaleSet)
+		comp->SetLocalScale (Ogre::Vector3::UNIT_SCALE);
 
 	return true;
 }

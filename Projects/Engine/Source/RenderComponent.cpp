@@ -26,9 +26,9 @@ void RenderComponent::PostInit (GameObject* obj)
 
 void RenderComponent::PostUpdate (float t, float dt)
 {
-	m_pCurrentNode->setPosition (m_owner->Transform ()->GetPositionInWorldSpace ());
-	m_pCurrentNode->setOrientation (m_owner->Transform ()->GetRotationInWorldSpace ());
-	m_pCurrentNode->setScale (m_owner->Transform ()->GetScaleInWorldSpace ());
+	m_pCurrentNode->setPosition (m_owner->Transform ()->GetLocalPosition ());
+	m_pCurrentNode->setOrientation (m_owner->Transform ()->GetLocalRotation ());
+	m_pCurrentNode->setScale (m_owner->Transform ()->GetLocalScale ());
 }
 
 
