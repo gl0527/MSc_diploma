@@ -1,11 +1,11 @@
 #include "XML/MeshProcessor.h"
 #include "MeshComponent.h"
 #include "XML/XMLParser.h"
-#include "Ogre.h"
 
 #include "Prefab/GameObjectCreator.h"
 #include "Prefab/GenericPrefab.h"
 #include "ObjectManager.h"
+#include <iostream>
 
 
 namespace Engine {

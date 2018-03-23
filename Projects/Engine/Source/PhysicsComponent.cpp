@@ -2,7 +2,8 @@
 #include "GameObject.h"
 #include "Game.h"
 #include "PhysicsSystem.h"
-#include <Ogre.h>
+#include "OgreVector3.h"
+#include "OgreQuaternion.h"
 #include "TransformComponent.h"
 #include "PhysicsMaterial.h"
 
@@ -63,12 +64,15 @@ void PhysicsComponent::CreateRigidBody ()
 	const auto& q = m_owner->Transform ()->GetGlobalRotation ();
 	const auto& p = m_owner->Transform ()->GetGlobalPosition ();
 
-	btTransform pose (btQuaternion (q.x, q.y, q.z, q.w), btVector3 (p.x, p.y, p.z));
+	btQuaternion physicsRot (q.x, q.y, q.z, q.w);
+	btVector3 physicsPos (p.x, p.y, p.z);
+
+	btTransform pose (physicsRot, physicsPos);
 	m_pMotionState = new btDefaultMotionState (pose);
 
 	btVector3 inertia (0, 0, 0);
 	if (m_rigidBodyType == RigidBodyType::Static)
-		m_mass = 0.0f;
+		m_mass = 0;
 	else
 		m_pCompoundShape->calculateLocalInertia (m_mass, inertia);
 
@@ -82,6 +86,12 @@ void PhysicsComponent::CreateRigidBody ()
 	}
 	m_pRigidBody->setUserPointer (this);
 	m_pWorld->addRigidBody (m_pRigidBody);
+
+	btBroadphaseProxy* broadPhaseProxy = m_pRigidBody->getBroadphaseHandle ();
+	if (broadPhaseProxy != nullptr) {
+		broadPhaseProxy->m_collisionFilterGroup = static_cast<short> (btBroadphaseProxy::DefaultFilter);
+		broadPhaseProxy->m_collisionFilterMask = static_cast<short> (btBroadphaseProxy::AllFilter);
+	}
 }
 
 
@@ -202,16 +212,25 @@ void PhysicsComponent::AddForce (float fx, float fy, float fz)
 }
 
 
+void PhysicsComponent::AddTorque (float tx, float ty, float tz)
+{
+	if (m_rigidBodyType == RigidBodyType::Dynamic && m_pRigidBody != nullptr) {
+		btVector3 torque (tx, ty, tz);
+		m_pRigidBody->applyTorque (torque);
+	}
+}
+
+
 void PhysicsComponent::SetAngularFactor (float x, float y, float z)
 {
-	if (m_rigidBodyType == RigidBodyType::Dynamic && m_pRigidBody)
+	if (m_rigidBodyType == RigidBodyType::Dynamic && m_pRigidBody != nullptr)
 		m_pRigidBody->setAngularFactor (btVector3 (x, y, z));
 }
 
 
 void PhysicsComponent::SetLinearVelocity (float x, float y, float z)
 {
-	if (m_rigidBodyType == RigidBodyType::Dynamic && m_pRigidBody)
+	if (/*m_rigidBodyType == RigidBodyType::Dynamic && */m_pRigidBody)
 		m_pRigidBody->setLinearVelocity (btVector3 (x, y, z));
 }
 

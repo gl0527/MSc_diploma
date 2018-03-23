@@ -1,7 +1,7 @@
 #include "AudioManager.h"
 #include "ErrorMessage.h"
 #include <iostream>
-#include "Ogre.h"
+#include "OgreVector3.h"
 #include "GameObject.h"
 #include "TransformComponent.h"
 #include "ObjectManager.h"
@@ -11,9 +11,12 @@ namespace Engine {
 
 AudioManager::AudioManager () :
 	m_pAudioDevice (nullptr),
-	m_pAudioContext (nullptr)
+	m_pAudioContext (nullptr),
+	m_pathToBuffers ("")
 {
-	alDistanceModel (AL_LINEAR_DISTANCE_CLAMPED);
+	for (size_t i = 0; i < s_MaxSourceCount; ++i) {
+		m_sourceIDs[i] = 0;
+	}
 }
 
 
@@ -21,12 +24,6 @@ AudioManager& AudioManager::GetInstance ()
 {
 	std::call_once (s_onceFlag, [] () { s_pInstance.reset (new AudioManager); });
 	return *s_pInstance.get ();
-}
-
-
-unsigned char AudioManager::GetMaxSourceCount ()
-{
-	return s_MaxSourceCount;
 }
 
 
@@ -47,6 +44,9 @@ void AudioManager::Init ()
 	ALenum error = alutGetError ();
 	if (error != AL_NO_ERROR)
 		ERR_THROW (std::runtime_error, "An error occurred during OpenAL initialization!");
+
+	alGenSources (s_MaxSourceCount, m_sourceIDs);
+	alDistanceModel (AL_LINEAR_DISTANCE_CLAMPED);
 }
 
 
@@ -60,7 +60,8 @@ void AudioManager::Update ()
 		const Ogre::Vector3& listenerUp = listenerTransform->Up ();
 
 		alListener3f (AL_POSITION, listenerPos.x, listenerPos.y, listenerPos.z);
-		ALfloat listenerOrient[] = { listenerDir.x, listenerDir.y, listenerDir.z, listenerUp.x, listenerUp.y, listenerUp.z };
+		alListener3f (AL_VELOCITY, listenerDir.x, listenerDir.y, listenerDir.z);
+		float listenerOrient[] = { listenerDir.x, listenerDir.y, listenerDir.z, listenerUp.x, listenerUp.y, listenerUp.z };
 		alListenerfv (AL_ORIENTATION, listenerOrient);
 	}
 }
@@ -68,8 +69,9 @@ void AudioManager::Update ()
 
 void AudioManager::Destroy ()
 {
-	for (auto it = m_buffers.begin (), itEnd = m_buffers.end (); it != itEnd; ++it) {
-		ALuint buffer = it->second;
+	alDeleteSources (s_MaxSourceCount, m_sourceIDs);
+	for (auto it = m_bufferIDs.begin (), itEnd = m_bufferIDs.end (); it != itEnd; ++it) {
+		unsigned int buffer = it->second;
 		alDeleteBuffers (1, &buffer);
 	}
 	alcMakeContextCurrent (nullptr);
@@ -79,30 +81,51 @@ void AudioManager::Destroy ()
 }
 
 
-void AudioManager::AddBuffer (const std::string& filePath)
+void AudioManager::GetBuffer (const std::string& bufferName, unsigned int* outBufferID)
 {
-	ALuint buffer = alutCreateBufferFromFile (filePath.c_str ());
-	m_buffers[filePath] = buffer;
+	auto it = m_bufferIDs.find (bufferName);
+	
+	if (it != m_bufferIDs.end ()) {
+		*outBufferID = m_bufferIDs.at (bufferName);
+	} else {
+		unsigned int buffer = alutCreateBufferFromFile ((m_pathToBuffers + bufferName).c_str ());
+		m_bufferIDs[bufferName] = buffer;
+		*outBufferID = buffer;
+	}
 }
 
 
-bool AudioManager::GetBuffer (const std::string& bufferName, ALuint* outBuffer)
+bool AudioManager::GetAvailableSource (unsigned int* outSrcID) const
 {
-	auto it = m_buffers.find (bufferName);
-	
-	if (it != m_buffers.end ()) {
-		*outBuffer = m_buffers.at (bufferName);
+	for (unsigned char i = 0; i < s_MaxSourceCount; ++i) {
+		if (!IsPlaying (m_sourceIDs[i])) {
+			*outSrcID = m_sourceIDs[i];
 
-		return true;
+			return true;
+		}
 	}
 
 	return false;
 }
 
 
+void AudioManager::SetPathToBuffers (const std::string& pathToBuffers)
+{
+	m_pathToBuffers = pathToBuffers;
+}
+
+
 void AudioManager::SetListener (const std::string& listenerName)
 {
 	m_pListenerObj = ObjectManager::GetInstance ().GetGameObjectByName (listenerName).lock ();
+}
+
+
+bool AudioManager::IsPlaying (unsigned int sourceID) const
+{
+	ALenum state;
+	alGetSourcei (sourceID, AL_SOURCE_STATE, &state);
+	return state == AL_PLAYING;
 }
 
 }	// namespace Engine

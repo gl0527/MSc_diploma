@@ -1,7 +1,7 @@
 #include "XML/ParticleProcessor.h"
 #include "ParticleComponent.h"
 #include "XML/XMLParser.h"
-#include "Ogre.h"
+#include <iostream>
 
 
 namespace Engine {

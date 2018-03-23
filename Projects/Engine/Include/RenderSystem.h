@@ -6,19 +6,32 @@
 // ---------------------------------- includes ----------------------------------
 
 #include "System.h"
-#include "Ogre.h"
+#include "OgrePrerequisites.h"
 #include <OIS.h>
 #include "Overlay\OgreOverlayManager.h"
-#include "MyGUI.h"
+#include "MyGUI_Gui.h"
 #include "stdafx.h"
 
 
 namespace Ogre {
+
 class OverlaySystem;
+class Root;
+class SceneNode;
+class SceneManager;
+class RenderWindow;
+class OverlayElement;
+class Overlay;
+class OverlayContainer;
+class OverlayManager;
+class Overlay;
+
 }
 
 namespace MyGUI {
+
 class OgrePlatform;
+
 }
 
 namespace Engine {

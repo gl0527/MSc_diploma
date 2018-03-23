@@ -6,7 +6,9 @@
 // ---------------------------------- includes ----------------------------------
 
 #include "Component.h"
-#include "Ogre.h"
+#include "OgreVector3.h"
+#include "OgreQuaternion.h"
+#include "OgreMatrix4.h"
 
 
 namespace Engine {
@@ -18,7 +20,7 @@ class TransformComponent : public Component
 public:
 										TransformComponent (const std::string& name);
 
-	void								PostInit (GameObject* /*owner*/) override;
+	void								PostInit (GameObject* owner) override;
 
 	DLL_EXPORT Ogre::Vector3			Forward () const;
 	DLL_EXPORT Ogre::Vector3			Right () const;
@@ -62,6 +64,7 @@ private:
 
 	void								UpdateGlobalTransform ();
 	void								UpdateLocalTransform ();
+	void								UpdateGlobalTransformForChildren ();
 };
 
 }	// namespace Engine

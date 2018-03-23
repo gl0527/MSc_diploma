@@ -1,7 +1,9 @@
 #include "InputComponent.h"
 #include "GameObject.h"
 #include "InputManager.h"
-#include <Ogre.h>
+#include "OgreVector3.h"
+#include "OgreQuaternion.h"
+#include "OgreMath.h"
 #include "TransformComponent.h"
 
 
@@ -21,33 +23,21 @@ void InputComponent::PreUpdate(float t, float dt)
 	Ogre::Vector3 moveDir = Ogre::Vector3::ZERO;
 	++delay;
 
-	/*if (inputHandler->isKeyDown(OIS::KC_ESCAPE))
-	{
-		Game::getInstance().destroy();
-		return;
-	}*/
-	/*if (inputHandler->isKeyDown(OIS::KC_P))
-		Game::getInstance().pause();*/
-	/*if (inputHandler->isKeyDown(OIS::KC_D))
-		moveDir += Ogre::Vector3(1.0f, 0.0f, 0.0f);
-	if (inputHandler->isKeyDown(OIS::KC_A))
+	if (InputManager::GetInstance ().IsKeyDown (OIS::KC_D))
 		moveDir += Ogre::Vector3(-1.0f, 0.0f, 0.0f);
-	if (inputHandler->isKeyDown(OIS::KC_W))
-		moveDir += Ogre::Vector3(0.0f, 0.0f, -1.0f);
-	if (inputHandler->isKeyDown(OIS::KC_S))
+	if (InputManager::GetInstance ().IsKeyDown (OIS::KC_A))
+		moveDir += Ogre::Vector3(1.0f, 0.0f, 0.0f);
+	if (InputManager::GetInstance ().IsKeyDown (OIS::KC_W))
 		moveDir += Ogre::Vector3(0.0f, 0.0f, 1.0f);
-	if (inputHandler->isKeyDown(OIS::KC_SYSRQ) && delay > maxDelay)
+	if (InputManager::GetInstance ().IsKeyDown (OIS::KC_S))
+		moveDir += Ogre::Vector3(0.0f, 0.0f, -1.0f);
+	/*if (inputHandler->isKeyDown(OIS::KC_SYSRQ) && delay > maxDelay)
 	{
 		std::cout << "Screenshot taken.\n";
 		Game::getInstance().getRenderSystem()->getRenderWindow()->writeContentsToTimestampedFile("screenshot", ".jpg");
 		delay = 0;
-	}
+	}*/
 		
-	if (ms.buttonDown(OIS::MB_Left))
-		std::cout << "lmb: " << ms.X.abs << ", " << ms.Y.abs << std::endl;
-	if (ms.buttonDown(OIS::MB_Right))
-		std::cout << "rmb: " << ms.X.rel << ", " << ms.Y.rel << std::endl;*/
-	
 	int mouseRelX, mouseRelY;
 
 	if (InputManager::GetInstance ().GetRelativeMouseX (&mouseRelX)) {
@@ -56,18 +46,17 @@ void InputComponent::PreUpdate(float t, float dt)
 		m_owner->Transform ()->SetGlobalRotation (Qyaw * m_owner->Transform ()->GetGlobalRotation ());
 	}
 
-	const Ogre::Vector3& right = m_owner->Transform()->Right();
+	/*const Ogre::Vector3& right = m_owner->Transform()->Right();
 	
 	if (InputManager::GetInstance ().GetRelativeMouseY (&mouseRelY)) {
 		Ogre::Radian pitch (-turnSpeed * mouseRelY);
 		Ogre::Quaternion Qpitch (pitch, right);
 		m_owner->Transform ()->SetGlobalRotation (Qpitch * m_owner->Transform ()->GetGlobalRotation ());
-	}
+	}*/
 
-	/*moveDir.normalise();
-	moveDir = m_owner->transform()->rotation() * moveDir; // azert, hogy a movedir az m_owner koordinata-rendszereben legyen ertve
-	
-	m_owner->transform()->setPosition(m_owner->transform()->position() + moveDir * dt * moveSpeed);*/ // a dt miatt a mozgas sebessege fuggetlen a gep sebessegetol
+	moveDir.normalise ();
+	moveDir = m_owner->Transform ()->GetGlobalRotation () * moveDir;
+	m_owner->Transform ()->SetGlobalPosition (m_owner->Transform ()->GetGlobalPosition () + moveDir * dt * moveSpeed);
 }
 
 

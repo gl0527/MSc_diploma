@@ -208,6 +208,12 @@ std::vector<std::string> GameObject::GetChildrenNames () const
 }
 
 
+const std::vector<GameObject::WPtr> GameObject::GetChildren () const
+{
+	return m_children;
+}
+
+
 void GameObject::ClearParent ()
 {
 	m_pParent.reset ();

@@ -1,5 +1,6 @@
 #include "AnimState.h"
-#include <Ogre.h>
+#include "OgreAnimationState.h"
+#include "OgrePrerequisites.h"
 
 
 namespace Engine {

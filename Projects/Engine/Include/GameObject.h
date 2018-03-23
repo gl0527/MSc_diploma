@@ -56,6 +56,7 @@ public:
 	std::weak_ptr<Component>		GetComponent (const std::string& cID) const;
 	DLL_EXPORT	WPtr				GetParent () const;
 	std::vector<std::string>		GetChildrenNames () const;
+	const std::vector<WPtr>			GetChildren () const;
 
 	template<typename T>
 	std::weak_ptr<T>				GetFirstComponentByType ();

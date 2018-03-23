@@ -1,5 +1,4 @@
 // include from Engine
-#include "AudioComponent.h"
 #include "Game.h"
 #include "GameObject.h"
 #include "ObjectManager.h"
@@ -10,11 +9,14 @@
 #include "InputComponent.h"
 #include "FPSComponent.h"
 #include "InputProcessor.h"
-#include "CameraControlComponent.h"
 #include "WeaponComponent.h"
 #include "SoldierAnimComponent.h"
 #include "AudioManager.h"
 #include "AudioSourceComponent.h"
+
+#include "OgreSceneManager.h"
+#include "MyGUI_Widget.h"
+#include "MyGUI_Button.h"
 
 
 using namespace Engine;
@@ -47,14 +49,12 @@ int main(int argc, char** argv)
 	if (!xmlParser.LoadXMLFromFile ("media\\level01-arrival\\map\\test.xml"))
 		return -1;
 
+	AudioManager::GetInstance ().SetPathToBuffers ("media\\level01-arrival\\sound\\");
+
 	renderSys->LoadGUILayout ("EditPanel.layout");
 	renderSys->LoadGUILayout ("MainPanel.layout");
 	auto button = renderSys->GetWidget<MyGUI::Button> ("New");
 	button->eventMouseButtonClick = MyGUI::newDelegate (GLOBAL_FUNC_NAME);
-
-	AudioManager::GetInstance ().AddBuffer ("media\\level01-arrival\\sound\\churchbell.wav");
-	AudioManager::GetInstance ().AddBuffer ("media\\level01-arrival\\sound\\bounce.wav");
-	AudioManager::GetInstance ().AddBuffer ("media\\level01-arrival\\sound\\ghostbirth.wav");
 
 	if (auto exp = objectMgr.GetGameObjectByName ("explosive").lock ()) {
 		if (auto explosivePhysx = exp->GetFirstComponentByType<PhysicsComponent> ().lock ()) {
@@ -72,13 +72,28 @@ int main(int argc, char** argv)
 		soldierGO->AddComponent (soldierAnimComp);
 	}
 
-	if (auto lvl = objectMgr.GetGameObjectByName ("ball").lock ()) {
-		std::shared_ptr<AudioSourceComponent> audio (new AudioSourceComponent ("levelKeszo", AudioSourceComponent::SoundEffect));
-		//audio->AddBuffer ("media\\level01-arrival\\sound\\main_theme.wav");
-		audio->AddBuffer ("media\\level01-arrival\\sound\\bounce.wav");
+	if (auto lvl = objectMgr.GetGameObjectByName ("level").lock ()) {
+		std::shared_ptr<AudioSourceComponent> audio (new AudioSourceComponent ("music", AudioSourceComponent::Music));
+		audio->AddBuffer ("main_theme_2.wav");
+		audio->AddBuffer ("main_theme_4.wav");
 
 		lvl->AddComponent (audio);
+
 		audio->SetLooping (true);
+		audio->SetVolume (0.3f);
+		audio->Play ();
+	}
+
+	if (auto ball = objectMgr.GetGameObjectByName ("ball").lock ()) {
+		std::shared_ptr<AudioSourceComponent> audio (new AudioSourceComponent ("levelKeszo", AudioSourceComponent::SoundEffect));
+		audio->AddBuffer ("churchbell.wav");
+		audio->AddBuffer ("bounce.wav");
+
+		ball->AddComponent (audio);
+
+		audio->SetLooping (true);
+		audio->SetMaxDistanceWithFullGain (40.0f);
+		audio->SetMinDistanceWithZeroGain (150.0f);
 		audio->Play ();
 	}
 
@@ -88,25 +103,13 @@ int main(int argc, char** argv)
 	}
 
 	if (auto gijoecam = objectMgr.GetGameObjectByName ("gijoecamera").lock ()) {
-		std::shared_ptr<CameraControlComponent> camControl (new CameraControlComponent ("camc"));
-		gijoecam->AddComponent (camControl);
 		AudioManager::GetInstance ().SetListener ("gijoecamera");
-	}
-	if (auto weapon = objectMgr.GetGameObjectByName ("weapon").lock ()) {
-		//Factory<WeaponComponent> weaponFactory;
-
-		//weaponFactory.SetCtorParams ("weap");
-		//weaponFactory.SetAllNonCtorParams ();
-
-		//Factory<WeaponComponent>::SPtr weaponComponent = weaponFactory.Create ();
-
-		//weapon->AddComponent (weaponComponent);
 	}
 
 	// setting up environment
 	auto sceneMgr = renderSys->GetSceneManager ();
 
-	sceneMgr->setAmbientLight (Ogre::ColourValue (0.2f, 0.2f, 0.2f, 1.0f)); // ez is kellene az xml-be
+	sceneMgr->setAmbientLight (Ogre::ColourValue (0.4f, 0.4f, 0.4f, 1.0f)); // ez is kellene az xml-be
 	//sceneMgr->setShadowTechnique(Ogre::SHADOWTYPE_STENCIL_MODULATIVE);
 	//sceneMgr->setShadowColour(Ogre::ColourValue(0.3f, 0.3f, 0.3f));
 	sceneMgr->setSkyBox (true, "Stormy");

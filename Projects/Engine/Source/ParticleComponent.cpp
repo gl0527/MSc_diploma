@@ -1,6 +1,8 @@
 #include "ParticleComponent.h"
 #include "GameObject.h"
-#include "Ogre.h"
+#include "OgreStringConverter.h"
+#include "OgreSceneManager.h"
+#include "OgreParticleSystem.h"
 
 
 namespace Engine {

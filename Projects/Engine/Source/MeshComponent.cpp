@@ -1,6 +1,8 @@
 #include "MeshComponent.h"
 #include "GameObject.h"
-#include "Ogre.h"
+#include "OgreStringConverter.h"
+#include "OgreSceneManager.h"
+#include "OgreEntity.h"
 
 
 namespace Engine {

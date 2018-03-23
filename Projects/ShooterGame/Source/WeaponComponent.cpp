@@ -2,6 +2,9 @@
 #include "GameObject.h"
 #include "TransformComponent.h"
 #include "MeshComponent.h"
+#include "OgreEntity.h"
+#include "OgreSkeletonInstance.h"
+#include "OgreBone.h"
 
 
 WeaponComponent::WeaponComponent(const std::string& name)

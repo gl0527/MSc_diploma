@@ -6,7 +6,9 @@
 // ---------------------------------- includes ----------------------------------
 
 #include "Component.h"
-#include <Ogre.h>
+#include "OgreVector3.h"
+#include "OgreColourValue.h"
+#include "OgreLight.h"
 
 
 namespace Engine {

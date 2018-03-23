@@ -4,7 +4,10 @@
 #include "InputManager.h"
 #include "PhysicsComponent.h"
 #include "TransformComponent.h"
-#include "Ogre.h"
+#include "OgreVector3.h"
+#include "OgreSkeleton.h"
+#include "OgreSkeletonInstance.h"
+#include "OgreEntity.h"
 
 
 // ========================= class SoldierAnimComponent =========================
@@ -232,7 +235,7 @@ void SoldierAnimComponent::RunState::PostExecute (Stateable* stateable, float t,
 		return;
 	}
 
-	const Ogre::Vector3& forward = -1.0f * m_pParent->m_owner->Transform()->Forward ();	// a -1-es szorzo csak azert kell, mert a katona alap nezeti iranya a z=+1, s nem z=-1
+	const Ogre::Vector3& forward = -1.0f * m_pParent->m_owner->Transform()->Forward ();
 
  	auto ownerPhysics = m_pParent->m_owner->GetFirstComponentByType<PhysicsComponent>();
 
@@ -240,6 +243,7 @@ void SoldierAnimComponent::RunState::PostExecute (Stateable* stateable, float t,
 		phy->SetLinearVelocity (0.0f, 0.0f, 0.0f);
 		phy->ActivateRigidBody ();
 		phy->AddForce (4'000.0f * forward.x, 4'000.0f * forward.y, 4'000.0f * forward.z);
+		phy->SetAngularFactor (0.0f, 1.0f, 0.0f);
 	}
 
 	if (!toIdle && inputManager.IsLeftMouseButtonDown ())

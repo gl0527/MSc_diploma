@@ -2,6 +2,8 @@
 #include "GameObject.h"
 #include "Game.h"
 #include "RenderSystem.h"
+#include "OgreRenderWindow.h"
+#include "OgreSceneManager.h"
 
 
 namespace Engine {

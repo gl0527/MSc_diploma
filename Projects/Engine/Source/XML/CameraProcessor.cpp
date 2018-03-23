@@ -7,7 +7,7 @@
 #include "ObjectManager.h"
 #include "GameObject.h"
 
-#include "Ogre.h"
+#include "OgreVector3.h"
 
 
 namespace Engine {

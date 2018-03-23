@@ -1,6 +1,8 @@
 #include "BillboardComponent.h"
 #include "GameObject.h"
-#include "Ogre.h"
+#include "OgreStringConverter.h"
+#include "OgreSceneManager.h"
+#include "OgreBillboardSet.h"
 
 
 namespace Engine {

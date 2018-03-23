@@ -27,37 +27,37 @@ void TransformComponent::PostInit (GameObject* /*owner*/)
 }
 
 
-const Ogre::Vector3& TransformComponent::GetGlobalPosition () const
+inline const Ogre::Vector3& TransformComponent::GetGlobalPosition () const
 {
 	return m_globalPosition;
 }
 
 
-const Ogre::Quaternion& TransformComponent::GetGlobalRotation () const
+inline const Ogre::Quaternion& TransformComponent::GetGlobalRotation () const
 {
 	return m_globalRotation;
 }
 
 
-const Ogre::Vector3& TransformComponent::GetGlobalScale () const
+inline const Ogre::Vector3& TransformComponent::GetGlobalScale () const
 {
 	return m_globalScale;
 }
 
 
-const Ogre::Vector3& TransformComponent::GetLocalPosition () const
+inline const Ogre::Vector3& TransformComponent::GetLocalPosition () const
 {
 	return m_localPosition;
 }
 
 
-const Ogre::Quaternion& TransformComponent::GetLocalRotation () const
+inline const Ogre::Quaternion& TransformComponent::GetLocalRotation () const
 {
 	return m_localRotation;
 }
 
 
-const Ogre::Vector3& TransformComponent::GetLocalScale () const
+inline const Ogre::Vector3& TransformComponent::GetLocalScale () const
 {
 	return m_localScale;
 }
@@ -166,7 +166,7 @@ void TransformComponent::UpdateGlobalTransform ()
 		m_globalTransform = m_localTransform;
 	}
 	m_globalTransform.decomposition (m_globalPosition, m_globalScale, m_globalRotation);
-	// TODO gyerekekre is
+	UpdateGlobalTransformForChildren ();
 }
 
 
@@ -178,7 +178,19 @@ void TransformComponent::UpdateLocalTransform ()
 		m_localTransform = m_globalTransform;
 	}
 	m_localTransform.decomposition (m_localPosition, m_localScale, m_localRotation);
-	// TODO gyerekekre is
+	UpdateGlobalTransformForChildren ();
+}
+
+
+void TransformComponent::UpdateGlobalTransformForChildren ()
+{
+	const auto& children = m_owner->GetChildren ();
+
+	for (const auto& weakChild : children) {
+		if (auto child = weakChild.lock ()) {
+			child->Transform ()->UpdateGlobalTransform ();
+		}
+	}
 }
 
 }	// namespace Engine

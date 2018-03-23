@@ -1,7 +1,5 @@
 #include "XML/AudioProcessor.h"
 
-#include "AudioComponent.h"
-
 #include "XML/XMLParser.h"
 
 #include "Prefab/GameObjectCreator.h"
@@ -16,7 +14,7 @@ namespace XML {
 
 bool AudioProcessor::ProcessXMLTag (TiXmlElement* elem)
 {
-	const char* file;
+	/*const char* file;
 	const char* listener;
 
 	try {
@@ -100,7 +98,7 @@ bool AudioProcessor::ProcessXMLTag (TiXmlElement* elem)
 			if (ObjectManager::GetInstance ().GetGameObjectCreator (parentName, prefab))
 				prefab->AddComponentCreator (std::make_shared<AudioPrefab> (audioPrefab));
 		}
-	}
+	}*/
 
 	return true;
 }

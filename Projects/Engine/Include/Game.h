@@ -51,7 +51,6 @@ private:
 
 	RenderSystem*	m_pRenderSystem;
 	PhysicsSystem*	m_pPhysicsSystem;
-	AudioSystem*	m_pAudioSystem;
 	Ticker*			m_pTimer;
 
 

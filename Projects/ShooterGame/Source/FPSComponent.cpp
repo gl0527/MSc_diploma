@@ -1,6 +1,8 @@
 #include "FPSComponent.h"
 #include "Game.h"
 #include "Overlay\OgreOverlaySystem.h"
+#include "OgreStringConverter.h"
+#include "OgreRenderWindow.h"
 
 
 FPSComponent::FPSComponent(const std::string& name)

@@ -1,11 +1,12 @@
 #include "XML/XMLParser.h"
 
-#include "Ogre.h"
+#include "OgreVector3.h"
+#include "OgreQuaternion.h"
+#include "OgreColourValue.h"
 
 #include "XML/TransformProcessor.h"
 #include "XML/CameraProcessor.h"
 #include "XML/MeshProcessor.h"
-#include "XML/TPCameraProcessor.h"
 #include "XML/PhysicsProcessor.h"
 #include "XML/GameObjectProcessor.h"
 #include "XML/AudioProcessor.h"
@@ -42,7 +43,6 @@ bool XMLParser::Init ()
 {
 	new GameObjectProcessor;
 	new TransformProcessor;
-	new TPCameraProcessor;
 	new CameraProcessor;
 	new MeshProcessor;
 	new PhysicsProcessor;

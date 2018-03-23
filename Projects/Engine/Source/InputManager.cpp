@@ -1,9 +1,10 @@
 #include "InputManager.h"
 
 #include <sstream>
-#include "Ogre.h"
 #include "Game.h"
 #include "RenderSystem.h"
+#include "OgreRenderWindow.h"
+
 
 namespace Engine {
 

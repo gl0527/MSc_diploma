@@ -3,6 +3,8 @@
 #include "Game.h"
 #include "RenderSystem.h"
 #include "TransformComponent.h"
+#include "OgreSceneManager.h"
+#include "OgreEntity.h"
 
 
 namespace Engine {

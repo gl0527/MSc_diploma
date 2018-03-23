@@ -21,28 +21,33 @@ class AudioManager : public SingletonBase<AudioManager>
 {
 public:
 	static DLL_EXPORT AudioManager&		GetInstance ();
-	static unsigned char				GetMaxSourceCount ();
 
 	void								Init ();
 	void								Update ();
 	void								Destroy ();
 
-	DLL_EXPORT void						AddBuffer (const std::string& filePath);
-	bool								GetBuffer (const std::string& bufferName, ALuint* outBuffer);
+	void								GetBuffer (const std::string& bufferName, unsigned int* outBufferID);
+	bool								GetAvailableSource (unsigned int* outSrcID) const;
+	bool								IsPlaying (unsigned int sourceID) const;
 
+	DLL_EXPORT void						SetPathToBuffers (const std::string& pathToBuffers);
 	DLL_EXPORT void						SetListener (const std::string& listenerName);
 	
 private:
 	friend class SingletonBase<AudioManager>;
 
-	static constexpr unsigned char	s_MaxSourceCount = 8;
+	static constexpr unsigned char			s_MaxSourceCount = 16;
 
-	ALCdevice*						m_pAudioDevice;
-	ALCcontext*						m_pAudioContext;
-		
-	std::map<std::string, ALuint>	m_buffers;	// sound datas, could be any of them
+	ALCdevice*								m_pAudioDevice;
+	ALCcontext*								m_pAudioContext;
 
-	std::shared_ptr<GameObject>		m_pListenerObj;	// it is the camera for most cases
+	unsigned int							m_sourceIDs[s_MaxSourceCount];
+	std::map<std::string, unsigned int>		m_bufferIDs;
+
+	std::string								m_pathToBuffers;
+
+	std::shared_ptr<GameObject>				m_pListenerObj;
+
 
 										AudioManager ();
 										~AudioManager () = default;

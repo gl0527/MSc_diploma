@@ -1,6 +1,7 @@
 #include "XML/PhysicsProcessor.h"
 #include "PhysicsComponent.h"
-#include "Ogre.h"
+#include "OgreVector3.h"
+#include "OgreQuaternion.h"
 #include "XML/XMLParser.h"
 #include "PhysicsMaterial.h"
 

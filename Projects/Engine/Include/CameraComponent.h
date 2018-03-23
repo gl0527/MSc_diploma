@@ -6,7 +6,16 @@
 // ---------------------------------- includes ----------------------------------
 
 #include "RenderComponent.h"
-#include "Ogre.h"
+#include "OgreRay.h"
+#include "OgreVector3.h"
+
+
+namespace Ogre {
+class Camera;
+class Viewport;
+class RenderTexture;
+class RenderWindow;
+}
 
 
 namespace Engine {

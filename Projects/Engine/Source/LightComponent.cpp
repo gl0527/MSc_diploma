@@ -2,6 +2,7 @@
 #include "GameObject.h"
 #include "Game.h"
 #include "RenderSystem.h"
+#include "OgreSceneManager.h"
 #include "TransformComponent.h"
 
 

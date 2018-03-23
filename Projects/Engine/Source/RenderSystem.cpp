@@ -1,6 +1,9 @@
 #include "RenderSystem.h"
 #include "Overlay\OgreOverlaySystem.h"
 #include "MyGUI_OgrePlatform.h"
+#include "MyGUI_Gui.h"
+#include "MyGUI_InputManager.h"
+#include "MyGUI_LayoutManager.h"
 #include "InputManager.h"
 #include "ErrorMessage.h"
 

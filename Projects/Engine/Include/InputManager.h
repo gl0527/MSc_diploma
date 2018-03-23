@@ -51,8 +51,8 @@ public:
 	bool							IsRightMouseButtonDown () const;
 	bool							IsMiddleMouseButtonDown () const;
 
-	bool							GetAbsoluteMouseX (int* outAbsoluteMouseX) const;
-	bool							GetAbsoluteMouseY (int* outAbsoluteMouseY) const;
+	DLL_EXPORT bool					GetAbsoluteMouseX (int* outAbsoluteMouseX) const;
+	DLL_EXPORT bool					GetAbsoluteMouseY (int* outAbsoluteMouseY) const;
 	DLL_EXPORT bool					GetRelativeMouseX (int* outRelativeMouseX) const;
 	DLL_EXPORT bool					GetRelativeMouseY (int* outRelativeMouseY) const;
 	
