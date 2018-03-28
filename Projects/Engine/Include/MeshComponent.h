@@ -11,7 +11,9 @@
 // ----------------------------- forward declaration -----------------------------
 
 namespace Ogre {
+
 class Entity;
+
 }
 
 namespace Engine {

@@ -7,6 +7,7 @@
 
 #include <vector>
 #include <algorithm>
+#include <functional>
 
 
 namespace Engine {
@@ -17,7 +18,7 @@ template<typename RET = void, typename... ARGS>
 class Delegate
 {
 private:
-	typedef RET (*Callback) (ARGS...);
+	using Callback = std::function<RET (ARGS...)>;
 	std::vector<Callback> m_handlers;
 
 public:

@@ -16,7 +16,9 @@ namespace Engine {
 // ----------------------------- forward declaration-----------------------------
 
 namespace Prefab {
+
 class GameObjectCreator;
+
 }
 
 class GameObject;

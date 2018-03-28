@@ -2,6 +2,7 @@
 #include "PhysicsComponent.h"
 
 
+
 // using anonymous namespace to force internal linkage
 // so its content will be accessible for only one translation unit (created from this source file)
 namespace {

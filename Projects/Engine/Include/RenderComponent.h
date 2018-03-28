@@ -9,9 +9,11 @@
 
 
 namespace Ogre {
+
 class MovableObject;
 class SceneManager;
 class SceneNode;
+
 }
 
 namespace Engine {

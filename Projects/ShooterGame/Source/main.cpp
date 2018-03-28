@@ -46,10 +46,10 @@ int main(int argc, char** argv)
 	new InputProcessor;
 	new DynamicMovementProcessor;
 
+	AudioManager::GetInstance ().SetPathToBuffers ("media\\level01-arrival\\sound\\");
+
 	if (!xmlParser.LoadXMLFromFile ("media\\level01-arrival\\map\\test.xml"))
 		return -1;
-
-	AudioManager::GetInstance ().SetPathToBuffers ("media\\level01-arrival\\sound\\");
 
 	renderSys->LoadGUILayout ("EditPanel.layout");
 	renderSys->LoadGUILayout ("MainPanel.layout");
@@ -60,7 +60,7 @@ int main(int argc, char** argv)
 		if (auto explosivePhysx = exp->GetFirstComponentByType<PhysicsComponent> ().lock ()) {
 			explosivePhysx->onTriggerEnter += [] (PhysicsComponent* otherPhyComp) {
 				if (otherPhyComp != nullptr) {
-					otherPhyComp->AddForce (2'000, 1'000, -20'000);
+					otherPhyComp->AddForce (2'000, 5'000, -2'000);
 				}
 			};
 		}
@@ -72,29 +72,14 @@ int main(int argc, char** argv)
 		soldierGO->AddComponent (soldierAnimComp);
 	}
 
-	if (auto lvl = objectMgr.GetGameObjectByName ("level").lock ()) {
-		std::shared_ptr<AudioSourceComponent> audio (new AudioSourceComponent ("music", AudioSourceComponent::Music));
-		audio->AddBuffer ("main_theme_2.wav");
-		audio->AddBuffer ("main_theme_4.wav");
-
-		lvl->AddComponent (audio);
-
-		audio->SetLooping (true);
-		audio->SetVolume (0.3f);
-		audio->Play ();
-	}
-
 	if (auto ball = objectMgr.GetGameObjectByName ("ball").lock ()) {
-		std::shared_ptr<AudioSourceComponent> audio (new AudioSourceComponent ("levelKeszo", AudioSourceComponent::SoundEffect));
-		audio->AddBuffer ("churchbell.wav");
-		audio->AddBuffer ("bounce.wav");
-
-		ball->AddComponent (audio);
-
-		audio->SetLooping (true);
-		audio->SetMaxDistanceWithFullGain (40.0f);
-		audio->SetMinDistanceWithZeroGain (150.0f);
-		audio->Play ();
+		if (auto ballPhysx = ball->GetFirstComponentByType<PhysicsComponent> ().lock ()) {
+			ballPhysx->onCollision += [&] (PhysicsComponent* otherPhyComp) {
+				if (auto audio = ball->GetFirstComponentByType<AudioSourceComponent> ().lock ()) {
+					audio->Play ();
+				}
+			};
+		}
 	}
 
 	if (auto frames = objectMgr.CreateGameObject ("fps").lock ()) {

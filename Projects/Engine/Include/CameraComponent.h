@@ -11,10 +11,12 @@
 
 
 namespace Ogre {
+
 class Camera;
 class Viewport;
 class RenderTexture;
 class RenderWindow;
+
 }
 
 

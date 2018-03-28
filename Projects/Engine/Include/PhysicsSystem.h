@@ -6,8 +6,16 @@
 // ---------------------------------- includes ----------------------------------
 
 #include "stdafx.h"
-#include "btBulletDynamicsCommon.h"
+#include "BulletCollision/CollisionDispatch/btCollisionWorld.h"
+#include "LinearMath/btVector3.h"
 #include "System.h"
+
+
+class btDefaultCollisionConfiguration;
+class btCollisionDispatcher;
+class btBroadphaseInterface;
+class btSequentialImpulseConstraintSolver;
+class btDiscreteDynamicsWorld;
 
 
 namespace Engine {

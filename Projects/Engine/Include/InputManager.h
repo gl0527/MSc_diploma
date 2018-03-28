@@ -15,7 +15,9 @@
 
 
 namespace Ogre {
+
 class RenderWindow;
+
 }
 
 namespace Engine {	
