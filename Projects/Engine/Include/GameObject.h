@@ -34,6 +34,7 @@ public:
 	DLL_EXPORT	void				AddComponent (const std::shared_ptr<Component>& comp, bool replaceOld = true);
 				void				InsertComponent (size_t index, const std::shared_ptr<Component>& comp);
 	DLL_EXPORT	void				RemoveComponent (const std::string& compName);
+	void							RemoveComponent (size_t index);
 	void							RemoveComponent (const std::shared_ptr<Component>& comp);
 	void							RemoveComponent ();
 

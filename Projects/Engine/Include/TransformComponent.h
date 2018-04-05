@@ -20,8 +20,6 @@ class TransformComponent : public Component
 public:
 										TransformComponent (const std::string& name);
 
-	void								PostInit (GameObject* owner) override;
-
 	DLL_EXPORT Ogre::Vector3			Forward () const;
 	DLL_EXPORT Ogre::Vector3			Right () const;
 	DLL_EXPORT Ogre::Vector3			Up () const;
@@ -61,6 +59,9 @@ private:
 	Ogre::Matrix4		m_localTransform;
 
 	TransformComponent* m_pParentTransform;
+
+
+	void								PostInit (GameObject* owner) override;
 
 	void								UpdateGlobalTransform ();
 	void								UpdateLocalTransform ();

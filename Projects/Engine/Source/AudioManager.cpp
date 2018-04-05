@@ -4,6 +4,7 @@
 #include "GameObject.h"
 #include "TransformComponent.h"
 #include "ObjectManager.h"
+#include "AudioSourceComponent.h"
 
 
 namespace Engine {
@@ -15,11 +16,8 @@ AudioManager::AudioManager () :
 	m_isInitialized (false),
 	m_isEnabled (true)
 {
-	for (size_t i = 0; i < s_MaxSourceCount; ++i) {
+	for (size_t i = 0; i < s_MaxUsedSources; ++i)
 		m_sourceIDs[i] = 0;
-		m_sourcesInUse[i] = false;
-		AL_SAFE_CALL (alSourceStop (m_sourceIDs[i]), "Unable to stop OpenAL source.");
-	}
 }
 
 
@@ -54,7 +52,7 @@ void AudioManager::Init ()
 	if (error != AL_NO_ERROR)
 		ERR_THROW (std::runtime_error, "An error occurred during OpenAL initialization!");
 
-	AL_SAFE_CALL (alGenSources (s_MaxSourceCount, m_sourceIDs), "Unable to create OpenAL sources.");
+	AL_SAFE_CALL (alGenSources (s_MaxUsedSources, m_sourceIDs), "Unable to create OpenAL sources.");
 	AL_SAFE_CALL (alDistanceModel (AL_LINEAR_DISTANCE_CLAMPED), "Unable to set distance model of OpenAL.");
 
 	m_isInitialized = true;
@@ -63,24 +61,60 @@ void AudioManager::Init ()
 
 void AudioManager::Update ()
 {
-	if (m_pListenerObj != nullptr) {
-		TransformComponent* listenerTransform = m_pListenerObj->Transform ();
+	if (m_pListenerObj == nullptr)
+		return;
+	
+	TransformComponent* listenerTransform = m_pListenerObj->Transform ();
 
-		const Ogre::Vector3& listenerPos = listenerTransform->GetGlobalPosition ();
-		const Ogre::Vector3& listenerDir = listenerTransform->Forward ();
-		const Ogre::Vector3& listenerUp = listenerTransform->Up ();
+	const Ogre::Vector3& listenerPos = listenerTransform->GetGlobalPosition ();
+	const Ogre::Vector3& listenerDir = listenerTransform->Forward ();
+	const Ogre::Vector3& listenerUp = listenerTransform->Up ();
 
-		AL_SAFE_CALL (alListener3f (AL_POSITION, listenerPos.x, listenerPos.y, listenerPos.z), "Unable to set position of OpenAL listener.");
-		AL_SAFE_CALL (alListener3f (AL_VELOCITY, listenerDir.x, listenerDir.y, listenerDir.z), "Unable to set velocity of OpenAL listener.");
-		float listenerOrient[] = { listenerDir.x, listenerDir.y, listenerDir.z, listenerUp.x, listenerUp.y, listenerUp.z };
-		AL_SAFE_CALL (alListenerfv (AL_ORIENTATION, listenerOrient), "Unable to set orientation of OpenAL listener.");
+	AL_SAFE_CALL (alListener3f (AL_POSITION, listenerPos.x, listenerPos.y, listenerPos.z), "Unable to set position of OpenAL listener.");
+	AL_SAFE_CALL (alListener3f (AL_VELOCITY, listenerDir.x, listenerDir.y, listenerDir.z), "Unable to set velocity of OpenAL listener.");
+	float listenerOrient[] = { listenerDir.x, listenerDir.y, listenerDir.z, listenerUp.x, listenerUp.y, listenerUp.z };
+	AL_SAFE_CALL (alListenerfv (AL_ORIENTATION, listenerOrient), "Unable to set orientation of OpenAL listener.");
+	
+	if (m_audioSourceComponents.size () > s_MaxUsedSources) {
+		std::sort (m_audioSourceComponents.begin (), m_audioSourceComponents.end (),
+			[&listenerPos] (const std::shared_ptr<AudioSourceComponent>& audio1, const std::shared_ptr<AudioSourceComponent>& audio2) {
+			if (audio1->GetType () == AudioSourceComponent::Music)
+				return true;
+
+			if (audio2->GetType () == AudioSourceComponent::Music)
+				return false;
+
+			if (audio1->GetType () == audio2->GetType ()) {
+				if (audio1->GetType () == AudioSourceComponent::SoundEffect) {
+					float audio1DistFromListener = audio1->GetOwner ()->Transform ()->GetGlobalPosition ().distance (listenerPos);
+					float audio2DistFromListener = audio2->GetOwner ()->Transform ()->GetGlobalPosition ().distance (listenerPos);
+
+					return audio1DistFromListener < audio2DistFromListener;
+				} else {
+					return true;
+				}
+			}
+
+			if (audio1->GetType () == AudioSourceComponent::Ambient && audio2->GetType () == AudioSourceComponent::SoundEffect)
+				return true;
+
+			if (audio1->GetType () == AudioSourceComponent::SoundEffect && audio2->GetType () == AudioSourceComponent::Ambient)
+				return false;
+		});
+	}
+
+	for (size_t i = 0; i < s_MaxUsedSources; ++i) {
+		if (i < m_audioSourceComponents.size ())
+			m_audioSourceComponents[i]->SetSource (m_sourceIDs[i]);
 	}
 }
 
 
 void AudioManager::Destroy ()
 {
-	AL_SAFE_CALL (alDeleteSources (s_MaxSourceCount, m_sourceIDs), "Unable to delete OpenAL sources.");
+	m_audioSourceComponents.clear ();
+
+	AL_SAFE_CALL (alDeleteSources (s_MaxUsedSources, m_sourceIDs), "Unable to delete OpenAL sources.");
 	for (auto it = m_bufferIDs.begin (), itEnd = m_bufferIDs.end (); it != itEnd; ++it) {
 		unsigned int buffer = it->second;
 		AL_SAFE_CALL (alDeleteBuffers (1, &buffer), "Unable to delete OpenAL buffer.");
@@ -89,6 +123,12 @@ void AudioManager::Destroy ()
 	alcDestroyContext (m_pAudioContext);
 	alcCloseDevice (m_pAudioDevice);
 	alutExit ();
+}
+
+
+void AudioManager::AddAudioSourceComponent (const std::shared_ptr<AudioSourceComponent>& pAudioSourceComp)
+{
+	m_audioSourceComponents.push_back (pAudioSourceComp);
 }
 
 
@@ -107,21 +147,6 @@ void AudioManager::GetBuffer (const std::string& bufferName, unsigned int* outBu
 		m_bufferIDs[bufferName] = buffer;
 		*outBufferID = buffer;
 	}
-}
-
-
-bool AudioManager::GetAvailableSource (unsigned int* outSrcID)
-{
-	for (unsigned char i = 0; i < s_MaxSourceCount; ++i) {
-		if (!m_sourcesInUse[i] && !IsPlaying (m_sourceIDs[i])) {
-			m_sourcesInUse[i] = true;
-			*outSrcID = m_sourceIDs[i];
-
-			return true;
-		}
-	}
-
-	return false;
 }
 
 
@@ -146,15 +171,9 @@ void AudioManager::Enable ()
 void AudioManager::Disable ()
 {
 	m_isEnabled = false;
-}
 
-
-void AudioManager::UnleashSource (unsigned int sourceID)
-{
-	for (size_t i = 0; i < s_MaxSourceCount; ++i) {
-		if (m_sourceIDs[i] == sourceID)
-			m_sourcesInUse[i] = false;
-	}
+	for (auto& audioComp : m_audioSourceComponents)
+		audioComp->Stop ();
 }
 
 

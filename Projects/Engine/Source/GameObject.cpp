@@ -17,34 +17,26 @@ GameObject::GameObject (const std::string& id)
 
 void GameObject::AddComponent (const Component::SPtr& comp, bool replaceOld/* = true*/)
 {
-	if (comp == nullptr)
-		return;
+	auto it = m_components.begin (), itEnd = m_components.end ();
 	
-	auto it = m_components.begin ();
-	for (; it != m_components.end () && (*it)->GetTypeName () != comp->GetTypeName (); ++it);
+	for (; it != itEnd; ++it) {
+		if ((*it)->GetTypeName () == comp->GetTypeName ())
+			break;
+	}
 
-	if (comp->IsUnique ()) {
-		if (it != m_components.end ()) {
+	if (it != itEnd) {
+		if (comp->IsUnique () || (*it)->GetName () == comp->GetName ()) {
 			if (replaceOld) {
 				RemoveComponent ((*it)->GetName ());
 				m_components.push_back (comp);
 				comp->Init (this);
 			}
-		} else {
-			m_components.push_back (comp);
-			comp->Init (this);
+
+			return;
 		}
-	} else {
-		if (it != m_components.end ()) {
-			if ((*it)->GetName () == comp->GetName ()) {
-				if (replaceOld) {
-					RemoveComponent ((*it)->GetName ());
-				}
-			}
-		}
-		m_components.push_back (comp);
-		comp->Init (this);
 	}
+	m_components.push_back (comp);
+	comp->Init (this);
 }
 
 
@@ -66,6 +58,15 @@ void GameObject::RemoveComponent (const std::string& compName)
 			break;
 		}
 	}
+}
+
+
+void GameObject::RemoveComponent (size_t index)
+{
+	if (index > m_components.size () - 1)
+		return;
+
+	m_components.erase (m_components.begin () + index);
 }
 
 
@@ -104,10 +105,6 @@ void GameObject::AddChild (const std::string& childName)
 	if (const auto& child = ObjectManager::GetInstance ().GetGameObjectByName (childName).lock ()) {
 		m_children.push_back (child);
 	}
-
-	//child->transform()->setPosition(this->transform()->position() + child->transform()->position());
-	/*child->transform()->setRotation(this->transform()->rotation() * child->transform()->rotation());
-	child->transform()->setScale(this->transform()->position() + child->transform()->position());*/
 }
 
 
