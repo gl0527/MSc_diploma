@@ -37,8 +37,13 @@ bool AudioProcessor::ProcessXMLTag (TiXmlElement* elem)
 		type = AudioSourceComponent::Ambient;
 	}
 
-	std::shared_ptr<AudioSourceComponent> audioComp (new AudioSourceComponent (compName, type));
-	AddToParentObject (elem, audioComp);
+	using AudioPrefab = Prefab::GenericPrefab<AudioSourceComponent, AudioSourceComponent::Descriptor>;
+
+	AudioPrefab audioPrefab;
+	AudioSourceComponent::Descriptor desc;
+
+	desc.name = compName;
+	desc.audioType = type;
 
 	foreach_child (elem)
 	{
@@ -54,7 +59,7 @@ bool AudioProcessor::ProcessXMLTag (TiXmlElement* elem)
 
 				return false;
 			}
-			audioComp->SetVolume (volume);
+			desc.volume = volume;
 		} else if (childTag == "speed") {
 			float speed;
 
@@ -65,7 +70,7 @@ bool AudioProcessor::ProcessXMLTag (TiXmlElement* elem)
 
 				return false;
 			}
-			audioComp->SetSpeed (speed);
+			desc.speed = speed;
 		} else if (childTag == "loop") {
 			bool loop;
 
@@ -76,7 +81,7 @@ bool AudioProcessor::ProcessXMLTag (TiXmlElement* elem)
 
 				return false;
 			}
-			audioComp->SetLooping (loop);
+			desc.isLooping = loop;
 		} else if (childTag == "buffer") {
 			const char* bufferName;
 
@@ -87,7 +92,7 @@ bool AudioProcessor::ProcessXMLTag (TiXmlElement* elem)
 
 				return false;
 			}
-			audioComp->AddBuffer (bufferName);
+			desc.buffers.push_back (bufferName);
 		} else if (childTag == "refdist") {
 			float refDist;
 
@@ -98,7 +103,8 @@ bool AudioProcessor::ProcessXMLTag (TiXmlElement* elem)
 
 				return false;
 			}
-			audioComp->SetMaxDistanceWithFullGain (refDist);
+
+			desc.maxDistWithFullGain = refDist;
 		} else if (childTag == "maxdist") {
 			float maxDist;
 
@@ -109,7 +115,7 @@ bool AudioProcessor::ProcessXMLTag (TiXmlElement* elem)
 
 				return false;
 			}
-			audioComp->SetMinDistanceWithZeroGain (maxDist);
+			desc.minDistWithZeroGain = maxDist;
 		} else if (childTag == "randombufferselection") {
 			bool isRandomSelectedBuffers;
 
@@ -120,12 +126,35 @@ bool AudioProcessor::ProcessXMLTag (TiXmlElement* elem)
 
 				return false;
 			}
-			audioComp->SetRandomBuffers (isRandomSelectedBuffers);
+			desc.isBufferRandomlySelected = isRandomSelectedBuffers;
+		}
+	}
+
+	audioPrefab.SetDescriptor (desc);
+
+	std::string parentTag (elem->Parent ()->Value ());
+
+	if (parentTag == std::string ("gameobject")) {
+		std::string parentName;
+		if (GetParentName (elem, parentName)) {
+			auto object = ObjectManager::GetInstance ().GetGameObjectByName (parentName).lock ();
+
+			audioPrefab.Create ();
+			audioPrefab.Attach (object.get ());
+			audioPrefab.ApplyDescriptor ();
+		}
+	} else if (parentTag == std::string ("prefab")) {
+		std::string parentName;
+		if (GetParentName (elem, parentName)) {
+			std::shared_ptr <Prefab::GameObjectCreator> prefab;
+
+			if (ObjectManager::GetInstance ().GetGameObjectCreator (parentName, prefab))
+				prefab->AddComponentCreator (std::make_shared<AudioPrefab> (audioPrefab));
 		}
 	}
 
 	return true;
 }
 
-}
+}	// namespace XML
 }	// namespace Engine

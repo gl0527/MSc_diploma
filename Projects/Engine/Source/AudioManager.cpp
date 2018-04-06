@@ -103,9 +103,11 @@ void AudioManager::Update ()
 		});
 	}
 
-	for (size_t i = 0; i < s_MaxUsedSources; ++i) {
-		if (i < m_audioSourceComponents.size ())
-			m_audioSourceComponents[i]->SetSource (m_sourceIDs[i]);
+	for (size_t i = 0; i < m_audioSourceComponents.size (); ++i) {
+		if (i < s_MaxUsedSources)
+			m_audioSourceComponents[i]->BindSource (m_sourceIDs[i]);
+		else
+			m_audioSourceComponents[i]->UnBindSource ();
 	}
 }
 

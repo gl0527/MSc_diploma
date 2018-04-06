@@ -19,12 +19,29 @@ class AudioSourceComponent : public Component
 public:
 	enum AudioType
 	{
-		SoundEffect = 0,	// 3D, it has the lowest priority
-		Ambient = 1,	// mostly 2D
-		Music = 2	// 2D
+		SoundEffect,
+		Ambient,
+		Music
+	};
+
+	struct Descriptor
+	{
+		Descriptor ();
+
+		std::string name;
+		AudioType	audioType;
+
+		float						volume;
+		float						speed;
+		bool						isLooping;
+		float						maxDistWithFullGain;
+		float						minDistWithZeroGain;
+		bool						isBufferRandomlySelected;
+		std::vector<std::string>	buffers;
 	};
 
 						AudioSourceComponent (const std::string& sourceName, AudioType type);
+						AudioSourceComponent (const Descriptor& desc);
 
 	void				PostUpdate (float t, float dt) override;
 	void				Destroy () override;
@@ -39,7 +56,8 @@ public:
 	bool				IsBufferRandomlySelected () const;
 	AudioType			GetType () const;
 
-	void				SetSource (unsigned int sourceID);
+	void				BindSource (unsigned int sourceID);
+	void				UnBindSource ();
 	DLL_EXPORT void		SetVolume (float volume);
 	void				SetSpeed (float speed);
 	DLL_EXPORT void		SetLooping (bool looping);
@@ -47,10 +65,12 @@ public:
 	DLL_EXPORT void		SetMinDistanceWithZeroGain (float maxDist);
 	void				SetRandomBuffers (bool enable);
 
+	void				ApplyDescriptor (const Descriptor& desc);
+
 private:
 	float						m_volume;
 	float						m_speed;
-	float						m_isLooping;
+	bool						m_isLooping;
 	float						m_maxDistWithFullGain;
 	float						m_minDistWithZeroGain;
 	bool						m_isBufferRandomlySelected;

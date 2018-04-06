@@ -8,6 +8,19 @@
 
 namespace Engine {
 
+AudioSourceComponent::Descriptor::Descriptor ():
+	name (""),
+	audioType (Music),
+	volume (1.0f),
+	speed (1.0f),
+	isLooping (false),
+	maxDistWithFullGain (50.0f),
+	minDistWithZeroGain (200.0f),
+	isBufferRandomlySelected (true)
+{
+}
+
+
 AudioSourceComponent::AudioSourceComponent (const std::string& sourceName, AudioType type):
 	Component (sourceName),
 	m_type (type),
@@ -20,6 +33,12 @@ AudioSourceComponent::AudioSourceComponent (const std::string& sourceName, Audio
 	m_currentBufferIndex (0),
 	m_sourceID (0),
 	m_audioManager (AudioManager::GetInstance ())
+{
+}
+
+
+AudioSourceComponent::AudioSourceComponent (const Descriptor& desc):
+	AudioSourceComponent (desc.name, desc.audioType)
 {
 }
 
@@ -76,6 +95,9 @@ void AudioSourceComponent::AddBuffer (const std::string& bufferName)
 
 void AudioSourceComponent::Play ()
 {
+	if (m_sourceID == 0)
+		return;
+	
 	if (!m_audioManager.IsInitialized () ||
 		!m_audioManager.IsEnabled () ||
 		m_audioManager.IsPlaying (m_sourceID))
@@ -100,23 +122,32 @@ void AudioSourceComponent::Play ()
 
 void AudioSourceComponent::Pause ()
 {
+	if (m_sourceID == 0)
+		return;
+
 	AL_SAFE_CALL (alSourcePause (m_sourceID), "Unable to pause OpenAL source.");
 }
 
 
 void AudioSourceComponent::Stop ()
 {
+	if (m_sourceID == 0)
+		return;
+
 	AL_SAFE_CALL (alSourceStop (m_sourceID), "Unable to stop OpenAL source.");
 }
 
 
 void AudioSourceComponent::Continue ()
 {
+	if (m_sourceID == 0)
+		return;
+
 	AL_SAFE_CALL (alSourcePlay (m_sourceID), "Unable to play OpenAL source.");
 }
 
 
-void AudioSourceComponent::SetSource (unsigned int sourceID)
+void AudioSourceComponent::BindSource (unsigned int sourceID)
 {
 	if (m_sourceID == sourceID)
 		return;
@@ -133,9 +164,19 @@ void AudioSourceComponent::SetSource (unsigned int sourceID)
 }
 
 
+void AudioSourceComponent::UnBindSource ()
+{
+	m_sourceID = 0;
+}
+
+
 void AudioSourceComponent::SetVolume (float volume)
 {
 	m_volume = volume;
+
+	if (m_sourceID == 0)
+		return;
+
 	AL_SAFE_CALL (alSourcef (m_sourceID, AL_GAIN, m_volume), "Unable to set volume of the OpenAL source.");
 }
 
@@ -143,6 +184,10 @@ void AudioSourceComponent::SetVolume (float volume)
 void AudioSourceComponent::SetSpeed (float speed)
 {
 	m_speed = speed;
+
+	if (m_sourceID == 0)
+		return;
+
 	AL_SAFE_CALL (alSourcef (m_sourceID, AL_PITCH, m_speed), "Unable to set pitch of OpenAL source.");
 }
 
@@ -159,6 +204,10 @@ void AudioSourceComponent::SetMaxDistanceWithFullGain (float refDist)
 		return;
 	
 	m_maxDistWithFullGain = refDist;
+
+	if (m_sourceID == 0)
+		return;
+
 	AL_SAFE_CALL (alSourcef (m_sourceID, AL_REFERENCE_DISTANCE, m_maxDistWithFullGain), "Unable to set reference distance of OpenAL source.");
 }
 
@@ -169,6 +218,10 @@ void AudioSourceComponent::SetMinDistanceWithZeroGain (float maxDist)
 		return;
 	
 	m_minDistWithZeroGain = maxDist;
+
+	if (m_sourceID == 0)
+		return;
+
 	AL_SAFE_CALL (alSourcef (m_sourceID, AL_MAX_DISTANCE, m_minDistWithZeroGain), "Unable to set max distance of OpenAL source.");
 }
 
@@ -188,6 +241,20 @@ AudioSourceComponent::AudioType AudioSourceComponent::GetType () const
 void AudioSourceComponent::SetRandomBuffers (bool enable)
 {
 	m_isBufferRandomlySelected = enable;
+}
+
+
+void AudioSourceComponent::ApplyDescriptor (const AudioSourceComponent::Descriptor& desc)
+{
+	SetVolume (desc.volume);
+	SetSpeed (desc.speed);
+	SetLooping (desc.isLooping);
+	SetMaxDistanceWithFullGain (desc.maxDistWithFullGain);
+	SetMinDistanceWithZeroGain (desc.minDistWithZeroGain);
+	SetRandomBuffers (desc.isBufferRandomlySelected);
+
+	for (const std::string& buffer : desc.buffers)
+		AddBuffer (buffer);
 }
 
 }	// namespace Engine

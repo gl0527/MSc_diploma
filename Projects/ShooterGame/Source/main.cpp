@@ -62,7 +62,7 @@ int main(int argc, char** argv)
 		if (auto explosivePhysx = exp->GetFirstComponentByType<PhysicsComponent> ().lock ()) {
 			explosivePhysx->onTriggerEnter += [] (PhysicsComponent* otherPhyComp) {
 				if (otherPhyComp != nullptr) {
-					otherPhyComp->AddForce (2'000, 5'000, -2'000);
+					otherPhyComp->AddForce (2'000, 4'000, -8'000);
 				}
 			};
 		}
@@ -78,7 +78,7 @@ int main(int argc, char** argv)
 		if (auto ballPhysx = ball->GetFirstComponentByType<PhysicsComponent> ().lock ()) {
 			ballPhysx->onCollision += [&] (PhysicsComponent* otherPhyComp) {
 				if (auto audio = ball->GetFirstComponentByType<AudioSourceComponent> ().lock ()) {
-					audio->Play ();
+					//audio->Play ();
 				}
 			};
 		}
