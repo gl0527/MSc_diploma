@@ -12,7 +12,7 @@ namespace Engine {
 AudioManager::AudioManager () :
 	m_pAudioDevice (nullptr),
 	m_pAudioContext (nullptr),
-	m_pathToBuffers (""),
+	m_resourceLocation (""),
 	m_isInitialized (false),
 	m_isEnabled (true)
 {
@@ -143,7 +143,7 @@ void AudioManager::GetBuffer (const std::string& bufferName, unsigned int* outBu
 	} else {
 		unsigned int buffer;
 		
-		ALUT_SAFE_CALL (buffer = alutCreateBufferFromFile ((m_pathToBuffers + bufferName).c_str ()),
+		ALUT_SAFE_CALL (buffer = alutCreateBufferFromFile ((m_resourceLocation + bufferName).c_str ()),
 			"Cannot load audio file: " + bufferName);
 		
 		m_bufferIDs[bufferName] = buffer;
@@ -179,9 +179,9 @@ void AudioManager::Disable ()
 }
 
 
-void AudioManager::SetPathToBuffers (const std::string& pathToBuffers)
+void AudioManager::SetResourceLocation (const std::string& pathToBuffers)
 {
-	m_pathToBuffers = pathToBuffers;
+	m_resourceLocation = pathToBuffers;
 }
 
 

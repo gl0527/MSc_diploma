@@ -71,9 +71,10 @@ bool RenderSystem::init ()
 	m_pOverlayMgr = Ogre::OverlayManager::getSingletonPtr ();
 
 	resGroupManager->initialiseAllResourceGroups ();
-
+	
 	m_pOgrePlatform = new MyGUI::OgrePlatform;
-	m_pOgrePlatform->initialise (m_pRenderWnd, m_pSceneMgr);
+	m_pOgrePlatform->initialise (m_pRenderWnd, m_pSceneMgr, Ogre::ResourceGroupManager::AUTODETECT_RESOURCE_GROUP_NAME);
+
 	m_pGUI = new MyGUI::Gui;
 	m_pGUI->initialise ();
 
@@ -110,7 +111,7 @@ bool RenderSystem::Start ()
 }
 
 
-void RenderSystem::SetOgrePlatform ()
+void RenderSystem::SetActiveViewport ()
 {
 	m_pOgrePlatform->getRenderManagerPtr ()->setActiveViewport (0);
 }

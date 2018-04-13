@@ -59,8 +59,8 @@ public:
 	bool							keyPressed (const OIS::KeyEvent& ke) override;
 	bool							keyReleased (const OIS::KeyEvent& ke) override;
 
-	static	Ogre::MeshPtr			CreatePlaneMeshXZ (const char* planeMeshName, float y, unsigned int u = 1, unsigned int v = 1);
-	static	Ogre::TexturePtr		CreateTexture (const char* texName, unsigned int w, unsigned int h);
+	static DLL_EXPORT Ogre::MeshPtr	CreatePlaneMeshXZ (const char* planeMeshName, float y, unsigned int u = 1, unsigned int v = 1);
+	static Ogre::TexturePtr			CreateTexture (const char* texName, unsigned int w, unsigned int h);
 
 	void							LoadResourceGroup (const std::string& resGroupName);
 	DLL_EXPORT void					UnloadResourceGroup (const std::string& resGroupName);
@@ -85,7 +85,7 @@ public:
 	template<typename T>
 	T*								GetWidget (const std::string& widgetName);
 
-	void							SetOgrePlatform ();
+	void							SetActiveViewport ();
 
 private:
 	Ogre::Root*				m_pOgreRoot;

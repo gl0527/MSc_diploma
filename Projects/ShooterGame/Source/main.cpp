@@ -13,6 +13,7 @@
 #include "SoldierAnimComponent.h"
 #include "AudioManager.h"
 #include "AudioSourceComponent.h"
+#include "ParticleComponent.h"
 
 #include "OgreSceneManager.h"
 #include "MyGUI_Widget.h"
@@ -48,7 +49,9 @@ int main(int argc, char** argv)
 	new InputProcessor;
 	new DynamicMovementProcessor;
 
-	AudioManager::GetInstance ().SetPathToBuffers ("media\\level01-arrival\\sound\\");
+	AudioManager::GetInstance ().SetResourceLocation ("media\\level01-arrival\\sound\\");
+
+	renderSys->CreatePlaneMeshXZ ("ground", 0, 100, 100);
 
 	if (!xmlParser.LoadXMLFromFile ("media\\level01-arrival\\map\\test.xml"))
 		return -1;
@@ -59,6 +62,9 @@ int main(int argc, char** argv)
 	button->eventMouseButtonClick = MyGUI::newDelegate (GLOBAL_FUNC_NAME);
 
 	if (auto exp = objectMgr.GetGameObjectByName ("explosive").lock ()) {
+		std::shared_ptr<ParticleComponent> pParticle (new ParticleComponent ("particle", "Flare"));
+		exp->AddComponent (pParticle);
+		
 		if (auto explosivePhysx = exp->GetFirstComponentByType<PhysicsComponent> ().lock ()) {
 			explosivePhysx->onTriggerEnter += [] (PhysicsComponent* otherPhyComp) {
 				if (otherPhyComp != nullptr) {
@@ -96,7 +102,7 @@ int main(int argc, char** argv)
 	// setting up environment
 	auto sceneMgr = renderSys->GetSceneManager ();
 
-	sceneMgr->setAmbientLight (Ogre::ColourValue (0.4f, 0.4f, 0.4f, 1.0f)); // ez is kellene az xml-be
+	sceneMgr->setAmbientLight (Ogre::ColourValue (0.15f, 0.15f, 0.15f, 1.0f)); // ez is kellene az xml-be
 	//sceneMgr->setShadowTechnique(Ogre::SHADOWTYPE_STENCIL_MODULATIVE);
 	//sceneMgr->setShadowColour(Ogre::ColourValue(0.3f, 0.3f, 0.3f));
 	sceneMgr->setSkyBox (true, "Stormy");

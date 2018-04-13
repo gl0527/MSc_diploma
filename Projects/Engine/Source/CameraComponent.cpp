@@ -56,7 +56,7 @@ void CameraComponent::PostInit (GameObject* obj)
 	CreateNode ();
 	m_pCurrentNode->attachObject (m_pObject);
 
-	Game::GetInstance ().GetRenderSystem ()->SetOgrePlatform ();
+	Game::GetInstance ().GetRenderSystem ()->SetActiveViewport ();
 }
 
 

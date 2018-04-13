@@ -59,7 +59,7 @@ public:
 	DLL_EXPORT void						Enable ();
 	DLL_EXPORT void						Disable ();
 	
-	DLL_EXPORT void						SetPathToBuffers (const std::string& pathToBuffers);
+	DLL_EXPORT void						SetResourceLocation (const std::string& pathToBuffers);
 	DLL_EXPORT void						SetListener (const std::string& listenerName);
 	
 private:
@@ -77,7 +77,7 @@ private:
 	unsigned int					m_sourceIDs[s_MaxUsedSources];
 	BufferMap						m_bufferIDs;
 
-	std::string						m_pathToBuffers;
+	std::string						m_resourceLocation;
 
 	std::shared_ptr<GameObject>		m_pListenerObj;
 
