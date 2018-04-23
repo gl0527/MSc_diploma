@@ -57,7 +57,7 @@ void AudioSourceComponent::PostUpdate (float /*t*/, float /*dt*/)
 
 	if (m_owner != nullptr) {
 		Ogre::Vector3 pos = m_owner->Transform ()->GetGlobalPosition ();
-		Ogre::Vector3 dir = m_owner->Transform ()->Forward ();
+		Ogre::Vector3 dir = m_owner->Transform ()->GetGlobalFacing ();
 
 		if (m_type == SoundEffect) {
 			AL_SAFE_CALL (alSource3f (m_sourceID, AL_POSITION, pos.x, pos.y, pos.z), "Unable to set position of OpenAL source.");

@@ -63,19 +63,19 @@ inline const Ogre::Vector3& TransformComponent::GetLocalScale () const
 }
 
 
-Ogre::Vector3 TransformComponent::Forward () const
+Ogre::Vector3 TransformComponent::GetGlobalFacing () const
 {
 	return m_globalRotation * Ogre::Vector3::NEGATIVE_UNIT_Z;
 }
 
 
-Ogre::Vector3 TransformComponent::Right () const
+Ogre::Vector3 TransformComponent::GetGlobalRightDirection () const
 {
 	return m_globalRotation * Ogre::Vector3::UNIT_X;
 }
 
 
-Ogre::Vector3 TransformComponent::Up () const
+Ogre::Vector3 TransformComponent::GetGlobalUpDirection () const
 {
 	return m_globalRotation * Ogre::Vector3::UNIT_Y;
 }

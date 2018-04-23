@@ -13,6 +13,7 @@
 #include "XML/ParticleProcessor.h"
 #include "XML/LightProcessor.h"
 #include "XML/PrefabProcessor.h"
+#include "XML/EnvironmentDataProcessor.h"
 
 #include "ErrorMessage.h"
 
@@ -50,6 +51,7 @@ bool XMLParser::Init ()
 	new ParticleProcessor;
 	new LightProcessor;
 	new PrefabProcessor;
+	new EnvironmentDataProcessor;
 
 	return true;
 }

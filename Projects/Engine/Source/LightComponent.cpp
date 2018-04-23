@@ -58,7 +58,7 @@ void LightComponent::PostUpdate (float t, float dt)
 	if (m_type != Ogre::Light::LT_DIRECTIONAL)
 		m_pLight->setPosition (ownerTransform->GetGlobalPosition ());
 	if (m_type != Ogre::Light::LT_POINT)
-		m_pLight->setDirection (ownerTransform->Forward ());
+		m_pLight->setDirection (ownerTransform->GetGlobalFacing ());
 }
 
 

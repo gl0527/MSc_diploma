@@ -11,6 +11,7 @@
 #include "InputProcessor.h"
 #include "WeaponComponent.h"
 #include "SoldierAnimComponent.h"
+#include "SoldierStateComponent.h"
 #include "AudioManager.h"
 #include "AudioSourceComponent.h"
 #include "ParticleComponent.h"
@@ -62,21 +63,28 @@ int main(int argc, char** argv)
 	button->eventMouseButtonClick = MyGUI::newDelegate (GLOBAL_FUNC_NAME);
 
 	if (auto exp = objectMgr.GetGameObjectByName ("explosive").lock ()) {
-		std::shared_ptr<ParticleComponent> pParticle (new ParticleComponent ("particle", "Flare"));
-		exp->AddComponent (pParticle);
-		
 		if (auto explosivePhysx = exp->GetFirstComponentByType<PhysicsComponent> ().lock ()) {
-			explosivePhysx->onTriggerEnter += [] (PhysicsComponent* otherPhyComp) {
+			explosivePhysx->onTriggerEnter += [&] (PhysicsComponent* otherPhyComp) {
+				static bool particleEnabled = true;
+				
 				if (otherPhyComp != nullptr) {
+					if (auto explosiveParticle = exp->GetFirstComponentByType<ParticleComponent> ().lock ()) {
+						explosiveParticle->SetEnabled (particleEnabled);
+					}
 					otherPhyComp->AddForce (2'000, 4'000, -8'000);
 				}
+				particleEnabled = !particleEnabled;
 			};
 		}
 	}
 
+	if (auto soldierGO = objectMgr.GetGameObjectByName ("human01").lock ()) {
+		std::shared_ptr<SoldierStateComponent> soldierStateComp (new SoldierStateComponent ("soldierStateComp"));
+		soldierGO->AddComponent (soldierStateComp);
+	}
+
 	if (auto soldierGO = objectMgr.GetGameObjectByName ("gijoe").lock ()) {
 		std::shared_ptr<SoldierAnimComponent> soldierAnimComp (new SoldierAnimComponent ("soldierAnimComp"));
-
 		soldierGO->AddComponent (soldierAnimComp);
 	}
 
@@ -98,14 +106,6 @@ int main(int argc, char** argv)
 	if (auto gijoecam = objectMgr.GetGameObjectByName ("gijoecamera").lock ()) {
 		AudioManager::GetInstance ().SetListener ("gijoecamera");
 	}
-
-	// setting up environment
-	auto sceneMgr = renderSys->GetSceneManager ();
-
-	sceneMgr->setAmbientLight (Ogre::ColourValue (0.15f, 0.15f, 0.15f, 1.0f)); // ez is kellene az xml-be
-	//sceneMgr->setShadowTechnique(Ogre::SHADOWTYPE_STENCIL_MODULATIVE);
-	//sceneMgr->setShadowColour(Ogre::ColourValue(0.3f, 0.3f, 0.3f));
-	sceneMgr->setSkyBox (true, "Stormy");
 
 	game.Start ();
 	game.DeleteInstance ();

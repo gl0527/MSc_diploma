@@ -23,11 +23,12 @@ namespace Engine {
 class ParticleComponent : public RenderComponent
 {
 public:
-	DLL_EXPORT		ParticleComponent (const std::string& name, const std::string& partName);
-	virtual			~ParticleComponent ();
+						ParticleComponent (const std::string& name, const std::string& partName);
 
-	virtual void	PostInit (GameObject* obj) override;
-	virtual void	Destroy () override;
+	void				PostInit (GameObject* obj) override;
+	void				Destroy () override;
+
+	DLL_EXPORT void		SetEnabled (bool enable);
 
 private:
 	static unsigned int		s_instanceCount;

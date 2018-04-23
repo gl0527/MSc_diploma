@@ -67,8 +67,8 @@ void AudioManager::Update ()
 	TransformComponent* listenerTransform = m_pListenerObj->Transform ();
 
 	const Ogre::Vector3& listenerPos = listenerTransform->GetGlobalPosition ();
-	const Ogre::Vector3& listenerDir = listenerTransform->Forward ();
-	const Ogre::Vector3& listenerUp = listenerTransform->Up ();
+	const Ogre::Vector3& listenerDir = listenerTransform->GetGlobalFacing ();
+	const Ogre::Vector3& listenerUp = listenerTransform->GetGlobalUpDirection ();
 
 	AL_SAFE_CALL (alListener3f (AL_POSITION, listenerPos.x, listenerPos.y, listenerPos.z), "Unable to set position of OpenAL listener.");
 	AL_SAFE_CALL (alListener3f (AL_VELOCITY, listenerDir.x, listenerDir.y, listenerDir.z), "Unable to set velocity of OpenAL listener.");

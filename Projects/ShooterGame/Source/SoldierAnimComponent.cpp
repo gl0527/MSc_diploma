@@ -235,7 +235,7 @@ void SoldierAnimComponent::RunState::PostExecute (Stateable* stateable, float t,
 		return;
 	}
 
-	const Ogre::Vector3& forward = -1.0f * m_pParent->m_owner->Transform()->Forward ();
+	const Ogre::Vector3& forward = -1.0f * m_pParent->m_owner->Transform()->GetGlobalFacing ();
 
  	auto ownerPhysics = m_pParent->m_owner->GetFirstComponentByType<PhysicsComponent>();
 

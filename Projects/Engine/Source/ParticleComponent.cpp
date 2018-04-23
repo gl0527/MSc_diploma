@@ -17,11 +17,6 @@ ParticleComponent::ParticleComponent (const std::string& name, const std::string
 }
 
 
-ParticleComponent::~ParticleComponent ()
-{
-}
-
-
 void ParticleComponent::PostInit (GameObject* obj)
 {
 	m_pParticleSys = m_pSceneManager->createParticleSystem (obj->GetName () + Ogre::StringConverter::toString (s_instanceCount++), m_particleName);
@@ -33,6 +28,15 @@ void ParticleComponent::PostInit (GameObject* obj)
 void ParticleComponent::Destroy ()
 {
 	m_pSceneManager->destroyParticleSystem (m_pParticleSys->getName ());
+}
+
+
+void ParticleComponent::SetEnabled (bool enable)
+{
+	if (m_pParticleSys == nullptr)
+		return;
+
+	m_pParticleSys->setEmitting (enable);
 }
 
 }	// namespace Engine

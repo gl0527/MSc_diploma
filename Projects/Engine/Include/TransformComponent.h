@@ -20,9 +20,9 @@ class TransformComponent : public Component
 public:
 										TransformComponent (const std::string& name);
 
-	DLL_EXPORT Ogre::Vector3			Forward () const;
-	DLL_EXPORT Ogre::Vector3			Right () const;
-	DLL_EXPORT Ogre::Vector3			Up () const;
+	DLL_EXPORT Ogre::Vector3			GetGlobalFacing () const;
+	DLL_EXPORT Ogre::Vector3			GetGlobalRightDirection () const;
+	DLL_EXPORT Ogre::Vector3			GetGlobalUpDirection () const;
 	
 	DLL_EXPORT const Ogre::Vector3&		GetGlobalPosition () const;
 	DLL_EXPORT const Ogre::Quaternion&	GetGlobalRotation () const;
@@ -40,7 +40,7 @@ public:
 	DLL_EXPORT void						SetLocalRotation (const Ogre::Quaternion& localRotation);
 	DLL_EXPORT void						SetLocalScale (const Ogre::Vector3& localScale);
 
-	void								Translate (const Ogre::Vector3& translateVec);
+	DLL_EXPORT void						Translate (const Ogre::Vector3& translateVec);
 	void								Rotate (const Ogre::Quaternion& rotQ);
 	void								Rotate (float angleInRad, const Ogre::Vector3& axis);
 	void								Scale (const Ogre::Vector3& scaleVec);
