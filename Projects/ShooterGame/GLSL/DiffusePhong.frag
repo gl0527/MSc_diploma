@@ -40,7 +40,7 @@ void main()
 	vec4 attenuatedDiffuseLightColor = diffuseLightColor * attenuation;
 	vec4 attenuatedSpecularLightColor = specularLightColor * attenuation;
 	
-	vec4 diffuseLighting = attenuatedDiffuseLightColor * diffuseMaterialColor * NdotL;
+	vec4 diffuseLighting = attenuatedDiffuseLightColor * /*diffuseMaterialColor * */NdotL;
 	vec4 specularLighting = attenuatedSpecularLightColor * vec4 (specularMaterialColor.xyz, 1.0) * pow (NdotH, specularMaterialColor.w);
 	
 	gl_FragColor = diffuseLighting + specularLighting;
