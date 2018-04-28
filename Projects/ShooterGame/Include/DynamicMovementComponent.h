@@ -16,6 +16,7 @@ using namespace Engine;
 class DynamicMovementComponent : public Component
 {
 	float moveSpeed;
+	float turnSpeed;
 	std::weak_ptr<PhysicsComponent> ownerPhysics;
 	std::weak_ptr<SoldierAnimComponent> ownerSoldierComp;
 public:
@@ -26,6 +27,7 @@ public:
 	virtual void PreUpdate(float t, float dt) override;
 
 	void setMoveSpeed(float speed) { moveSpeed = speed; }
+	void setTurnSpeed (float speed) { turnSpeed = speed; }
 };
 
 #endif	// #ifndef DYNAMIC_MOVEMENT_COMPONENT_H

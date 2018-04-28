@@ -10,7 +10,7 @@
 #include "FPSComponent.h"
 #include "InputProcessor.h"
 #include "WeaponComponent.h"
-#include "SoldierAnimComponent.h"
+#include "SoldierAnimationComponent.h"
 #include "SoldierStateComponent.h"
 #include "AudioManager.h"
 #include "AudioSourceComponent.h"
@@ -54,7 +54,7 @@ int main(int argc, char** argv)
 
 	renderSys->CreatePlaneMeshXZ ("ground", 0, 100, 100);
 
-	if (!xmlParser.LoadXMLFromFile ("media\\level01-arrival\\map\\test.xml"))
+	if (!xmlParser.LoadXMLFromFile ("media\\level01-arrival\\map\\ShooterGame.xml"))
 		return -1;
 
 	renderSys->LoadGUILayout ("EditPanel.layout");
@@ -84,18 +84,13 @@ int main(int argc, char** argv)
 	}
 
 	if (auto soldierGO = objectMgr.GetGameObjectByName ("gijoe").lock ()) {
-		std::shared_ptr<SoldierAnimComponent> soldierAnimComp (new SoldierAnimComponent ("soldierAnimComp"));
+		std::shared_ptr<SoldierAnimationComponent> soldierAnimComp (new SoldierAnimationComponent ("soldierAnimComp"));
 		soldierGO->AddComponent (soldierAnimComp);
 	}
 
-	if (auto ball = objectMgr.GetGameObjectByName ("ball").lock ()) {
-		if (auto ballPhysx = ball->GetFirstComponentByType<PhysicsComponent> ().lock ()) {
-			ballPhysx->onCollision += [&] (PhysicsComponent* otherPhyComp) {
-				if (auto audio = ball->GetFirstComponentByType<AudioSourceComponent> ().lock ()) {
-					//audio->Play ();
-				}
-			};
-		}
+	if (auto weapon = objectMgr.GetGameObjectByName ("weaponNode").lock ()) {
+		std::shared_ptr<WeaponComponent> weaponComp (new WeaponComponent ("soldierWeapon"));
+		weapon->AddComponent (weaponComp);
 	}
 
 	if (auto frames = objectMgr.CreateGameObject ("fps").lock ()) {

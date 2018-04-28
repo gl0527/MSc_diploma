@@ -76,6 +76,7 @@ public:
 	DLL_EXPORT void		AddTorque (float tx, float ty, float tz);
 	DLL_EXPORT void		SetAngularFactor (float x, float y, float z);
 	DLL_EXPORT void		SetLinearVelocity (float x, float y, float z);
+	DLL_EXPORT void		SetAngularVelocity (float x, float y, float z);
 	DLL_EXPORT void		ActivateRigidBody ();
 	void				DisableRotationXYZ ();
 

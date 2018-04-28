@@ -12,6 +12,4 @@ public:
 
 	virtual void Start() override;
 	virtual void PreUpdate(float t, float dt) override;
-
-	void SetAllNonCtorParams () {}
 };

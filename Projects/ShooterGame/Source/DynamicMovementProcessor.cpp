@@ -4,7 +4,7 @@
 #include <iostream>
 
 
-bool DynamicMovementProcessor::ProcessXMLTag(TiXmlElement* elem)
+bool DynamicMovementProcessor::ProcessXMLTag (TiXmlElement* elem)
 {
 	const char* name;
 	try {
@@ -15,27 +15,34 @@ bool DynamicMovementProcessor::ProcessXMLTag(TiXmlElement* elem)
 		return false;
 	}
 
-	std::shared_ptr<DynamicMovementComponent> comp(new DynamicMovementComponent(name));
+	std::shared_ptr<DynamicMovementComponent> comp (new DynamicMovementComponent (name));
 
 	AddToParentObject (elem, comp);
 
-	foreach_child(elem)
+	foreach_child (elem)
 	{
-		std::string childName(child->Value());
+		std::string childName (child->Value ());
 
-		if (childName == "speed")
-		{
-			float speed;
-			
+		if (childName == "movespeed") {
+			float moveSpeed;
 			try {
-				XML::XMLParser::ParsePrimitive (child, "value", &speed);
+				XML::XMLParser::ParsePrimitive (child, "value", &moveSpeed);
 			} catch (const std::runtime_error& re) {
 				std::cout << re.what () << std::endl;
 
 				return false;
 			}
+			comp->setMoveSpeed (moveSpeed);
+		} else if (childName == "turnspeed") {
+			float turnSpeed;
+			try {
+				XML::XMLParser::ParsePrimitive (child, "value", &turnSpeed);
+			} catch (const std::runtime_error& re) {
+				std::cout << re.what () << std::endl;
 
-			comp->setMoveSpeed(speed);
+				return false;
+			}
+			comp->setTurnSpeed (turnSpeed);
 		}
 	}
 

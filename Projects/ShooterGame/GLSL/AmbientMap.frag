@@ -8,5 +8,6 @@ uniform sampler2D ambientMap;
 
 void main()
 {
-	gl_FragColor = texture2D (diffuseMap, diffuseMapCoord) * texture2D (ambientMap, ambientMapCoord);
+	gl_FragColor = 	texture2D (diffuseMap, diffuseMapCoord) *
+					texture2D (ambientMap, ambientMapCoord);
 }

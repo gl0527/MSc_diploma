@@ -235,6 +235,13 @@ void PhysicsComponent::SetLinearVelocity (float x, float y, float z)
 }
 
 
+void PhysicsComponent::SetAngularVelocity (float x, float y, float z)
+{
+	if (m_pRigidBody != nullptr)
+		m_pRigidBody->setAngularVelocity (btVector3 (x, y, z));
+}
+
+
 void PhysicsComponent::ActivateRigidBody ()
 {
 	if (m_pRigidBody)

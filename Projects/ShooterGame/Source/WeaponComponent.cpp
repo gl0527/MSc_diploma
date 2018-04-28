@@ -7,31 +7,27 @@
 #include "OgreBone.h"
 
 
-WeaponComponent::WeaponComponent(const std::string& name)
-	: Component(name)
+WeaponComponent::WeaponComponent (const std::string& name)
+	: Component (name)
 {
 }
 
-WeaponComponent::~WeaponComponent()
+WeaponComponent::~WeaponComponent ()
 {
 }
 
-void WeaponComponent::Start()
+void WeaponComponent::Start ()
 {
 }
 
-void WeaponComponent::PreUpdate(float t, float dt)
+void WeaponComponent::PreUpdate (float t, float dt)
 {
-	if (auto parent = m_owner->GetParent().lock())
-	{
-		if (auto parentMesh = parent->GetFirstComponentByType<MeshComponent>().lock())
-		{
-			if (auto parentSkeleton = parentMesh->GetEntity()->getSkeleton())
-			{
-				if (auto rightHand = parentSkeleton->getBone("hand_r"))
-				{
-					m_owner->Transform()->SetGlobalPosition(rightHand->_getDerivedPosition());
-					m_owner->Transform()->SetGlobalRotation(rightHand->_getDerivedOrientation());
+	if (auto parent = m_owner->GetParent ().lock ()) {
+		if (auto parentMesh = parent->GetFirstComponentByType<MeshComponent> ().lock ()) {
+			if (auto parentSkeleton = parentMesh->GetEntity ()->getSkeleton ()) {
+				if (auto rightHand = parentSkeleton->getBone ("hand_r")) {
+					m_owner->Transform ()->SetLocalPosition (rightHand->_getDerivedPosition ());
+					m_owner->Transform ()->SetLocalRotation (rightHand->_getDerivedOrientation ());
 				}
 			}
 		}
