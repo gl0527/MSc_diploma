@@ -6,6 +6,17 @@
 #include "OgreSkeletonInstance.h"
 #include "OgreEntity.h"
 #include "AudioSourceComponent.h"
+#include "PlayerDataComponent.h"
+
+
+namespace {
+
+inline bool IsRunning ()
+{
+	return InputManager::GetInstance ().IsKeyDown (OIS::KC_W);
+}
+
+}	// namespace
 
 
 SoldierAnimationComponent::SoldierAnimationComponent (const std::string& name):
@@ -13,8 +24,10 @@ SoldierAnimationComponent::SoldierAnimationComponent (const std::string& name):
 	m_upperBodyAnimation (UpperBodyState::Idle),
 	m_lowerBodyAnimation (LowerBodyState::Idle),
 	m_ownerEntity (nullptr),
+	m_ownerData (nullptr),
 	m_isInShootState (false),
-	m_hasWeapon (false)
+	m_hasWeapon (false),
+	m_isDead (false)
 {
 	m_upperBodyAnimation.AddTransitions ({
 		{UpperBodyState::Idle,			UpperBodyState::Run,		'r', [this] { OnTransition ("up_stand", "up_run", true); }},
@@ -28,6 +41,8 @@ SoldierAnimationComponent::SoldierAnimationComponent (const std::string& name):
 	m_lowerBodyAnimation.AddTransitions ({
 		{LowerBodyState::Idle,	LowerBodyState::Run,	'r', [this] { OnTransition ("leg_stand", "leg_run", true); }},
 		{LowerBodyState::Run,	LowerBodyState::Idle,	'i', [this] { OnTransition ("leg_run", "leg_stand", true); }},
+		{LowerBodyState::Idle,	LowerBodyState::Dead,	'd', [this] { OnTransitionToDeath (); }},
+		{LowerBodyState::Run,	LowerBodyState::Dead,	'd', [this] { OnTransitionToDeath (); }},
 	});
 
 	m_upperBodyAnimation.AddStateFunction (UpperBodyState::Idle,
@@ -47,13 +62,21 @@ SoldierAnimationComponent::SoldierAnimationComponent (const std::string& name):
 
 	m_lowerBodyAnimation.AddStateFunction (LowerBodyState::Run,
 		std::bind (&SoldierAnimationComponent::OnLowerBodyRun, this, std::placeholders::_1, std::placeholders::_2));
+
+	m_lowerBodyAnimation.AddStateFunction (LowerBodyState::Dead,
+		std::bind (&SoldierAnimationComponent::OnDeath, this, std::placeholders::_1, std::placeholders::_2));
 }
 
 
 void SoldierAnimationComponent::Start ()
 {
+	m_ownerData = m_owner->GetFirstComponentByType<PlayerDataComponent> ().lock ();
+	if (m_ownerData == nullptr) {
+		m_owner->RemoveComponent (m_name);
+		return;
+	}
 	if (auto ownerMesh = m_owner->GetFirstComponentByType<MeshComponent> ().lock ()) {
-		m_ownerEntity =  (ownerMesh->GetEntity ());
+		m_ownerEntity = ownerMesh->GetEntity ();
 
 		if (auto skeleton = m_ownerEntity->getSkeleton ()) {
 			skeleton->setBlendMode (Ogre::ANIMBLEND_CUMULATIVE);
@@ -67,6 +90,10 @@ void SoldierAnimationComponent::Start ()
 
 void SoldierAnimationComponent::PreUpdate (float t, float dt)
 {
+	if (m_ownerData->IsDead ()) {
+		m_isDead = true;
+		m_lowerBodyAnimation.Process ('d');
+	}
 	if (m_hasWeapon) {
 		if ((m_isInShootState || InputManager::GetInstance ().IsLeftMouseButtonDown ())) {
 			m_isInShootState = true;
@@ -74,21 +101,11 @@ void SoldierAnimationComponent::PreUpdate (float t, float dt)
 		} else {
 			m_upperBodyAnimation.Process ('w');
 		}
-		if (InputManager::GetInstance ().IsKeyDown (OIS::KC_W)) {
-			m_lowerBodyAnimation.Process ('r');	// ezeknek csak akkor kene lefutniuk, amikor az esemeny bekovetkezik -> feliratkozas az inputmanagerre!!!
-		} else {
-			m_lowerBodyAnimation.Process ('i');
-		}
+		m_lowerBodyAnimation.Process (IsRunning () ? 'r' : 'i');
 	} else {
-		if (InputManager::GetInstance ().IsKeyDown (OIS::KC_W)) {
-			m_upperBodyAnimation.Process ('r');
-			m_lowerBodyAnimation.Process ('r');
-		} else {
-			m_upperBodyAnimation.Process ('i');
-			m_lowerBodyAnimation.Process ('i');
-		}
+		m_upperBodyAnimation.Process (IsRunning () ? 'r' : 'i');
+		m_lowerBodyAnimation.Process (IsRunning () ? 'r' : 'i');
 	}
-	
 	m_upperBodyAnimation.Update (t, dt);
 	m_lowerBodyAnimation.Update (t, dt);
 }
@@ -100,14 +117,45 @@ void SoldierAnimationComponent::HasWeapon (bool hasWeapon)
 }
 
 
+bool SoldierAnimationComponent::IsDead () const
+{
+	return m_isDead;
+}
+
+
 void SoldierAnimationComponent::OnTransition (const char* fromAnimName, const char* toAnimName, bool isLooping)
 {
-	Ogre::AnimationState* pAnimState = m_ownerEntity->getAnimationState (fromAnimName);
+	TurnOffAnimation (fromAnimName);
+	TurnOnAnimation (toAnimName, isLooping);
+}
+
+
+void SoldierAnimationComponent::OnTransitionToDeath ()
+{
+	TurnOffAnimation ("up_stand");
+	TurnOffAnimation ("up_run");
+	TurnOffAnimation ("up_weapon_hold");
+	TurnOffAnimation ("up_shoot");
+	TurnOffAnimation ("leg_stand");
+	TurnOffAnimation ("leg_run");
+
+	TurnOnAnimation ("death", false);
+	m_upperBodyAnimation.SetState (UpperBodyState::Dead);
+}
+
+
+void SoldierAnimationComponent::TurnOffAnimation (const char* animName)
+{
+	Ogre::AnimationState* pAnimState = m_ownerEntity->getAnimationState (animName);
 	pAnimState->setEnabled (false);
 	pAnimState->setWeight (0.0f);
 	pAnimState->setLoop (false);
+}
 
-	pAnimState = m_ownerEntity->getAnimationState (toAnimName);
+
+void SoldierAnimationComponent::TurnOnAnimation (const char* animName, bool isLooping)
+{
+	Ogre::AnimationState* pAnimState = m_ownerEntity->getAnimationState (animName);
 	pAnimState->setEnabled (true);
 	pAnimState->setWeight (1.0f);
 	pAnimState->setTimePosition (0.0f);
@@ -169,4 +217,18 @@ void SoldierAnimationComponent::OnLowerBodyRun (float t, float dt)
 {
 	Ogre::AnimationState* pAnimState = m_ownerEntity->getAnimationState ("leg_run");
 	pAnimState->addTime (dt);
+}
+
+
+void SoldierAnimationComponent::OnDeath (float t, float dt)
+{
+	Ogre::AnimationState* pAnimState = m_ownerEntity->getAnimationState ("death");
+	pAnimState->addTime (dt);
+	static bool isDeathSoundPlayed = false;
+	auto soldierAudio = m_owner->GetFirstComponentByType<AudioSourceComponent> ().lock ();
+	
+	if (!isDeathSoundPlayed && soldierAudio != nullptr) {
+		soldierAudio->Play ();
+		isDeathSoundPlayed = true;
+	}
 }

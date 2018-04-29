@@ -12,12 +12,12 @@ varying vec4 worldPos;
 
 void main ()
 {
-   gl_Position = modelViewProjMatrix * gl_Vertex;
-   worldPos = modelMatrix * gl_Vertex;
-   worldNorm = vec3 (vec4 (gl_Normal, 0.0) * modelMatrixInverse);
-   diffuseMapCoord = gl_MultiTexCoord0.xy;
-   lightMapCoord = gl_MultiTexCoord1.xy;
-   ambientMapCoord = worldPos.xz;
-   ambientMapCoord += vec2 (170.0, 255.0);
-   ambientMapCoord /= vec2 (340.0, 425.0);
+	gl_Position = modelViewProjMatrix * gl_Vertex;
+	worldPos = modelMatrix * gl_Vertex;
+	worldNorm = vec3 (vec4 (gl_Normal, 0.0) * modelMatrixInverse);
+	diffuseMapCoord = gl_MultiTexCoord0.xy;
+	lightMapCoord = gl_MultiTexCoord1.xy;
+	ambientMapCoord = worldPos.xz;
+	ambientMapCoord += vec2 (170.0, 255.0);
+	ambientMapCoord /= vec2 (340.0, 425.0);
 }

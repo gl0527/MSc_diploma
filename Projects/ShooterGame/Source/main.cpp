@@ -13,6 +13,7 @@
 #include "AudioManager.h"
 #include "AudioSourceComponent.h"
 #include "ParticleComponent.h"
+#include "PlayerDataComponent.h"
 
 #include "OgreSceneManager.h"
 #include "MyGUI_Widget.h"
@@ -83,6 +84,9 @@ int main(int argc, char** argv)
 	if (auto soldierGO = objectMgr.GetGameObjectByName ("gijoe").lock ()) {
 		std::shared_ptr<SoldierAnimationComponent> soldierAnimComp (new SoldierAnimationComponent ("soldierAnimComp"));
 		soldierGO->AddComponent (soldierAnimComp);
+
+		std::shared_ptr<PlayerDataComponent> soldierData (new PlayerDataComponent ("soldierData"));
+		soldierGO->AddComponent (soldierData);
 	}
 
 	if (auto weapon = objectMgr.GetGameObjectByName ("weapon").lock ()) {

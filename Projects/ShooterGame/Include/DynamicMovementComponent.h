@@ -21,20 +21,20 @@ using namespace Engine;
 class DynamicMovementComponent : public Component
 {
 public:
-	DynamicMovementComponent(const std::string& name);
+					DynamicMovementComponent(const std::string& name);
 	
-	virtual void Start() override;
-	virtual void PreUpdate(float t, float dt) override;
+	virtual void	Start() override;
+	virtual void	PreUpdate(float t, float dt) override;
 
-	void SetMoveSpeed(float moveSpeed);
-	void SetTurnSpeed (float turnSpeed);
+	void			SetMoveSpeed(float moveSpeed);
+	void			SetTurnSpeed (float turnSpeed);
 
 private:
-	float m_moveSpeed;
-	float m_turnSpeed;
-	std::shared_ptr<PhysicsComponent> m_pOwnerPhysics;
+	float								m_moveSpeed;
+	float								m_turnSpeed;
+	std::shared_ptr<PhysicsComponent>	m_pOwnerPhysics;
 
-	void OnCollision (PhysicsComponent* other);
+	void			OnCollision (PhysicsComponent* other);
 };
 
 #endif	// #ifndef DYNAMIC_MOVEMENT_COMPONENT_H
