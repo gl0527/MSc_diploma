@@ -26,14 +26,16 @@ public:
 						RenderComponent (const std::string& name);
 	virtual				~RenderComponent ();
 
-	virtual void		PostInit (GameObject* obj) override;
-	virtual void		PostUpdate (float t, float dt) override;
-	virtual void		Destroy () override;
+	void				PostInit (GameObject* obj) override;
+	void				PostUpdate (float t, float dt) override;
+	void				Destroy () override;
 
 	Ogre::SceneNode*	GetOgreNode () const { return m_pCurrentNode; }
 
 	void				SetCastShadows (bool cast);
 	void				SetVisible (bool visible);
+
+	DLL_EXPORT void		MoveNode ();
 
 protected:
 	Ogre::SceneNode*		m_pParentNode;
@@ -41,7 +43,8 @@ protected:
 	Ogre::MovableObject*	m_pObject;
 	Ogre::SceneManager*		m_pSceneManager;
 
-	void CreateNode ();
+
+	void				CreateNode ();
 };
 
 }	// namespace Engine

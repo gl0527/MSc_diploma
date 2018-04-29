@@ -5,6 +5,7 @@
 #include "OgreSkeleton.h"
 #include "OgreSkeletonInstance.h"
 #include "OgreEntity.h"
+#include "AudioSourceComponent.h"
 
 
 SoldierAnimationComponent::SoldierAnimationComponent (const std::string& name):
@@ -93,6 +94,12 @@ void SoldierAnimationComponent::PreUpdate (float t, float dt)
 }
 
 
+void SoldierAnimationComponent::HasWeapon (bool hasWeapon)
+{
+	m_hasWeapon = hasWeapon;
+}
+
+
 void SoldierAnimationComponent::OnTransition (const char* fromAnimName, const char* toAnimName, bool isLooping)
 {
 	Ogre::AnimationState* pAnimState = m_ownerEntity->getAnimationState (fromAnimName);
@@ -129,6 +136,13 @@ void SoldierAnimationComponent::OnUpperBodyShoot (float t, float dt)
 {
 	Ogre::AnimationState* pAnimState = m_ownerEntity->getAnimationState ("up_shoot");
 	pAnimState->addTime (dt);
+
+	if (fabs (pAnimState->getTimePosition () - 1.0f) < 0.01f) {
+		if (auto weapon = m_owner->GetChild ("weapon")) {
+			if (auto weaponAudio = weapon->GetFirstComponentByType<AudioSourceComponent> ().lock ())
+				weaponAudio->Play ();
+		}
+	}
 	if (pAnimState->hasEnded ())
 		m_isInShootState = false;
 }

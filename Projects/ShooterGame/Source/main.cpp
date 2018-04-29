@@ -6,9 +6,7 @@
 #include "XML/XMLParser.h"
 
 #include "DynamicMovementProcessor.h"
-#include "InputComponent.h"
 #include "FPSComponent.h"
-#include "InputProcessor.h"
 #include "WeaponComponent.h"
 #include "SoldierAnimationComponent.h"
 #include "SoldierStateComponent.h"
@@ -47,7 +45,6 @@ int main(int argc, char** argv)
 	if (!game.Init ())
 		return -1;
 
-	new InputProcessor;
 	new DynamicMovementProcessor;
 
 	AudioManager::GetInstance ().SetResourceLocation ("media\\level01-arrival\\sound\\");
@@ -88,7 +85,7 @@ int main(int argc, char** argv)
 		soldierGO->AddComponent (soldierAnimComp);
 	}
 
-	if (auto weapon = objectMgr.GetGameObjectByName ("weaponNode").lock ()) {
+	if (auto weapon = objectMgr.GetGameObjectByName ("weapon").lock ()) {
 		std::shared_ptr<WeaponComponent> weaponComp (new WeaponComponent ("soldierWeapon"));
 		weapon->AddComponent (weaponComp);
 	}

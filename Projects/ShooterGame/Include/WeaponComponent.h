@@ -1,15 +1,23 @@
+#ifndef WEAPON_COMPONENT_H
+#define WEAPON_COMPONENT_H
+
 #pragma once
+
+// ---------------------------------- includes ----------------------------------
+
 #include "Component.h"
+
 
 using namespace Engine;
 
+// =========================== class WeaponComponent ============================
+
 class WeaponComponent : public Component
 {
-	
 public:
-	WeaponComponent(const std::string& name);
-	~WeaponComponent();
+			WeaponComponent (const std::string& name);
 
-	virtual void Start() override;
-	virtual void PreUpdate(float t, float dt) override;
+	void	PreUpdate (float t, float dt) override;
 };
+
+#endif	// #ifndef WEAPON_COMPONENT_H

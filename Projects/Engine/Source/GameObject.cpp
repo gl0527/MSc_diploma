@@ -1,6 +1,7 @@
 #include "GameObject.h"
 #include "ObjectManager.h"
 #include "TransformComponent.h"
+#include "MeshComponent.h"
 
 
 namespace Engine {
@@ -211,6 +212,17 @@ const std::vector<GameObject::WPtr> GameObject::GetChildren () const
 }
 
 
+GameObject::SPtr GameObject::GetChild (const std::string& name)
+{
+	for (auto& child : m_children) {
+		if (auto childSptr = child.lock ())
+			if (childSptr->GetName () == name)
+				return childSptr;
+	}
+	return nullptr;
+}
+
+
 void GameObject::ClearParent ()
 {
 	m_pParent.reset ();
@@ -228,6 +240,10 @@ void GameObject::SetParent (const std::string& parentName)
 	if (auto ancestor = ObjectManager::GetInstance ().GetGameObjectByName (parentName).lock ()) {
 		m_pParent = ancestor;
 		ancestor->AddChild (m_Name);
+		Transform()->SetParentTransform ();
+		if (auto mesh = GetFirstComponentByType<MeshComponent> ().lock ()) {
+			mesh->MoveNode ();
+		}
 	}
 }
 

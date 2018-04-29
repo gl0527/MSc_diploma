@@ -89,7 +89,7 @@ public:
 	void				SetTrigger (bool trigger);
 
 	void				SetTypeToDynamic ();
-	void				SetTypeToKinematic ();
+	DLL_EXPORT void		SetTypeToKinematic ();
 	void				SetTypeToStatic ();
 
 	void				SetPhysicsMaterial (const PhysicsMaterial& phyMat);

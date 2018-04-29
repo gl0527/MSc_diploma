@@ -21,9 +21,16 @@ TransformComponent::TransformComponent (const std::string& name) :
 
 void TransformComponent::PostInit (GameObject* /*owner*/)
 {
+	SetParentTransform ();
+}
+
+
+void TransformComponent::SetParentTransform ()
+{
 	if (auto parent = m_owner->GetParent ().lock ()) {
 		m_pParentTransform = parent->Transform ();
 	}
+	UpdateGlobalTransform ();
 }
 
 

@@ -12,13 +12,6 @@ WeaponComponent::WeaponComponent (const std::string& name)
 {
 }
 
-WeaponComponent::~WeaponComponent ()
-{
-}
-
-void WeaponComponent::Start ()
-{
-}
 
 void WeaponComponent::PreUpdate (float t, float dt)
 {
@@ -27,7 +20,8 @@ void WeaponComponent::PreUpdate (float t, float dt)
 			if (auto parentSkeleton = parentMesh->GetEntity ()->getSkeleton ()) {
 				if (auto rightHand = parentSkeleton->getBone ("hand_r")) {
 					m_owner->Transform ()->SetLocalPosition (rightHand->_getDerivedPosition ());
-					m_owner->Transform ()->SetLocalRotation (rightHand->_getDerivedOrientation ());
+					Ogre::Quaternion rotation (Ogre::Radian (Ogre::Math::PI * 0.5f), Ogre::Vector3::UNIT_X);
+					m_owner->Transform ()->SetLocalRotation (rightHand->_getDerivedOrientation () * rotation);
 				}
 			}
 		}

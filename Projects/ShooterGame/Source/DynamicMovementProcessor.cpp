@@ -32,7 +32,7 @@ bool DynamicMovementProcessor::ProcessXMLTag (TiXmlElement* elem)
 
 				return false;
 			}
-			comp->setMoveSpeed (moveSpeed);
+			comp->SetMoveSpeed (moveSpeed);
 		} else if (childName == "turnspeed") {
 			float turnSpeed;
 			try {
@@ -42,7 +42,7 @@ bool DynamicMovementProcessor::ProcessXMLTag (TiXmlElement* elem)
 
 				return false;
 			}
-			comp->setTurnSpeed (turnSpeed);
+			comp->SetTurnSpeed (turnSpeed);
 		}
 	}
 

@@ -48,8 +48,8 @@ void AudioManager::Init ()
 	if (m_pAudioContext == nullptr)
 		ERR_THROW (std::runtime_error, "Could not create audio context!");
 
-	ALenum error = alutGetError ();
-	if (error != AL_NO_ERROR)
+	ALenum err = alutGetError ();
+	if (err != AL_NO_ERROR)
 		ERR_THROW (std::runtime_error, "An error occurred during OpenAL initialization!");
 
 	AL_SAFE_CALL (alGenSources (s_MaxUsedSources, m_sourceIDs), "Unable to create OpenAL sources.");

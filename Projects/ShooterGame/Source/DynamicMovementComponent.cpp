@@ -3,27 +3,24 @@
 #include "Game.h"
 #include "TransformComponent.h"
 #include "InputManager.h"
+#include "PhysicsComponent.h"
+#include "SoldierAnimationComponent.h"
+#include "MeshComponent.h"
 
 
 DynamicMovementComponent::DynamicMovementComponent (const std::string& name)
 	:Component (name),
-	moveSpeed (0.0f),
-	turnSpeed (0.0f),
-	ownerPhysics (std::shared_ptr<PhysicsComponent> (nullptr)),
-	ownerSoldierComp (std::shared_ptr<SoldierAnimComponent> (nullptr))
-{
-}
-
-
-DynamicMovementComponent::~DynamicMovementComponent ()
+	m_moveSpeed (0.0f),
+	m_turnSpeed (0.0f),
+	m_pOwnerPhysics (std::shared_ptr<PhysicsComponent> (nullptr))
 {
 }
 
 
 void DynamicMovementComponent::Start ()
 {
-	ownerPhysics = m_owner->GetFirstComponentByType<PhysicsComponent> ();
-	ownerSoldierComp = m_owner->GetFirstComponentByType<SoldierAnimComponent> ();
+	m_pOwnerPhysics = m_owner->GetFirstComponentByType<PhysicsComponent> ().lock ();
+	m_pOwnerPhysics->onCollision += std::bind (&DynamicMovementComponent::OnCollision, this, std::placeholders::_1);
 }
 
 
@@ -50,11 +47,36 @@ void DynamicMovementComponent::PreUpdate (float t, float dt)
 	dForce.normalise ();
 	dForce = m_owner->Transform ()->GetGlobalRotation () * dForce;
 
-	if (auto phy = ownerPhysics.lock ()) {
-		phy->ActivateRigidBody ();
-		phy->SetLinearVelocity (0.0f, 0.0f, 0.0f);
-		phy->SetAngularVelocity (0.0f, 0.0f, 0.0f);
-		phy->AddForce (moveSpeed * dForce.x, moveSpeed * dForce.y, moveSpeed * dForce.z);
-		phy->AddTorque (0.0f, turnSpeed * dTorque, 0.0f);
+	m_pOwnerPhysics->ActivateRigidBody ();
+	m_pOwnerPhysics->SetLinearVelocity (0.0f, 0.0f, 0.0f);
+	m_pOwnerPhysics->SetAngularVelocity (0.0f, 0.0f, 0.0f);
+	m_pOwnerPhysics->AddForce (m_moveSpeed * dForce.x, m_moveSpeed * dForce.y, m_moveSpeed * dForce.z);
+	m_pOwnerPhysics->AddTorque (0.0f, m_turnSpeed * dTorque, 0.0f);
+}
+
+
+void DynamicMovementComponent::SetMoveSpeed (float moveSpeed)
+{
+	m_moveSpeed = moveSpeed;
+}
+
+
+void DynamicMovementComponent::SetTurnSpeed (float turnSpeed)
+{
+	m_turnSpeed = turnSpeed;
+}
+
+
+void DynamicMovementComponent::OnCollision (PhysicsComponent* other)
+{
+	static bool collided = false;
+	
+	GameObject* otherOwner = other->GetOwner ();
+	if (!collided && otherOwner->GetName () == "weapon") {
+		collided = true;
+		other->SetTypeToKinematic ();
+		otherOwner->SetParent (m_owner->GetName ());
+		if (auto anim = m_owner->GetFirstComponentByType<SoldierAnimationComponent> ().lock ())
+			anim->HasWeapon (true);
 	}
 }

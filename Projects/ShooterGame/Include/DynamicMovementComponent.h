@@ -5,9 +5,14 @@
 
 // ---------------------------------- includes ----------------------------------
 
-#include "PhysicsComponent.h"
-#include "SoldierAnimComponent.h"
-#include <memory>
+#include "Component.h"
+
+
+namespace Engine {
+
+class PhysicsComponent;
+
+}
 
 using namespace Engine;
 
@@ -15,19 +20,21 @@ using namespace Engine;
 
 class DynamicMovementComponent : public Component
 {
-	float moveSpeed;
-	float turnSpeed;
-	std::weak_ptr<PhysicsComponent> ownerPhysics;
-	std::weak_ptr<SoldierAnimComponent> ownerSoldierComp;
 public:
 	DynamicMovementComponent(const std::string& name);
-	~DynamicMovementComponent();
 	
 	virtual void Start() override;
 	virtual void PreUpdate(float t, float dt) override;
 
-	void setMoveSpeed(float speed) { moveSpeed = speed; }
-	void setTurnSpeed (float speed) { turnSpeed = speed; }
+	void SetMoveSpeed(float moveSpeed);
+	void SetTurnSpeed (float turnSpeed);
+
+private:
+	float m_moveSpeed;
+	float m_turnSpeed;
+	std::shared_ptr<PhysicsComponent> m_pOwnerPhysics;
+
+	void OnCollision (PhysicsComponent* other);
 };
 
 #endif	// #ifndef DYNAMIC_MOVEMENT_COMPONENT_H

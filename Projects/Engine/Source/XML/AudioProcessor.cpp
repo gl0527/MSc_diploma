@@ -33,7 +33,7 @@ bool AudioProcessor::ProcessXMLTag (TiXmlElement* elem)
 		type = AudioSourceComponent::SoundEffect;
 	} else if (strcmp (typeName, "Music") == 0) {
 		type = AudioSourceComponent::Music;
-	} else if (strcmp (typeName, "Ambient") == 0) {
+	} else {
 		type = AudioSourceComponent::Ambient;
 	}
 

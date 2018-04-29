@@ -19,10 +19,14 @@ RenderComponent::RenderComponent (const std::string& name)
 }
 
 
+RenderComponent::~RenderComponent ()
+{
+}
+
+
 void RenderComponent::PostInit (GameObject* obj)
 {
 	CreateNode ();
-	m_pCurrentNode->attachObject (m_pObject);
 }
 
 
@@ -50,12 +54,22 @@ void RenderComponent::CreateNode ()
 		}
 	}
 	m_pCurrentNode = m_pParentNode->createChildSceneNode ();
+	m_pCurrentNode->attachObject (m_pObject);
 }
 
 
-RenderComponent::~RenderComponent ()
+void RenderComponent::MoveNode ()
 {
-	std::cout << "RenderComponent destructor called.\n";
+	if (m_pCurrentNode != nullptr)
+		m_pParentNode->removeChild (m_pCurrentNode);
+
+	if (const auto& ownerParent = m_owner->GetParent ().lock ()) {
+		if (const auto& ownerRenderer = ownerParent->GetFirstComponentByType<RenderComponent> ().lock ()) {
+			if (auto pNode = ownerRenderer->GetOgreNode ())
+				m_pParentNode = pNode;
+		}
+	}
+	m_pParentNode->addChild (m_pCurrentNode);
 }
 
 

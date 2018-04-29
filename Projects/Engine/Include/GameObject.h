@@ -42,7 +42,7 @@ public:
 	void							RemoveTag (const std::string& tag);
 	void							RemoveTag ();
 
-	void							AddChild (const std::string& childName);
+	DLL_EXPORT void					AddChild (const std::string& childName);
 	void							RemoveChild (const std::string& childName);
 	void							RemoveChildren ();
 
@@ -58,13 +58,14 @@ public:
 	DLL_EXPORT	WPtr				GetParent () const;
 	std::vector<std::string>		GetChildrenNames () const;
 	const std::vector<WPtr>			GetChildren () const;
+	DLL_EXPORT SPtr					GetChild (const std::string& name);
 
 	template<typename T>
 	std::weak_ptr<T>				GetFirstComponentByType ();
 
 	void							ClearParent ();
 	bool							HasParent () const;
-	void							SetParent (const std::string& parentName);
+	DLL_EXPORT void					SetParent (const std::string& parentName);
 	bool							HasTag (const std::string& t) const;
 	bool							IsDestroyed () const;
 
