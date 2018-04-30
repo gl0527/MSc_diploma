@@ -20,7 +20,7 @@ DynamicMovementComponent::DynamicMovementComponent (const std::string& name)
 void DynamicMovementComponent::Start ()
 {
 	m_pOwnerPhysics = m_owner->GetFirstComponentByType<PhysicsComponent> ().lock ();
-	m_pOwnerPhysics->onCollision += std::bind (&DynamicMovementComponent::OnCollision, this, std::placeholders::_1);
+	m_pOwnerPhysics->onCollision += std::bind (&DynamicMovementComponent::OnCollisionWithWeapon, this, std::placeholders::_1);
 }
 
 
@@ -67,7 +67,7 @@ void DynamicMovementComponent::SetTurnSpeed (float turnSpeed)
 }
 
 
-void DynamicMovementComponent::OnCollision (PhysicsComponent* other)
+void DynamicMovementComponent::OnCollisionWithWeapon (PhysicsComponent* other)
 {
 	static bool collided = false;
 	

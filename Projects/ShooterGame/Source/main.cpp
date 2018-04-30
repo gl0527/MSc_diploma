@@ -14,6 +14,7 @@
 #include "AudioSourceComponent.h"
 #include "ParticleComponent.h"
 #include "PlayerDataComponent.h"
+#include "EnemyAIComponent.h"
 
 #include "OgreSceneManager.h"
 #include "MyGUI_Widget.h"
@@ -92,6 +93,14 @@ int main(int argc, char** argv)
 	if (auto weapon = objectMgr.GetGameObjectByName ("weapon").lock ()) {
 		std::shared_ptr<WeaponComponent> weaponComp (new WeaponComponent ("soldierWeapon"));
 		weapon->AddComponent (weaponComp);
+	}
+
+	if (auto pacman = objectMgr.GetGameObjectByName ("pacman").lock ()) {
+		std::shared_ptr<PlayerDataComponent> pacmanData (new PlayerDataComponent ("pacmanData"));
+		pacman->AddComponent (pacmanData);
+
+		std::shared_ptr<EnemyAIComponent> pacmanAI (new EnemyAIComponent ("pacmanAI"));
+		pacman->AddComponent (pacmanAI);
 	}
 
 	if (auto frames = objectMgr.CreateGameObject ("fps").lock ()) {
