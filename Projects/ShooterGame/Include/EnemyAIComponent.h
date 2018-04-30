@@ -33,18 +33,18 @@ class EnemyAIComponent : public Component
 public:
 	enum class State { Search, Attack, RunAway };
 
-	explicit EnemyAIComponent (const std::string& name);
+	explicit	EnemyAIComponent (const std::string& name);
 
-	void Start () override;
-	void PreUpdate (float t, float dt) override;
+	void		Start () override;
+	void		PreUpdate (float t, float dt) override;
 
 private:
 	using EnemyStateMachine = FiniteStateMachine<State, char>;
 	
-	EnemyStateMachine m_enemyStateMachine;
-	std::shared_ptr<Engine::GameObject> m_targetObj;
-	std::shared_ptr<PhysicsComponent> m_pOwnerPhysics;
-	std::shared_ptr<PlayerDataComponent> m_ownerData;
+	EnemyStateMachine						m_enemyStateMachine;
+	std::shared_ptr<Engine::GameObject>		m_targetObj;
+	std::shared_ptr<PhysicsComponent>		m_pOwnerPhysics;
+	std::shared_ptr<PlayerDataComponent>	m_ownerData;
 
 	const Ogre::Vector3& GetTargetPosition () const;
 	const Ogre::Vector3& GetOwnerPosition () const;

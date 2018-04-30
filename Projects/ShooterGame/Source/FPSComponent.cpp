@@ -33,11 +33,6 @@ FPSComponent::FPSComponent (const std::string& name)
 }
 
 
-FPSComponent::~FPSComponent ()
-{
-}
-
-
 void FPSComponent::PostUpdate (float t, float dt)
 {
 	float fps = renderWnd->getLastFPS ();

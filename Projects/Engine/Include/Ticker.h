@@ -15,7 +15,7 @@ namespace Engine {
 class Ticker
 {
 public:
-						Ticker (float limit = 0.0f);
+	explicit			Ticker (float limit = 0.0f);
 
 	void				Tick ();
 	void				Reset ();

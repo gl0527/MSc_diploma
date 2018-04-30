@@ -23,7 +23,7 @@ namespace Engine {
 class RenderComponent : public Component
 {
 public:
-						RenderComponent (const std::string& name);
+	explicit			RenderComponent (const std::string& name);
 	virtual				~RenderComponent ();
 
 	void				PostInit (GameObject* obj) override;

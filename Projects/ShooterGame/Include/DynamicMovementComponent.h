@@ -21,7 +21,7 @@ using namespace Engine;
 class DynamicMovementComponent : public Component
 {
 public:
-					DynamicMovementComponent(const std::string& name);
+	explicit		DynamicMovementComponent(const std::string& name);
 	
 	virtual void	Start() override;
 	virtual void	PreUpdate(float t, float dt) override;

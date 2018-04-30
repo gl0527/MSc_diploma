@@ -15,9 +15,9 @@ using namespace Engine;
 class WeaponComponent : public Component
 {
 public:
-			WeaponComponent (const std::string& name);
+	explicit	WeaponComponent (const std::string& name);
 
-	void	PreUpdate (float t, float dt) override;
+	void		PreUpdate (float t, float dt) override;
 };
 
 #endif	// #ifndef WEAPON_COMPONENT_H

@@ -18,7 +18,7 @@ namespace Engine {
 class TransformComponent : public Component
 {
 public:
-										TransformComponent (const std::string& name);
+	explicit							TransformComponent (const std::string& name);
 
 	void								SetParentTransform ();
 

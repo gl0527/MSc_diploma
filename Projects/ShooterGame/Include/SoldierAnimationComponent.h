@@ -28,13 +28,13 @@ public:
 	enum class UpperBodyState { Idle, Run, WeaponHold, Shoot, Dead };
 	enum class LowerBodyState { Idle, Run, Dead };
 
-			SoldierAnimationComponent (const std::string& name);
+	explicit	SoldierAnimationComponent (const std::string& name);
 
-	void	Start () override;
-	void	PreUpdate (float t, float dt) override;
+	void		Start () override;
+	void		PreUpdate (float t, float dt) override;
 
-	void	HasWeapon (bool hasWeapon);
-	bool	IsDead () const;
+	void		HasWeapon (bool hasWeapon);
+	bool		IsDead () const;
 
 private:
 	using UpperBodyAnimation = FiniteStateMachine<UpperBodyState, char>;

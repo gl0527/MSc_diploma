@@ -9,7 +9,6 @@
 #include "FPSComponent.h"
 #include "WeaponComponent.h"
 #include "SoldierAnimationComponent.h"
-#include "SoldierStateComponent.h"
 #include "AudioManager.h"
 #include "AudioSourceComponent.h"
 #include "ParticleComponent.h"
@@ -75,11 +74,6 @@ int main(int argc, char** argv)
 				particleEnabled = !particleEnabled;
 			};
 		}
-	}
-
-	if (auto soldierGO = objectMgr.GetGameObjectByName ("human01").lock ()) {
-		std::shared_ptr<SoldierStateComponent> soldierStateComp (new SoldierStateComponent ("soldierStateComp"));
-		soldierGO->AddComponent (soldierStateComp);
 	}
 
 	if (auto soldierGO = objectMgr.GetGameObjectByName ("gijoe").lock ()) {

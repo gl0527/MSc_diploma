@@ -15,16 +15,16 @@ using namespace Engine;
 class PlayerDataComponent : public Component
 {
 public:
-	PlayerDataComponent (const std::string& name);
+	explicit		PlayerDataComponent (const std::string& name);
 
-	unsigned char GetHealthPoint () const;
-	unsigned char GetKills () const;
-	bool IsDead () const;
+	unsigned char	GetHealthPoint () const;
+	unsigned char	GetKills () const;
+	bool			IsDead () const;
 
-	void SetHealthPoint (unsigned char healthPoint);
-	void IncreaseHealtPoint (unsigned char amount);
-	void DecreaseHealtPoint (unsigned char amount);
-	void IncreaseKills (unsigned char amount);
+	void			SetHealthPoint (unsigned char healthPoint);
+	void			IncreaseHealtPoint (unsigned char amount);
+	void			DecreaseHealtPoint (unsigned char amount);
+	void			IncreaseKills (unsigned char amount);
 
 private:
 	unsigned char m_healthPoint;
