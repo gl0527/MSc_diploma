@@ -3,11 +3,10 @@
 
 #pragma once
 
-
+// ---------------------------------- includes ----------------------------------
 
 #include "Component.h"
 #include "FiniteStateMachine.h"
-
 
 
 namespace Engine {
@@ -27,6 +26,7 @@ class PlayerDataComponent;
 
 using namespace Engine;
 
+// =========================== class EnemyAIComponent ===========================
 
 class EnemyAIComponent : public Component
 {

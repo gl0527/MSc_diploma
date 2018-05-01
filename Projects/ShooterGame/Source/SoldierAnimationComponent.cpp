@@ -11,9 +11,15 @@
 
 namespace {
 
+inline bool IsRunningBackwards ()
+{
+	return InputManager::GetInstance ().IsKeyDown (OIS::KC_S);
+}
+
 inline bool IsRunning ()
 {
-	return InputManager::GetInstance ().IsKeyDown (OIS::KC_W);
+	return	InputManager::GetInstance ().IsKeyDown (OIS::KC_W) ||
+			InputManager::GetInstance ().IsKeyDown (OIS::KC_S);
 }
 
 }	// namespace
@@ -101,13 +107,13 @@ void SoldierAnimationComponent::PreUpdate (float t, float dt)
 		} else {
 			m_upperBodyAnimation.Process ('w');
 		}
-		m_lowerBodyAnimation.Process (IsRunning () ? 'r' : 'i');
 	} else {
 		m_upperBodyAnimation.Process (IsRunning () ? 'r' : 'i');
-		m_lowerBodyAnimation.Process (IsRunning () ? 'r' : 'i');
 	}
-	m_upperBodyAnimation.Update (t, dt);
-	m_lowerBodyAnimation.Update (t, dt);
+	m_lowerBodyAnimation.Process (IsRunning () ? 'r' : 'i');
+
+	m_upperBodyAnimation.Update (t, !m_isInShootState && IsRunningBackwards () ? -dt : dt);
+	m_lowerBodyAnimation.Update (t, IsRunningBackwards () ? -dt : dt);
 }
 
 
