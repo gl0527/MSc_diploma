@@ -26,29 +26,28 @@ inline bool IsRunning ()
 
 
 SoldierAnimationComponent::SoldierAnimationComponent (const std::string& name):
-	Component (name),
+	AnimationComponent (name),
 	m_upperBodyAnimation (UpperBodyState::Idle),
 	m_lowerBodyAnimation (LowerBodyState::Idle),
-	m_ownerEntity (nullptr),
 	m_ownerData (nullptr),
 	m_isInShootState (false),
 	m_hasWeapon (false),
 	m_isDead (false)
 {
 	m_upperBodyAnimation.AddTransitions ({
-		{UpperBodyState::Idle,			UpperBodyState::Run,		'r', [this] { OnTransition ("up_stand", "up_run", true); }},
-		{UpperBodyState::Idle,			UpperBodyState::WeaponHold,	'w', [this] { OnTransition ("up_stand", "up_weapon_hold", true); }},
-		{UpperBodyState::Run,			UpperBodyState::Idle,		'i', [this] { OnTransition ("up_run", "up_stand", true); }},
-		{UpperBodyState::Run,			UpperBodyState::WeaponHold,	'w', [this] { OnTransition ("up_run", "up_weapon_hold", true); }},
-		{UpperBodyState::WeaponHold,	UpperBodyState::Shoot,		's', [this] { OnTransition ("up_weapon_hold", "up_shoot", false); }},
-		{UpperBodyState::Shoot,			UpperBodyState::WeaponHold,	'w', [this] { OnTransition ("up_shoot", "up_weapon_hold", true); }},
+		{UpperBodyState::Idle,			UpperBodyState::Run,		'r', [this] { Transition ("up_stand", 0.0f, "up_run", 1.0f, true); }},
+		{UpperBodyState::Idle,			UpperBodyState::WeaponHold,	'w', [this] { Transition ("up_stand", 0.0f, "up_weapon_hold", 1.0f, true); }},
+		{UpperBodyState::Run,			UpperBodyState::Idle,		'i', [this] { Transition ("up_run", 0.0f, "up_stand", 1.0f, true); }},
+		{UpperBodyState::Run,			UpperBodyState::WeaponHold,	'w', [this] { Transition ("up_run", 0.0f, "up_weapon_hold", 1.0f, true); }},
+		{UpperBodyState::WeaponHold,	UpperBodyState::Shoot,		's', [this] { Transition ("up_weapon_hold", 0.0f, "up_shoot", 1.0f, false); }},
+		{UpperBodyState::Shoot,			UpperBodyState::WeaponHold,	'w', [this] { Transition ("up_shoot", 0.0f, "up_weapon_hold", 1.0f, true); }},
 	});
 
 	m_lowerBodyAnimation.AddTransitions ({
-		{LowerBodyState::Idle,	LowerBodyState::Run,	'r', [this] { OnTransition ("leg_stand", "leg_run", true); }},
-		{LowerBodyState::Run,	LowerBodyState::Idle,	'i', [this] { OnTransition ("leg_run", "leg_stand", true); }},
-		{LowerBodyState::Idle,	LowerBodyState::Dead,	'd', [this] { OnTransitionToDeath (); }},
-		{LowerBodyState::Run,	LowerBodyState::Dead,	'd', [this] { OnTransitionToDeath (); }},
+		{LowerBodyState::Idle,	LowerBodyState::Run,	'r', [this] { Transition ("leg_stand", 0.0f, "leg_run", 1.0f, true); }},
+		{LowerBodyState::Run,	LowerBodyState::Idle,	'i', [this] { Transition ("leg_run", 0.0f, "leg_stand", 1.0f, true); }},
+		{LowerBodyState::Idle,	LowerBodyState::Dead,	'd', [this] { TransitionToDeath (); }},
+		{LowerBodyState::Run,	LowerBodyState::Dead,	'd', [this] { TransitionToDeath (); }},
 	});
 
 	m_upperBodyAnimation.AddStateFunction (UpperBodyState::Idle,
@@ -86,6 +85,9 @@ void SoldierAnimationComponent::Start ()
 
 		if (auto skeleton = m_ownerEntity->getSkeleton ()) {
 			skeleton->setBlendMode (Ogre::ANIMBLEND_CUMULATIVE);
+
+			Enable ("up_stand", true);
+			Enable ("leg_stand", true);
 
 			return;
 		}
@@ -129,110 +131,69 @@ bool SoldierAnimationComponent::IsDead () const
 }
 
 
-void SoldierAnimationComponent::OnTransition (const char* fromAnimName, const char* toAnimName, bool isLooping)
+void SoldierAnimationComponent::TransitionToDeath ()
 {
-	TurnOffAnimation (fromAnimName);
-	TurnOnAnimation (toAnimName, isLooping);
-}
+	Disable ("up_stand");
+	Disable ("up_run");
+	Disable ("up_weapon_hold");
+	Disable ("up_shoot");
+	Disable ("leg_stand");
+	Disable ("leg_run");
 
-
-void SoldierAnimationComponent::OnTransitionToDeath ()
-{
-	TurnOffAnimation ("up_stand");
-	TurnOffAnimation ("up_run");
-	TurnOffAnimation ("up_weapon_hold");
-	TurnOffAnimation ("up_shoot");
-	TurnOffAnimation ("leg_stand");
-	TurnOffAnimation ("leg_run");
-
-	TurnOnAnimation ("death", false);
+	Enable ("death", false);
 	m_upperBodyAnimation.SetState (UpperBodyState::Dead);
-}
-
-
-void SoldierAnimationComponent::TurnOffAnimation (const char* animName)
-{
-	Ogre::AnimationState* pAnimState = m_ownerEntity->getAnimationState (animName);
-	pAnimState->setEnabled (false);
-	pAnimState->setWeight (0.0f);
-	pAnimState->setLoop (false);
-}
-
-
-void SoldierAnimationComponent::TurnOnAnimation (const char* animName, bool isLooping)
-{
-	Ogre::AnimationState* pAnimState = m_ownerEntity->getAnimationState (animName);
-	pAnimState->setEnabled (true);
-	pAnimState->setWeight (1.0f);
-	pAnimState->setTimePosition (0.0f);
-	pAnimState->setLoop (isLooping);
 }
 
 
 void SoldierAnimationComponent::OnUpperBodyIdle (float t, float dt)
 {
-	Ogre::AnimationState* pAnimState = m_ownerEntity->getAnimationState ("up_stand");
-	pAnimState->setEnabled (true);
-	pAnimState->setWeight (1.0f);
-	pAnimState->setLoop (true);
-	pAnimState->addTime (dt);
+	Step ("up_stand", dt);
 }
 
 
 void SoldierAnimationComponent::OnUpperBodyRun (float t, float dt)
 {
-	Ogre::AnimationState* pAnimState = m_ownerEntity->getAnimationState ("up_run");
-	pAnimState->addTime (dt);
+	Step ("up_run", dt);
 }
 
 
 void SoldierAnimationComponent::OnUpperBodyShoot (float t, float dt)
 {
-	Ogre::AnimationState* pAnimState = m_ownerEntity->getAnimationState ("up_shoot");
-	pAnimState->addTime (dt);
-
-	if (fabs (pAnimState->getTimePosition () - 1.0f) < 0.01f) {
+	Step ("up_shoot", dt);
+	if (fabs (GetTimePositionInSeconds ("up_shoot") - 1.0f) < 0.01f) {
 		if (auto weapon = m_owner->GetChild ("weapon")) {
 			if (auto weaponAudio = weapon->GetFirstComponentByType<AudioSourceComponent> ().lock ())
 				weaponAudio->Play ();
 		}
 	}
-	if (pAnimState->hasEnded ())
+	if (HasEnded ("up_shoot"))
 		m_isInShootState = false;
 }
 
 
 void SoldierAnimationComponent::OnUpperBodyWeaponHold (float t, float dt)
 {
-	Ogre::AnimationState* pAnimState = m_ownerEntity->getAnimationState ("up_weapon_hold");
-	pAnimState->addTime (dt);
+	Step ("up_weapon_hold", dt);
 }
 
 
 void SoldierAnimationComponent::OnLowerBodyIdle (float t, float dt)
 {
-	Ogre::AnimationState* pAnimState = m_ownerEntity->getAnimationState ("leg_stand");
-	pAnimState->setEnabled (true);
-	pAnimState->setWeight (1.0f);
-	pAnimState->setLoop (true);
-	pAnimState->addTime (dt);
+	Step ("leg_stand", dt);
 }
 
 
 void SoldierAnimationComponent::OnLowerBodyRun (float t, float dt)
 {
-	Ogre::AnimationState* pAnimState = m_ownerEntity->getAnimationState ("leg_run");
-	pAnimState->addTime (dt);
+	Step ("leg_run", dt);
 }
 
 
 void SoldierAnimationComponent::OnDeath (float t, float dt)
 {
-	Ogre::AnimationState* pAnimState = m_ownerEntity->getAnimationState ("death");
-	pAnimState->addTime (dt);
+	Step ("death", dt);
 	static bool isDeathSoundPlayed = false;
-	auto soldierAudio = m_owner->GetFirstComponentByType<AudioSourceComponent> ().lock ();
-	
+	auto soldierAudio = m_owner->GetFirstComponentByType<AudioSourceComponent> ().lock ();	
 	if (!isDeathSoundPlayed && soldierAudio != nullptr) {
 		soldierAudio->Play ();
 		isDeathSoundPlayed = true;

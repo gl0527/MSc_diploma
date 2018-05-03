@@ -5,7 +5,7 @@
 
 // ---------------------------------- includes ----------------------------------
 
-#include "Component.h"
+#include "AnimationComponent.h"
 #include "FiniteStateMachine.h"
 
 
@@ -22,7 +22,7 @@ class PlayerDataComponent;
 
 // ====================== class SoldierAnimationComponent =======================
 
-class SoldierAnimationComponent : public Component
+class SoldierAnimationComponent : public AnimationComponent
 {
 public:
 	enum class UpperBodyState { Idle, Run, WeaponHold, Shoot, Dead };
@@ -43,7 +43,6 @@ private:
 	UpperBodyAnimation						m_upperBodyAnimation;
 	LowerBodyAnimation						m_lowerBodyAnimation;
 	std::shared_ptr<PlayerDataComponent>	m_ownerData;
-	Ogre::Entity*							m_ownerEntity;
 	bool									m_isInShootState;
 	bool									m_hasWeapon;
 	bool									m_isDead;
@@ -56,10 +55,7 @@ private:
 	void	OnLowerBodyRun (float t, float dt);
 	void	OnDeath (float t, float dt);
 
-	void	OnTransition (const char* fromAnimName, const char* toAnimName, bool isLooping);
-	void	OnTransitionToDeath ();
-	void	TurnOffAnimation (const char* animName);
-	void	TurnOnAnimation (const char* animName, bool isLooping);
+	void	TransitionToDeath ();
 };
 
 #endif	//#ifndef SOLDIER_ANIMATION_COMPONENT_H

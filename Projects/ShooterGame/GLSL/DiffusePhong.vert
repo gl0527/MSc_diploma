@@ -18,6 +18,7 @@ void main ()
 	diffuseMapCoord = gl_MultiTexCoord0.xy;
 	lightMapCoord = gl_MultiTexCoord1.xy;
 	ambientMapCoord = worldPos.xz;
-	ambientMapCoord += vec2 (170.0, 255.0);
-	ambientMapCoord /= vec2 (340.0, 425.0);
+	ambientMapCoord += vec2 (0.0, 600.0);	// inverse translation of the building
+	ambientMapCoord += vec2 (170.0, 255.0);	// translate to the middle point of the building
+	ambientMapCoord /= vec2 (340.0, 425.0);	// downscaling the texture coordinates with the sizes of the building
 }
