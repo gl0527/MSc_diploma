@@ -10,10 +10,10 @@
 #include "WeaponComponent.h"
 #include "SoldierAnimationComponent.h"
 #include "AudioManager.h"
-#include "AudioSourceComponent.h"
 #include "ParticleComponent.h"
 #include "PlayerDataComponent.h"
 #include "EnemyAIComponent.h"
+#include "EnemyAnimationComponent.h"
 
 #include "OgreSceneManager.h"
 #include "MyGUI_Widget.h"
@@ -80,7 +80,7 @@ int main(int argc, char** argv)
 		std::shared_ptr<SoldierAnimationComponent> soldierAnimComp (new SoldierAnimationComponent ("soldierAnimComp"));
 		soldierGO->AddComponent (soldierAnimComp);
 
-		std::shared_ptr<PlayerDataComponent> soldierData (new PlayerDataComponent ("soldierData"));
+		std::shared_ptr<PlayerDataComponent> soldierData (new PlayerDataComponent ("soldierData", 100));
 		soldierGO->AddComponent (soldierData);
 	}
 
@@ -90,11 +90,25 @@ int main(int argc, char** argv)
 	}
 
 	if (auto pacman = objectMgr.GetGameObjectByName ("pacman").lock ()) {
-		std::shared_ptr<PlayerDataComponent> pacmanData (new PlayerDataComponent ("pacmanData"));
+		std::shared_ptr<PlayerDataComponent> pacmanData (new PlayerDataComponent ("pacmanData", 3));
 		pacman->AddComponent (pacmanData);
 
 		std::shared_ptr<EnemyAIComponent> pacmanAI (new EnemyAIComponent ("pacmanAI"));
 		pacman->AddComponent (pacmanAI);
+
+		std::shared_ptr<EnemyAnimationComponent> pacmanAnim (new EnemyAnimationComponent ("pacmanAnim", "walk", "go", "death"));
+		pacman->AddComponent (pacmanAnim);
+	}
+
+	if (auto ghost = objectMgr.GetGameObjectByName ("ghost").lock ()) {
+		std::shared_ptr<PlayerDataComponent> ghostData (new PlayerDataComponent ("ghostData", 3));
+		ghost->AddComponent (ghostData);
+
+		std::shared_ptr<EnemyAIComponent> ghostAI (new EnemyAIComponent ("ghostAI"));
+		ghost->AddComponent (ghostAI);
+
+		std::shared_ptr<EnemyAnimationComponent> ghostAnim (new EnemyAnimationComponent ("ghostAnim", "walk", "freeze", "death"));
+		ghost->AddComponent (ghostAnim);
 	}
 
 	if (auto frames = objectMgr.CreateGameObject ("fps").lock ()) {

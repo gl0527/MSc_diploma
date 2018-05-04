@@ -3,7 +3,7 @@
 
 #pragma once
 
-
+// ---------------------------------- includes ----------------------------------
 
 #include "Component.h"
 
@@ -16,7 +16,7 @@ class Entity;
 
 namespace Engine {
 
-
+// ========================== class AnimationComponent ==========================
 
 class AnimationComponent : public Component
 {

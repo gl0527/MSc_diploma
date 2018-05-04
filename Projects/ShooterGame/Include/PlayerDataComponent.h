@@ -15,7 +15,7 @@ using namespace Engine;
 class PlayerDataComponent : public Component
 {
 public:
-	explicit		PlayerDataComponent (const std::string& name);
+					PlayerDataComponent (const std::string& name, unsigned char healtPoint);
 
 	unsigned char	GetHealthPoint () const;
 	unsigned char	GetKills () const;

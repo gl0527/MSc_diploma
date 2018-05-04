@@ -31,12 +31,14 @@ using namespace Engine;
 class EnemyAIComponent : public Component
 {
 public:
-	enum class State { Search, Attack, RunAway };
+	enum class State { Search, Attack, RunAway, Dead };
 
 	explicit	EnemyAIComponent (const std::string& name);
 
 	void		Start () override;
 	void		PreUpdate (float t, float dt) override;
+
+	State		GetState () const;
 
 private:
 	using EnemyStateMachine = FiniteStateMachine<State, char>;
@@ -55,6 +57,7 @@ private:
 	void OnSearch (float t, float dt);
 	void OnAttack (float t, float dt);
 	void OnRunAway (float t, float dt);
+	void OnDead (float t, float dt);
 };
 
 #endif	// #ifndef ENEMY_AI_COMPONENT_H

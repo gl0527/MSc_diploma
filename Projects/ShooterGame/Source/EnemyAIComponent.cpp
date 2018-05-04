@@ -27,6 +27,9 @@ EnemyAIComponent::EnemyAIComponent (const std::string& name):
 
 	m_enemyStateMachine.AddStateFunction (State::RunAway,
 		std::bind (&EnemyAIComponent::OnRunAway, this, std::placeholders::_1, std::placeholders::_2));
+
+	m_enemyStateMachine.AddStateFunction (State::Dead,
+		std::bind (&EnemyAIComponent::OnDead, this, std::placeholders::_1, std::placeholders::_2));
 }
 
 
@@ -61,7 +64,9 @@ void EnemyAIComponent::PreUpdate (float t, float dt)
 	Ogre::Vector3 targetWorldPos = m_targetObj->Transform ()->GetGlobalPosition ();
 	Ogre::Vector3 ownerWorldPos = m_owner->Transform ()->GetGlobalPosition ();
 	
-	if (m_ownerData->GetHealthPoint () < 20)
+	if (m_ownerData->GetHealthPoint () < 1)
+		m_enemyStateMachine.SetState (State::Dead);
+	else if (m_ownerData->GetHealthPoint () < 2)
 		m_enemyStateMachine.Process ('r');
 	else if (targetWorldPos.distance (ownerWorldPos) < 30.0f) {
 		m_enemyStateMachine.Process ('a');
@@ -103,12 +108,18 @@ void EnemyAIComponent::Move (float distance, bool follow)
 		ownerWorldFacing.normalise ();
 
 		Ogre::Real cosTurnAngle (ownerWorldFacing.dotProduct (direction));
-		Ogre::Radian turnAngle = Ogre::Math::ACos (cosTurnAngle);
+		Ogre::Real turnAngle = Ogre::Math::ACos (cosTurnAngle).valueRadians ();
+
+		unsigned char sign = 1;
+		if (turnAngle > 1.1 * Ogre::Math::PI) {
+			turnAngle = 2 * Ogre::Math::PI - turnAngle;
+			sign = -1;
+		}
 
 		m_pOwnerPhysics->ActivateRigidBody ();
 		m_pOwnerPhysics->SetLinearVelocity (0.0f, 0.0f, 0.0f);
 		m_pOwnerPhysics->SetAngularVelocity (0.0f, 0.0f, 0.0f);
-		m_pOwnerPhysics->AddTorque (0.0f, 300 * turnAngle.valueRadians (), 0.0f);
+		m_pOwnerPhysics->AddTorque (0.0f, 300 * sign * turnAngle, 0.0f);
 		m_pOwnerPhysics->AddForce (1000 * direction.x, 1000 * direction.y, 1000 * direction.z);
 	}
 }
@@ -122,11 +133,23 @@ void EnemyAIComponent::OnSearch (float /*t*/, float /*dt*/)
 
 void EnemyAIComponent::OnAttack (float /*t*/, float /*dt*/)
 {
-
+	Move (18.0f, true);
 }
 
 
 void EnemyAIComponent::OnRunAway (float /*t*/, float /*dt*/)
 {
 	Move (20.0f, false);
+}
+
+
+void EnemyAIComponent::OnDead (float /*t*/, float /*dt*/)
+{
+
+}
+
+
+EnemyAIComponent::State EnemyAIComponent::GetState () const
+{
+	return m_enemyStateMachine.GetState ();
 }

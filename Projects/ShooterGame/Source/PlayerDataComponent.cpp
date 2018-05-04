@@ -1,9 +1,9 @@
 #include "PlayerDataComponent.h"
 
 
-PlayerDataComponent::PlayerDataComponent (const std::string& name):
+PlayerDataComponent::PlayerDataComponent (const std::string& name, unsigned char healtPoint):
 	Component (name),
-	m_healthPoint (100),
+	m_healthPoint (healtPoint),
 	m_kills (0)
 {
 }
