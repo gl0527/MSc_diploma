@@ -8,19 +8,15 @@
 #include "btBulletDynamicsCommon.h"
 
 #include "Component.h"
+#include "PhysicsMaterial.h"
+#include "OgreVector3.h"
+#include "OgreQuaternion.h"
 #include "Delegate.h"
-
-// ----------------------------- forward declaration -----------------------------
-
-namespace Ogre {
-
-class Vector3;
-class Quaternion;
-
-}
 
 
 namespace Engine {
+
+// ----------------------------- forward declaration -----------------------------
 
 class PhysicsMaterial;
 
@@ -40,33 +36,40 @@ public:
 	Delegate<void, PhysicsComponent*> onTriggerEnter;
 	Delegate<void, PhysicsComponent*> onCollision;
 
+	struct ShapeDescriptor
+	{
+		ShapeDescriptor ();
+
+		std::string shapeType;
+		float shapeDimensions[4];
+		Ogre::Vector3 shapePos;
+		Ogre::Quaternion shapeRot;
+	};
+
 	struct Descriptor
 	{
-		Descriptor ()
-			: name (""),
-			mass (0.0f),
-			isTrigger (false),
-			rigidBodyType (RigidBodyType::Static)
-		{
-		}
+		Descriptor ();
 
-		std::string		name;
-		float			mass;
+		std::string						name;
+		float							mass;
 		
-		bool			isTrigger;
-		RigidBodyType	rigidBodyType;
-		void*			materialDesc;
+		bool							isTrigger;
+		std::string						rigidBodyType;
+		Ogre::Vector3					angularFactor;
+		std::vector<ShapeDescriptor>	shapeDescriptors;
+		PhysicsMaterial::Descriptor		materialDescriptor;
 	};
 
 						PhysicsComponent (const std::string& name, float m);
 						PhysicsComponent (const Descriptor& desc);
-	virtual				~PhysicsComponent ();
 
-	virtual void		PostInit (GameObject* object) override;
-	virtual void		Update (float t, float dt) override;
-	virtual void		Destroy () override;
+	void				Start () override;
+	void				Update (float t, float dt) override;
+	void				Destroy () override;
 
 	void				ApplyDescriptor (const Descriptor& desc);
+	void				UseDescriptor ();
+	void				ApplyShapeDescriptors ();
 
 	void				AddCollisionShape (btCollisionShape* collShape, const Ogre::Vector3& p, const Ogre::Quaternion& q);
 	void				RemoveCollisionShape (btCollisionShape* collShape);
@@ -78,7 +81,6 @@ public:
 	DLL_EXPORT void		SetLinearVelocity (float x, float y, float z);
 	DLL_EXPORT void		SetAngularVelocity (float x, float y, float z);
 	DLL_EXPORT void		ActivateRigidBody ();
-	void				DisableRotationXYZ ();
 
 	DLL_EXPORT bool		IsTrigger () const;
 	bool				IsDynamic () const;
@@ -96,9 +98,9 @@ public:
 
 private:
 	RigidBodyType 			m_rigidBodyType;
-
 	float					m_mass;
 	bool					m_isTrigger;
+	Descriptor				m_descriptor;
 
 	btRigidBody*			m_pRigidBody;
 	btCompoundShape*		m_pCompoundShape;
@@ -106,9 +108,9 @@ private:
 	btDynamicsWorld*		m_pWorld;
 	PhysicsMaterial*		m_pPhyMaterial;
 
-	Ogre::Vector3		GetPosition ()		const;
-	Ogre::Quaternion	GetOrientation ()	const;
 
+	Ogre::Vector3		GetPosition () const;
+	Ogre::Quaternion	GetOrientation () const;
 	void				SetPosition (const Ogre::Vector3& p);
 	void				SetOrientation (const Ogre::Quaternion& q);
 };

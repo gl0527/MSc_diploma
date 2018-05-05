@@ -2,13 +2,30 @@
 #include "GameObject.h"
 #include "Game.h"
 #include "PhysicsSystem.h"
-#include "OgreVector3.h"
-#include "OgreQuaternion.h"
 #include "TransformComponent.h"
-#include "PhysicsMaterial.h"
 
 
 namespace Engine {
+
+PhysicsComponent::ShapeDescriptor::ShapeDescriptor () :
+	shapeType (""),
+	shapePos (Ogre::Vector3::ZERO),
+	shapeRot (Ogre::Quaternion::IDENTITY)
+{
+	for (unsigned char i = 0; i < 4; ++i)
+		shapeDimensions[i] = 0.0f;
+}
+
+
+PhysicsComponent::Descriptor::Descriptor () :
+	name (""),
+	mass (0.0f),
+	isTrigger (false),
+	rigidBodyType (""),
+	angularFactor (Ogre::Vector3 (1.0f, 1.0f, 1.0f))
+{
+}
+
 
 PhysicsComponent::PhysicsComponent (const std::string& name, float m)
 	: Component (name, true),
@@ -22,19 +39,13 @@ PhysicsComponent::PhysicsComponent (const std::string& name, float m)
 	if (m_mass < 1e-4) {
 		m_mass = 0.0f;
 		m_rigidBodyType = RigidBodyType::Static;
-	}
-	else
+	} else
 		m_rigidBodyType = RigidBodyType::Dynamic;
 }
 
 
 PhysicsComponent::PhysicsComponent (const Descriptor& desc)
-	: Component (desc.name),
-	m_mass (desc.mass),
-	m_isTrigger (desc.isTrigger),
-	m_pRigidBody (nullptr),
-	m_pCompoundShape (new btCompoundShape),
-	m_pWorld (Game::GetInstance ().GetPhysicsSystem ()->GetWorldPtr ())
+	: PhysicsComponent (desc.name, desc.mass)
 {
 }
 
@@ -52,9 +63,111 @@ void PhysicsComponent::RemoveCollisionShape (btCollisionShape* collShape)
 }
 
 
+void PhysicsComponent::Start ()
+{
+	ApplyShapeDescriptors ();
+	SetMass ();
+	CreateRigidBody ();
+	UseDescriptor ();
+}
+
+
+void PhysicsComponent::Update (float t, float dt)
+{
+	if (m_rigidBodyType == RigidBodyType::Dynamic) {
+		m_owner->Transform ()->SetGlobalPosition (GetPosition ());
+		m_owner->Transform ()->SetGlobalRotation (GetOrientation ());
+	} else if (m_rigidBodyType == RigidBodyType::Kinematic) {
+		SetPosition (m_owner->Transform ()->GetGlobalPosition ());
+		SetOrientation (m_owner->Transform ()->GetGlobalRotation ());
+	}
+}
+
+
+void PhysicsComponent::Destroy ()
+{
+	for (int i = 0; i < m_pCompoundShape->getNumChildShapes (); ++i) {
+		btCollisionShape* s = m_pCompoundShape->getChildShape (i);
+		m_pCompoundShape->removeChildShape (s);
+	}
+	btCollisionObject* obj = static_cast<btCollisionObject*>(m_pRigidBody);
+	m_pWorld->removeCollisionObject (obj);
+	m_pWorld->removeRigidBody (m_pRigidBody);
+
+	if (m_pCompoundShape != nullptr) {
+		delete m_pCompoundShape;
+		m_pCompoundShape = nullptr;
+	}
+	if (m_pMotionState != nullptr) {
+		delete m_pMotionState;
+		m_pMotionState = nullptr;
+	}
+	if (m_pRigidBody != nullptr) {
+		delete m_pRigidBody;
+		m_pRigidBody = nullptr;
+	}
+}
+
+
+void PhysicsComponent::ApplyDescriptor (const PhysicsComponent::Descriptor& desc)
+{
+	m_descriptor = desc;
+}
+
+
+void PhysicsComponent::ApplyShapeDescriptors ()
+{
+	for (const ShapeDescriptor& shapeDesc : m_descriptor.shapeDescriptors) {
+		std::string shapeType = shapeDesc.shapeType;
+		float x = shapeDesc.shapeDimensions[0];
+		float y = shapeDesc.shapeDimensions[1];
+		float z = shapeDesc.shapeDimensions[2];
+		float w = shapeDesc.shapeDimensions[3];
+		btCollisionShape* pCollisionShape = nullptr;
+
+		if (shapeType == "box") {
+			pCollisionShape = new btBoxShape (btVector3 (x * 0.5f, y * 0.5f, z * 0.5f));
+		} else if (shapeType == "staticplane") {
+			pCollisionShape = new btStaticPlaneShape (btVector3 (x, y, z), w);
+		} else if (shapeType == "capsule") {
+			pCollisionShape = new btCapsuleShape (x, y);
+		} else if (shapeType == "sphere") {
+			pCollisionShape = new btSphereShape (x);
+		}
+
+		if (pCollisionShape != nullptr)
+			AddCollisionShape (pCollisionShape, shapeDesc.shapePos, shapeDesc.shapeRot);
+	}
+}
+
+
+void PhysicsComponent::UseDescriptor ()
+{
+	SetTrigger (m_descriptor.isTrigger);
+
+	if (m_descriptor.rigidBodyType == "dynamic")
+		m_rigidBodyType = RigidBodyType::Dynamic;
+	else if (m_descriptor.rigidBodyType == "kinematic")
+		m_rigidBodyType = RigidBodyType::Kinematic;
+	else
+		m_rigidBodyType = RigidBodyType::Static;
+
+	SetAngularFactor (m_descriptor.angularFactor.x, m_descriptor.angularFactor.y, m_descriptor.angularFactor.z);
+
+	PhysicsMaterial physicsMaterial;
+
+	physicsMaterial.SetFriction (m_descriptor.materialDescriptor.friction);
+	physicsMaterial.SetLinearDamping (m_descriptor.materialDescriptor.linearDamping);
+	physicsMaterial.SetAngularDamping (m_descriptor.materialDescriptor.angularDamping);
+	physicsMaterial.SetBounciness (m_descriptor.materialDescriptor.bounciness);
+
+	SetPhysicsMaterial (physicsMaterial);
+}
+
+
 void PhysicsComponent::CreateRigidBody ()
 {
-	if (m_pRigidBody) {
+	if (m_pRigidBody != nullptr) {
 		m_pWorld->removeRigidBody (m_pRigidBody);
 		m_pRigidBody->setUserPointer (nullptr);
 		delete m_pRigidBody;
@@ -92,65 +205,6 @@ void PhysicsComponent::CreateRigidBody ()
 		broadPhaseProxy->m_collisionFilterGroup = static_cast<short> (btBroadphaseProxy::DefaultFilter);
 		broadPhaseProxy->m_collisionFilterMask = static_cast<short> (btBroadphaseProxy::AllFilter);
 	}
-}
-
-
-void PhysicsComponent::PostInit (GameObject* object)
-{
-	SetMass ();
-	CreateRigidBody ();
-}
-
-
-void PhysicsComponent::Update (float t, float dt)
-{
-	if (m_rigidBodyType == RigidBodyType::Dynamic) {
-		m_owner->Transform ()->SetGlobalPosition (GetPosition ());
-		m_owner->Transform ()->SetGlobalRotation (GetOrientation ());
-	}
-	else if (m_rigidBodyType == RigidBodyType::Kinematic) {
-		SetPosition (m_owner->Transform ()->GetGlobalPosition ());
-		SetOrientation (m_owner->Transform ()->GetGlobalRotation ());
-
-		// getshape, atallitas (localscale), setshape
-		// vagy rigidbody lezuzas
-
-		/*auto collShape = rigidBody->getCollisionShape();
-		const auto& ownerScale = ownerObject->transform()->scale();
-		collShape->setLocalScaling(btVector3(ownerScale.x, ownerScale.y, ownerScale.z));
-		rigidBody->setCollisionShape(collShape);*/
-	}
-}
-
-
-void PhysicsComponent::Destroy ()
-{
-	for (int i = 0; i < m_pCompoundShape->getNumChildShapes (); ++i) {
-		btCollisionShape* s = m_pCompoundShape->getChildShape (i);
-		m_pCompoundShape->removeChildShape (s);
-	}
-	btCollisionObject* obj = static_cast<btCollisionObject*>(m_pRigidBody);
-	m_pWorld->removeCollisionObject (obj);
-	m_pWorld->removeRigidBody (m_pRigidBody);
-
-	if (m_pCompoundShape) {
-		delete m_pCompoundShape;
-		m_pCompoundShape = nullptr;
-	}
-	if (m_pMotionState) {
-		delete m_pMotionState;
-		m_pMotionState = nullptr;
-	}
-	if (m_pRigidBody) {
-		delete m_pRigidBody;
-		m_pRigidBody = nullptr;
-	}
-}
-
-
-void PhysicsComponent::ApplyDescriptor (const Descriptor& desc)
-{
-
 }
 
 
@@ -192,10 +246,10 @@ void PhysicsComponent::SetPhysicsMaterial (const PhysicsMaterial& phyMat)
 {
 	if (m_pPhyMaterial != nullptr)
 		delete m_pPhyMaterial;
-	
+
 	m_pPhyMaterial = new PhysicsMaterial (phyMat);
 
-	if (m_pRigidBody) {
+	if (m_pRigidBody != nullptr) {
 		m_pRigidBody->setFriction (m_pPhyMaterial->GetFriction ());
 		m_pRigidBody->setDamping (m_pPhyMaterial->GetLinearDamping (), m_pPhyMaterial->GetAngularDamping ());
 		m_pRigidBody->setRestitution (m_pPhyMaterial->GetBounciness ());
@@ -205,7 +259,7 @@ void PhysicsComponent::SetPhysicsMaterial (const PhysicsMaterial& phyMat)
 
 void PhysicsComponent::AddForce (float fx, float fy, float fz)
 {
-	if (m_rigidBodyType == RigidBodyType::Dynamic && m_pRigidBody) {
+	if (m_rigidBodyType == RigidBodyType::Dynamic && m_pRigidBody != nullptr) {
 		btVector3 centralForce (fx, fy, fz);
 		m_pRigidBody->applyCentralForce (centralForce);
 	}
@@ -230,29 +284,22 @@ void PhysicsComponent::SetAngularFactor (float x, float y, float z)
 
 void PhysicsComponent::SetLinearVelocity (float x, float y, float z)
 {
-	if (/*m_rigidBodyType == RigidBodyType::Dynamic && */m_pRigidBody)
+	if (m_rigidBodyType == RigidBodyType::Dynamic && m_pRigidBody != nullptr)
 		m_pRigidBody->setLinearVelocity (btVector3 (x, y, z));
 }
 
 
 void PhysicsComponent::SetAngularVelocity (float x, float y, float z)
 {
-	if (m_pRigidBody != nullptr)
+	if (m_rigidBodyType == RigidBodyType::Dynamic && m_pRigidBody != nullptr)
 		m_pRigidBody->setAngularVelocity (btVector3 (x, y, z));
 }
 
 
 void PhysicsComponent::ActivateRigidBody ()
 {
-	if (m_pRigidBody)
+	if (m_pRigidBody != nullptr)
 		m_pRigidBody->activate (true);
-}
-
-
-void PhysicsComponent::DisableRotationXYZ ()
-{
-	if (m_rigidBodyType == RigidBodyType::Dynamic && m_pRigidBody != nullptr)
-		m_pRigidBody->setAngularFactor (0);
 }
 
 
@@ -296,11 +343,10 @@ void PhysicsComponent::SetTrigger (bool t)
 {
 	m_isTrigger = t;
 	if (m_isTrigger) {
-		if (m_pRigidBody)
+		if (m_pRigidBody != nullptr)
 			m_pRigidBody->setCollisionFlags (m_pRigidBody->getCollisionFlags () | btCollisionObject::CF_NO_CONTACT_RESPONSE);
-	}
-	else {
-		if (m_pRigidBody)
+	} else {
+		if (m_pRigidBody != nullptr)
 			m_pRigidBody->setCollisionFlags (m_pRigidBody->getCollisionFlags () & !btCollisionObject::CF_NO_CONTACT_RESPONSE);
 	}
 }
@@ -327,11 +373,6 @@ void PhysicsComponent::SetTypeToStatic ()
 	m_rigidBodyType = RigidBodyType::Static;
 	if (m_pRigidBody != nullptr)
 		CreateRigidBody ();
-}
-
-
-PhysicsComponent::~PhysicsComponent ()
-{
 }
 
 }	// namespace Engine

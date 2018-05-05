@@ -21,12 +21,9 @@ namespace XML {
 class PhysicsProcessor : public TagProcessor
 {
 public:
-					PhysicsProcessor () : TagProcessor ("physicscomponent") {}
+			PhysicsProcessor () : TagProcessor ("physicscomponent") {}
 
-	virtual bool	ProcessXMLTag (TiXmlElement* elem) override;
-
-private:
-	bool ProcessCollisionShape (PhysicsComponent* comp, TiXmlElement* child);
+	bool	ProcessXMLTag (TiXmlElement* elem) override;
 };
 
 }	// namespace XML

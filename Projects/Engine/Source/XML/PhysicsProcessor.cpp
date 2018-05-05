@@ -1,18 +1,21 @@
 #include "XML/PhysicsProcessor.h"
 #include "PhysicsComponent.h"
-#include "OgreVector3.h"
-#include "OgreQuaternion.h"
 #include "XML/XMLParser.h"
 #include "PhysicsMaterial.h"
+#include "Prefab/GameObjectCreator.h"
+#include "Prefab/GenericPrefab.h"
+#include "ObjectManager.h"
 
 
 namespace Engine {
 namespace XML {
+namespace {
 
-bool PhysicsProcessor::ProcessCollisionShape (PhysicsComponent* comp, TiXmlElement* child)
+bool ProcessCollisionShape (PhysicsComponent::Descriptor& phyDesc, TiXmlElement* child)
 {
-	const char* shapeTypeCStr;
+	PhysicsComponent::ShapeDescriptor shapeDesc;
 
+	const char* shapeTypeCStr;
 	try {
 		XMLParser::ParsePrimitive (child, "type", &shapeTypeCStr);
 	} catch (const std::runtime_error& re) {
@@ -20,14 +23,10 @@ bool PhysicsProcessor::ProcessCollisionShape (PhysicsComponent* comp, TiXmlEleme
 
 		return false;
 	}
+	shapeDesc.shapeType = std::string (shapeTypeCStr);
 
-	std::string shapeType (shapeTypeCStr);
-
-	btCollisionShape* collShape = nullptr;
-
-	if (shapeType == "box") {
+	if (shapeDesc.shapeType == "box") {
 		Ogre::Vector3 size;
-
 		try {
 			XMLParser::ParseFloat3_XYZ (child, size);
 		} catch (const std::runtime_error& re) {
@@ -35,12 +34,11 @@ bool PhysicsProcessor::ProcessCollisionShape (PhysicsComponent* comp, TiXmlEleme
 
 			return false;
 		}
-
-		collShape = new btBoxShape (btVector3 (size.x * 0.5f, size.y * 0.5f, size.z * 0.5f));
-	}
-	else if (shapeType == "staticplane") {
+		shapeDesc.shapeDimensions[0] = size.x;
+		shapeDesc.shapeDimensions[1] = size.y;
+		shapeDesc.shapeDimensions[2] = size.z;
+	} else if (shapeDesc.shapeType == "staticplane") {
 		float nx, ny, nz, d;
-
 		try {
 			XMLParser::ParsePrimitive (child, "nx", &nx);
 			XMLParser::ParsePrimitive (child, "ny", &ny);
@@ -51,12 +49,12 @@ bool PhysicsProcessor::ProcessCollisionShape (PhysicsComponent* comp, TiXmlEleme
 
 			return false;
 		}
-
-		collShape = new btStaticPlaneShape (btVector3 (nx, ny, nz), d);
-	}
-	else if (shapeType == "capsule") {
+		shapeDesc.shapeDimensions[0] = nx;
+		shapeDesc.shapeDimensions[1] = ny;
+		shapeDesc.shapeDimensions[2] = nz;
+		shapeDesc.shapeDimensions[3] = d;
+	} else if (shapeDesc.shapeType == "capsule") {
 		float radius, height;
-
 		try {
 			XMLParser::ParsePrimitive (child, "r", &radius);
 			XMLParser::ParsePrimitive (child, "h", &height);
@@ -65,12 +63,10 @@ bool PhysicsProcessor::ProcessCollisionShape (PhysicsComponent* comp, TiXmlEleme
 
 			return false;
 		}
-
-		collShape = new btCapsuleShape (radius, height);
-	}
-	else if (shapeType == "sphere") {
+		shapeDesc.shapeDimensions[0] = radius;
+		shapeDesc.shapeDimensions[1] = height;
+	} else if (shapeDesc.shapeType == "sphere") {
 		float radius;
-
 		try {
 			XMLParser::ParsePrimitive (child, "r", &radius);
 		} catch (const std::runtime_error& re) {
@@ -78,12 +74,11 @@ bool PhysicsProcessor::ProcessCollisionShape (PhysicsComponent* comp, TiXmlEleme
 
 			return false;
 		}
-
-		collShape = new btSphereShape (radius);
+		shapeDesc.shapeDimensions[0] = radius;
 	}
 
-	auto shapePos = Ogre::Vector3::ZERO;
-	auto shapeRot = Ogre::Quaternion::IDENTITY;
+	Ogre::Vector3 shapePos = Ogre::Vector3::ZERO;
+	Ogre::Quaternion shapeRot = Ogre::Quaternion::IDENTITY;
 
 	for (TiXmlElement* child2 = child->FirstChildElement (); child2 != nullptr; child2 = child2->NextSiblingElement ()) {
 		std::string childName2 (child2->Value ());
@@ -96,8 +91,7 @@ bool PhysicsProcessor::ProcessCollisionShape (PhysicsComponent* comp, TiXmlEleme
 
 				return false;
 			}
-		}
-		else if (childName2 == "rotation") {
+		} else if (childName2 == "rotation") {
 			try {
 				XMLParser::ParseFloat4_WXYZ (child2, shapeRot);
 			} catch (const std::runtime_error& re) {
@@ -107,10 +101,14 @@ bool PhysicsProcessor::ProcessCollisionShape (PhysicsComponent* comp, TiXmlEleme
 			}
 		}
 	}
-	comp->AddCollisionShape (collShape, shapePos, shapeRot);
+	shapeDesc.shapePos = shapePos;
+	shapeDesc.shapeRot = shapeRot;
+	phyDesc.shapeDescriptors.push_back (shapeDesc);
 
 	return true;
 }
+
+}	// namespace
 
 
 bool PhysicsProcessor::ProcessXMLTag (TiXmlElement* elem)
@@ -129,31 +127,21 @@ bool PhysicsProcessor::ProcessXMLTag (TiXmlElement* elem)
 		return false;
 	}
 
-	std::shared_ptr<PhysicsComponent> comp (new PhysicsComponent (name, mass));
+	using PhysicsPrefab = Prefab::GenericPrefab<PhysicsComponent, PhysicsComponent::Descriptor>;
 
-	if (strcmp (typeName, "dynamic") == 0)
-		comp->SetTypeToDynamic ();
-	else if (strcmp (typeName, "kinematic") == 0)
-		comp->SetTypeToKinematic ();
-	else if (strcmp (typeName, "static") == 0)
-		comp->SetTypeToStatic ();
-	else
-		return false;
+	PhysicsPrefab phyPrefab;
+	PhysicsComponent::Descriptor phyDesc;
 
-	unsigned int shapeCount = 0;
+	phyDesc.name = name;
+	phyDesc.mass = mass;
+	phyDesc.rigidBodyType = typeName;
 
 	for (TiXmlElement* child = elem->FirstChildElement (); child != nullptr; child = child->NextSiblingElement ()) {
 		std::string childName (child->Value ());
 
 		if (childName == "shape") {
-			shapeCount++;
-
-			ProcessCollisionShape (comp.get (), child);
-
-			if (shapeCount == 1)
-				AddToParentObject (elem, comp);
-		}
-		else if (childName == "material") {
+			ProcessCollisionShape (phyDesc, child);
+		} else if (childName == "material") {
 			float friction, linDamping, angDamping, bounciness;
 
 			try {
@@ -167,16 +155,11 @@ bool PhysicsProcessor::ProcessXMLTag (TiXmlElement* elem)
 				return false;
 			}
 
-			PhysicsMaterial phyMat;
-
-			phyMat.SetFriction (friction);
-			phyMat.SetLinearDamping (linDamping);
-			phyMat.SetAngularDamping (angDamping);
-			phyMat.SetBounciness (bounciness);
-
-			comp->SetPhysicsMaterial (phyMat);
-		}
-		else if (childName == "angularfactor") {
+			phyDesc.materialDescriptor.friction = friction;
+			phyDesc.materialDescriptor.linearDamping = linDamping;
+			phyDesc.materialDescriptor.angularDamping = angDamping;
+			phyDesc.materialDescriptor.bounciness = bounciness;
+		} else if (childName == "angularfactor") {
 			Ogre::Vector3 angularfactor;
 
 			try {
@@ -187,9 +170,8 @@ bool PhysicsProcessor::ProcessXMLTag (TiXmlElement* elem)
 				return false;
 			}
 
-			comp->SetAngularFactor (angularfactor.x, angularfactor.y, angularfactor.z);
-		}
-		else if (childName == "trigger") {
+			phyDesc.angularFactor = angularfactor;
+		} else if (childName == "trigger") {
 			bool isTrigger;
 
 			try {
@@ -200,21 +182,30 @@ bool PhysicsProcessor::ProcessXMLTag (TiXmlElement* elem)
 				return false;
 			}
 
-			comp->SetTrigger (isTrigger);
+			phyDesc.isTrigger = isTrigger;
 		}
-		else if (childName == "rotation") {
-			bool enableRotation;
+	}
 
-			try {
-				XMLParser::ParsePrimitive (child, "enabled", &enableRotation);
-			} catch (const std::runtime_error& re) {
-				std::cout << re.what () << std::endl;
+	phyPrefab.SetDescriptor (phyDesc);
 
-				return false;
-			}
+	std::string parentTag (elem->Parent ()->Value ());
 
-			if (!enableRotation)
-				comp->DisableRotationXYZ ();
+	if (parentTag == std::string ("gameobject")) {
+		std::string parentName;
+		if (GetParentName (elem, parentName)) {
+			auto object = ObjectManager::GetInstance ().GetGameObjectByName (parentName).lock ();
+
+			phyPrefab.Create ();
+			phyPrefab.Attach (object.get ());
+			phyPrefab.ApplyDescriptor ();
+		}
+	} else if (parentTag == std::string ("prefab")) {
+		std::string parentName;
+		if (GetParentName (elem, parentName)) {
+			std::shared_ptr<Prefab::GameObjectCreator> prefab;
+
+			if (ObjectManager::GetInstance ().GetGameObjectCreator (parentName, prefab))
+				prefab->AddComponentCreator (std::make_shared<PhysicsPrefab> (phyPrefab));
 		}
 	}
 
