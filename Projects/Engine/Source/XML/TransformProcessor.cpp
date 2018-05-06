@@ -24,8 +24,7 @@ void TransformProcessor::AddToParentObject (TiXmlElement* elem, const std::share
 	const auto& object = ObjectManager::GetInstance ().GetGameObjectByName (objectName);
 
 	if (auto obj = object.lock ()) {
-		obj->RemoveComponent (0);
-		obj->InsertComponent(0, component);
+		obj->AddTransformComponent (std::dynamic_pointer_cast<TransformComponent> (component));
 	}
 }
 

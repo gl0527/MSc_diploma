@@ -32,13 +32,14 @@ public:
 									~GameObject ();
 
 	DLL_EXPORT	void				AddComponent (const std::shared_ptr<Component>& comp, bool replaceOld = true);
-				void				InsertComponent (size_t index, const std::shared_ptr<Component>& comp);
+	DLL_EXPORT	void				AddTransformComponent (const std::shared_ptr<TransformComponent>& transform);
+	void							InsertComponent (size_t index, const std::shared_ptr<Component>& comp);
 	DLL_EXPORT	void				RemoveComponent (const std::string& compName);
-	void							RemoveComponent (size_t index);
+	DLL_EXPORT	void				RemoveComponent (size_t index);
 	void							RemoveComponent (const std::shared_ptr<Component>& comp);
 	void							RemoveComponent ();
 
-	void							AddTag (const std::string& tag);
+	DLL_EXPORT void					AddTag (const std::string& tag);
 	void							RemoveTag (const std::string& tag);
 	void							RemoveTag ();
 
@@ -46,7 +47,7 @@ public:
 	void							RemoveChild (const std::string& childName);
 	void							RemoveChildren ();
 
-	void							Start ();
+	DLL_EXPORT void					Start ();
 	void							PreUpdate (float t, float dt);
 	void							Update (float t, float dt);
 	void							PostUpdate (float t, float dt);
@@ -66,7 +67,7 @@ public:
 	void							ClearParent ();
 	bool							HasParent () const;
 	DLL_EXPORT void					SetParent (const std::string& parentName);
-	bool							HasTag (const std::string& t) const;
+	DLL_EXPORT bool					HasTag (const std::string& t) const;
 	bool							IsDestroyed () const;
 
 private:

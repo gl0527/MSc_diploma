@@ -7,7 +7,7 @@
 // so its content will be accessible for only one translation unit (created from this source file)
 namespace {
 
-bool collisionCallback (btManifoldPoint& /*cp*/, void* body0, void* body1)
+bool CollisionCallback (btManifoldPoint& /*cp*/, void* body0, void* body1)
 {
 	btRigidBody* rigidbody0 = reinterpret_cast<btRigidBody*> (body0);
 	btRigidBody* rigidbody1 = reinterpret_cast<btRigidBody*> (body1);
@@ -56,7 +56,7 @@ bool PhysicsSystem::init ()
 
 	m_pPhyWorld = new btDiscreteDynamicsWorld (m_pDispatcher, m_pOverlapPairCache, m_pConstraintSolver, m_pCollisionConfig);
 	m_pPhyWorld->setGravity (btVector3 (0.0f, -100.0f, 0.0f));
-	gContactProcessedCallback = collisionCallback;
+	gContactProcessedCallback = CollisionCallback;
 
 	return true;
 }

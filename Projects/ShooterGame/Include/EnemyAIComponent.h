@@ -9,18 +9,20 @@
 #include "FiniteStateMachine.h"
 
 
+// ----------------------------- forward declaration -----------------------------
+
 namespace Engine {
 
 class GameObject;
 class PhysicsComponent;
 
-}
+}	// namespace Engine
 
 namespace Ogre {
 
 class Vector3;
 
-}
+}	// namespace Ogre
 
 class PlayerDataComponent;
 

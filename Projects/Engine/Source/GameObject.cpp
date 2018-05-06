@@ -41,6 +41,13 @@ void GameObject::AddComponent (const Component::SPtr& comp, bool replaceOld/* = 
 }
 
 
+void GameObject::AddTransformComponent (const std::shared_ptr<TransformComponent>& transform)
+{
+	RemoveComponent (0);
+	InsertComponent (0, transform);
+}
+
+
 void GameObject::InsertComponent (size_t index, const std::shared_ptr<Component>& comp)
 {
 	if (comp) {

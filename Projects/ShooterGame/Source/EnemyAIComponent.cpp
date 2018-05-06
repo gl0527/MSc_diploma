@@ -1,5 +1,4 @@
 #include "EnemyAIComponent.h"
-#include <iostream>
 #include "ObjectManager.h"
 #include "GameObject.h"
 #include "TransformComponent.h"
@@ -13,10 +12,10 @@ EnemyAIComponent::EnemyAIComponent (const std::string& name):
 	m_targetObj (nullptr)
 {
 	m_enemyStateMachine.AddTransitions ({
-		{State::Search, State::Attack, 'a', [] { std::cout << "Time to attack you!\n"; }},
-		{State::Search, State::RunAway, 'r', [] { std::cout << "Do not hurt me!\n"; }},
-		{State::Attack, State::Search, 's', [] { std::cout << "Where are you?\n"; }},
-		{State::Attack, State::RunAway, 'r', [] { std::cout << "Do not hurt me!\n"; }},
+		{State::Search, State::Attack, 'a', nullptr},
+		{State::Search, State::RunAway, 'r', nullptr},
+		{State::Attack, State::Search, 's', nullptr},
+		{State::Attack, State::RunAway, 'r', nullptr},
 	});
 
 	m_enemyStateMachine.AddStateFunction (State::Search, 

@@ -4,10 +4,12 @@
 #include "OgreEntity.h"
 #include "OgreSkeletonInstance.h"
 #include "EnemyAIComponent.h"
+#include "ObjectManager.h"
 
 
 EnemyAnimationComponent::EnemyAnimationComponent (const std::string& name, const char* walkAnimName, const char* attackAnimName, const char* deadAnimName):
 	AnimationComponent (name),
+	m_isDeleted (false),
 	m_WalkAnimName (walkAnimName),
 	m_AttackAnimName (attackAnimName),
 	m_DeadAnimName (deadAnimName),
@@ -23,7 +25,7 @@ EnemyAnimationComponent::EnemyAnimationComponent (const std::string& name, const
 
 	m_animationGraph.AddStateFunction (State::Walk, [this] (float t, float dt) { Step (m_WalkAnimName, dt); });
 	m_animationGraph.AddStateFunction (State::Attack, [this] (float t, float dt) { Step (m_AttackAnimName, dt); });
-	m_animationGraph.AddStateFunction (State::Dead, [this] (float t, float dt) { Step (m_DeadAnimName, dt); });
+	m_animationGraph.AddStateFunction (State::Dead, std::bind (&EnemyAnimationComponent::OnDead, this, std::placeholders::_1, std::placeholders::_2));
 }
 
 
@@ -53,12 +55,24 @@ void EnemyAnimationComponent::Start ()
 }
 
 
-void EnemyAnimationComponent::PreUpdate (float t, float dt)
+void EnemyAnimationComponent::PostUpdate (float t, float dt)
 {
 	if (m_ownerAI->GetState () == EnemyAIComponent::State::Dead)
 		m_animationGraph.Process ('d');
 	else
 		m_animationGraph.Process (m_ownerAI->GetState () == EnemyAIComponent::State::Attack ? 'a' : 'w');
 
-	m_animationGraph.Update (t, dt);
+	if (!m_isDeleted)
+		m_animationGraph.Update (t, dt);
+}
+
+
+void EnemyAnimationComponent::OnDead (float t, float dt)
+{
+	Step (m_DeadAnimName, dt);
+
+	if (!m_isDeleted && GetProgression (m_DeadAnimName) > 0.99f) {
+		m_isDeleted = true;
+		ObjectManager::GetInstance ().MarkGameObjectForDelete (m_owner->GetName ());
+	}
 }

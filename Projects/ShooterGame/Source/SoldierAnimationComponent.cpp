@@ -2,11 +2,14 @@
 #include "InputManager.h"
 #include "MeshComponent.h"
 #include "GameObject.h"
+#include "TransformComponent.h"
 #include "OgreSkeleton.h"
 #include "OgreSkeletonInstance.h"
 #include "OgreEntity.h"
 #include "AudioSourceComponent.h"
 #include "PlayerDataComponent.h"
+#include "ObjectManager.h"
+#include "ManagerComponent.h"
 
 
 namespace {
@@ -80,6 +83,16 @@ void SoldierAnimationComponent::Start ()
 		m_owner->RemoveComponent (m_name);
 		return;
 	}
+
+	if (auto managerObj = ObjectManager::GetInstance ().GetGameObjectByName ("manager").lock ()) {
+		m_managerComp = managerObj->GetFirstComponentByType<ManagerComponent> ().lock ();
+	}
+
+	if (m_managerComp == nullptr) {
+		m_owner->RemoveComponent (m_name);
+		return;
+	}
+
 	if (auto ownerMesh = m_owner->GetFirstComponentByType<MeshComponent> ().lock ()) {
 		m_ownerEntity = ownerMesh->GetEntity ();
 
@@ -96,7 +109,7 @@ void SoldierAnimationComponent::Start ()
 }
 
 
-void SoldierAnimationComponent::PreUpdate (float t, float dt)
+void SoldierAnimationComponent::PostUpdate (float t, float dt)
 {
 	if (m_ownerData->IsDead ()) {
 		m_isDead = true;
@@ -160,8 +173,10 @@ void SoldierAnimationComponent::OnUpperBodyRun (float t, float dt)
 void SoldierAnimationComponent::OnUpperBodyShoot (float t, float dt)
 {
 	Step ("up_shoot", dt);
-	if (fabs (GetTimePositionInSeconds ("up_shoot") - 1.0f) < 0.01f) {
+	static unsigned int counter = 0;
+	if (fabs (GetTimePositionInSeconds ("up_shoot") - 0.8f) < 0.01f) {
 		if (auto weapon = m_owner->GetChild ("weapon")) {
+			m_managerComp->CreateBullet (counter++, weapon->Transform ()->GetGlobalPosition (), weapon->Transform ()->GetGlobalFacing ());
 			if (auto weaponAudio = weapon->GetFirstComponentByType<AudioSourceComponent> ().lock ())
 				weaponAudio->Play ();
 		}
@@ -193,7 +208,7 @@ void SoldierAnimationComponent::OnDeath (float t, float dt)
 {
 	Step ("death", dt);
 	static bool isDeathSoundPlayed = false;
-	auto soldierAudio = m_owner->GetFirstComponentByType<AudioSourceComponent> ().lock ();	
+	auto soldierAudio = m_owner->GetFirstComponentByType<AudioSourceComponent> ().lock ();
 	if (!isDeathSoundPlayed && soldierAudio != nullptr) {
 		soldierAudio->Play ();
 		isDeathSoundPlayed = true;

@@ -5,6 +5,7 @@
 
 // ---------------------------------- includes ----------------------------------
 
+#include "stdafx.h"
 #include <vector>
 #include <memory>
 
@@ -22,7 +23,7 @@ public:
 	explicit			GameObjectCreator (const std::string& name);
 
 	void				AddComponentCreator (std::shared_ptr<IPrefab> compCreator);
-	void				Instantiate (const std::string& name) const;
+	DLL_EXPORT void		Instantiate (const std::string& name) const;
 	
 	const std::string&	GetName () const;
 

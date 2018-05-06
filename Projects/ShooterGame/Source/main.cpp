@@ -14,6 +14,7 @@
 #include "PlayerDataComponent.h"
 #include "EnemyAIComponent.h"
 #include "EnemyAnimationComponent.h"
+#include "ManagerComponent.h"
 
 #include "OgreSceneManager.h"
 #include "MyGUI_Widget.h"
@@ -109,6 +110,11 @@ int main(int argc, char** argv)
 
 		std::shared_ptr<EnemyAnimationComponent> ghostAnim (new EnemyAnimationComponent ("ghostAnim", "walk", "freeze", "death"));
 		ghost->AddComponent (ghostAnim);
+	}
+
+	if (auto manager = objectMgr.GetGameObjectByName ("manager").lock ()) {
+		std::shared_ptr<ManagerComponent> managerComp (new ManagerComponent ("managerComp"));
+		manager->AddComponent (managerComp);
 	}
 
 	if (auto frames = objectMgr.CreateGameObject ("fps").lock ()) {

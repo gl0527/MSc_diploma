@@ -130,20 +130,19 @@ void Game::MainLoop ()
 bool Game::Update (float t, float dt)
 {
 	InputManager::GetInstance ().Capture ();
-
-	ObjectManager::GetInstance ().PreUpdate (t, dt); // fizika elotti teendok befrissitese
-
-	if (!m_pPhysicsSystem->update (t, dt)) // fizikai rendszer befrissitese
-		return false;
-
-	ObjectManager::GetInstance ().Update (t, dt); // fizika befrissitese
-
-	ObjectManager::GetInstance ().PostUpdate (t, dt); // fizika utani teendok elvegzese
-
 	AudioManager::GetInstance ().Update ();
+	ObjectManager::GetInstance ().PreUpdate (t, dt);
 
-	if (!m_pRenderSystem->update (t, dt)) // kirajzolas
+	if (!m_pPhysicsSystem->update (t, dt))
 		return false;
+
+	ObjectManager::GetInstance ().Update (t, dt);
+	ObjectManager::GetInstance ().PostUpdate (t, dt);
+
+	if (!m_pRenderSystem->update (t, dt))
+		return false;
+
+	ObjectManager::GetInstance ().RemoveMarkedGameObjects ();
 
 	return true;
 }

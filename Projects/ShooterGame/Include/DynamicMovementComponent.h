@@ -12,7 +12,7 @@ namespace Engine {
 
 class PhysicsComponent;
 
-}
+}	// namespace Engine
 
 using namespace Engine;
 

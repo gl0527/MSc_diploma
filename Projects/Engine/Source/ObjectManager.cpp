@@ -34,15 +34,23 @@ std::weak_ptr<GameObject> ObjectManager::CreateGameObject (const std::string& id
 
 void ObjectManager::RemoveGameObject (const std::string& id)
 {
-	auto& removableObject = m_gameObjectMap[id];
-	if (removableObject) {
-		const auto& removableChildren = removableObject->GetChildrenNames ();
-		for (auto it = removableChildren.begin (); it != removableChildren.end (); ++it) {
+	auto it = m_gameObjectMap.find (id);
+	if (it != m_gameObjectMap.end ()) {
+		// recursive call for the children
+		const auto& removableChildren = it->second->GetChildrenNames ();
+		for (auto it = removableChildren.begin (); it != removableChildren.end (); ++it)
 			RemoveGameObject (*it);
-		}
-		removableObject->Destroy ();
-		m_gameObjectMap.erase (m_gameObjectMap.find (id));
+
+		// erasing of the current element
+		it->second->Destroy ();
+		m_gameObjectMap.erase (it);
 	}
+}
+
+
+void ObjectManager::MarkGameObjectForDelete (const std::string& id)
+{
+	m_removableGameObjectNames.push_back (id);
 }
 
 
@@ -66,36 +74,43 @@ bool ObjectManager::GetGameObjectCreator (const std::string& name, std::shared_p
 
 void ObjectManager::Start ()
 {
-	for (const auto& mapElem : m_gameObjectMap)
-		mapElem.second->Start ();
+	for (auto& it = m_gameObjectMap.begin (), itEnd = m_gameObjectMap.end (); it != itEnd; ++it)
+		it->second->Start ();
 }
 
 
 void ObjectManager::PreUpdate (float t, float dt)
 {
-	for (const auto& mapElem : m_gameObjectMap)
-		mapElem.second->PreUpdate (t, dt);
+	for (auto& it = m_gameObjectMap.begin (), itEnd = m_gameObjectMap.end (); it != itEnd; ++it)
+		it->second->PreUpdate (t, dt);
 }
 
 
 void ObjectManager::Update (float t, float dt)
 {
-	for (const auto& mapElem : m_gameObjectMap)
-		mapElem.second->Update (t, dt);
+	for (auto& it = m_gameObjectMap.begin (), itEnd = m_gameObjectMap.end (); it != itEnd; ++it)
+		it->second->Update (t, dt);
 }
 
 
 void ObjectManager::PostUpdate (float t, float dt)
 {
-	for (const auto& mapElem : m_gameObjectMap)
-		mapElem.second->PostUpdate (t, dt);
+	for (auto& it = m_gameObjectMap.begin (), itEnd = m_gameObjectMap.end (); it != itEnd; ++it)
+		it->second->PostUpdate (t, dt);
+}
+
+
+void ObjectManager::RemoveMarkedGameObjects ()
+{
+	for (const std::string& gameObjectName : m_removableGameObjectNames)
+		RemoveGameObject (gameObjectName);
 }
 
 
 void ObjectManager::Destroy ()
 {
-	for (const auto& mapElem : m_gameObjectMap)
-		mapElem.second->Destroy ();
+	for (auto& it = m_gameObjectMap.begin (), itEnd = m_gameObjectMap.end (); it != itEnd; ++it)
+		it->second->Destroy ();
 }
 
 
