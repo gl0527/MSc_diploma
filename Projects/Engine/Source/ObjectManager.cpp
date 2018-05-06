@@ -38,8 +38,8 @@ void ObjectManager::RemoveGameObject (const std::string& id)
 	if (it != m_gameObjectMap.end ()) {
 		// recursive call for the children
 		const auto& removableChildren = it->second->GetChildrenNames ();
-		for (auto it = removableChildren.begin (); it != removableChildren.end (); ++it)
-			RemoveGameObject (*it);
+		for (auto childIt = removableChildren.begin (); childIt != removableChildren.end (); ++childIt)
+			RemoveGameObject (*childIt);
 
 		// erasing of the current element
 		it->second->Destroy ();
@@ -74,28 +74,28 @@ bool ObjectManager::GetGameObjectCreator (const std::string& name, std::shared_p
 
 void ObjectManager::Start ()
 {
-	for (auto& it = m_gameObjectMap.begin (), itEnd = m_gameObjectMap.end (); it != itEnd; ++it)
+	for (auto it = m_gameObjectMap.begin (), itEnd = m_gameObjectMap.end (); it != itEnd; ++it)
 		it->second->Start ();
 }
 
 
 void ObjectManager::PreUpdate (float t, float dt)
 {
-	for (auto& it = m_gameObjectMap.begin (), itEnd = m_gameObjectMap.end (); it != itEnd; ++it)
+	for (auto it = m_gameObjectMap.begin (), itEnd = m_gameObjectMap.end (); it != itEnd; ++it)
 		it->second->PreUpdate (t, dt);
 }
 
 
 void ObjectManager::Update (float t, float dt)
 {
-	for (auto& it = m_gameObjectMap.begin (), itEnd = m_gameObjectMap.end (); it != itEnd; ++it)
+	for (auto it = m_gameObjectMap.begin (), itEnd = m_gameObjectMap.end (); it != itEnd; ++it)
 		it->second->Update (t, dt);
 }
 
 
 void ObjectManager::PostUpdate (float t, float dt)
 {
-	for (auto& it = m_gameObjectMap.begin (), itEnd = m_gameObjectMap.end (); it != itEnd; ++it)
+	for (auto it = m_gameObjectMap.begin (), itEnd = m_gameObjectMap.end (); it != itEnd; ++it)
 		it->second->PostUpdate (t, dt);
 }
 
@@ -109,7 +109,7 @@ void ObjectManager::RemoveMarkedGameObjects ()
 
 void ObjectManager::Destroy ()
 {
-	for (auto& it = m_gameObjectMap.begin (), itEnd = m_gameObjectMap.end (); it != itEnd; ++it)
+	for (auto it = m_gameObjectMap.begin (), itEnd = m_gameObjectMap.end (); it != itEnd; ++it)
 		it->second->Destroy ();
 }
 

@@ -44,6 +44,8 @@ bool EnvironmentDataProcessor::ProcessXMLTag (TiXmlElement* elem)
 			sceneMgr->setSkyBox (true, materialName, distance, true);
 		}
 	}
+
+	return true;
 }
 
 }	// namespace XML

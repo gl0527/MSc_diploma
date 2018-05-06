@@ -89,7 +89,7 @@ const Ogre::Vector3& EnemyAIComponent::GetOwnerPosition () const
 }
 
 
-const Ogre::Vector3& EnemyAIComponent::GetOwnerFacing () const
+Ogre::Vector3 EnemyAIComponent::GetOwnerFacing () const
 {
 	return -m_owner->Transform ()->GetGlobalFacing ();	// enemies modelled with +z direction
 }
@@ -109,7 +109,7 @@ void EnemyAIComponent::Move (float distance, bool follow)
 		Ogre::Real cosTurnAngle (ownerWorldFacing.dotProduct (direction));
 		Ogre::Real turnAngle = Ogre::Math::ACos (cosTurnAngle).valueRadians ();
 
-		unsigned char sign = 1;
+		char sign = 1;
 		if (turnAngle > 1.1 * Ogre::Math::PI) {
 			turnAngle = 2 * Ogre::Math::PI - turnAngle;
 			sign = -1;

@@ -100,6 +100,8 @@ void AudioManager::Update ()
 
 			if (audio1->GetType () == AudioSourceComponent::SoundEffect && audio2->GetType () == AudioSourceComponent::Ambient)
 				return false;
+
+			return true;
 		});
 	}
 

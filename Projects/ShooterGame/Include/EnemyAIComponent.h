@@ -50,9 +50,9 @@ private:
 	std::shared_ptr<PhysicsComponent>		m_pOwnerPhysics;
 	std::shared_ptr<PlayerDataComponent>	m_ownerData;
 
-	const Ogre::Vector3& GetTargetPosition () const;
-	const Ogre::Vector3& GetOwnerPosition () const;
-	const Ogre::Vector3& GetOwnerFacing () const;
+	const Ogre::Vector3&	GetTargetPosition () const;
+	const Ogre::Vector3&	GetOwnerPosition () const;
+	Ogre::Vector3			GetOwnerFacing () const;
 
 	void Move (float distance, bool follow);
 
