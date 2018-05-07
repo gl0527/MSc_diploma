@@ -25,7 +25,14 @@ RenderSystem::RenderSystem (const char* wName, size_t w, size_t h)
 }
 
 
-bool RenderSystem::init ()
+RenderSystem& RenderSystem::GetInstance ()
+{
+	std::call_once (s_onceFlag, [] () { s_pInstance.reset (new RenderSystem ("Project lab Gurzo Lajos")); });
+	return *s_pInstance.get ();
+}
+
+
+void RenderSystem::Init ()
 {
 #ifdef _DEBUG
 	std::string resourceCfg ("resources_d.cfg");
@@ -58,7 +65,7 @@ bool RenderSystem::init ()
 
 	if (!m_pOgreRoot->restoreConfig () && !m_pOgreRoot->showConfigDialog ()) {
 		delete m_pOgreRoot;
-		return false;
+		return;
 	}
 
 	m_pOgreRoot->initialise (false);
@@ -77,64 +84,33 @@ bool RenderSystem::init ()
 
 	m_pGUI = new MyGUI::Gui;
 	m_pGUI->initialise ();
-
-	return true;
 }
 
 
-void RenderSystem::LoadResourceGroup (const std::string& resGroupName)
-{
-	try {
-		Ogre::ResourceGroupManager::getSingletonPtr ()->loadResourceGroup (resGroupName);
-	} catch (const Ogre::ItemIdentityException& iie) {
-		ERR_LOG (std::cerr, iie.what ());
-	}
-}
-
-
-void RenderSystem::UnloadResourceGroup (const std::string& resGroupName)
-{
-	try {
-		Ogre::ResourceGroupManager::getSingletonPtr ()->unloadResourceGroup (resGroupName);
-	} catch (const Ogre::ItemIdentityException& iie) {
-		ERR_LOG (std::cerr, iie.what());
-	}
-}
-
-
-bool RenderSystem::Start ()
+void RenderSystem::Start ()
 {
 	InputManager::GetInstance ().AddGUIAsKeyListener (this);
 	InputManager::GetInstance ().AddGUIAsMouseListener (this);
-
-	return true;
 }
 
 
-void RenderSystem::SetActiveViewport ()
-{
-	m_pOgrePlatform->getRenderManagerPtr ()->setActiveViewport (0);
-}
-
-
-bool RenderSystem::update (float t, float dt)
+void RenderSystem::Update (float t, float dt)
 {
 	if (m_pRenderWnd->isClosed ()) {
 		m_pOgreRoot->shutdown ();
-		return false;
+		return;
 	}
 
 	Ogre::WindowEventUtilities::messagePump ();
 
 	if (!m_pOgreRoot->renderOneFrame ()) {
 		m_pOgreRoot->shutdown ();
-		return false;
+		return;
 	}
-	return true;
 }
 
 
-void RenderSystem::destroy ()
+void RenderSystem::Destroy ()
 {
 	if (m_pGUI != nullptr) {
 		m_pGUI->shutdown ();
@@ -160,6 +136,32 @@ void RenderSystem::destroy ()
 		delete m_pOgreRoot;
 		m_pOgreRoot = nullptr;
 	}
+}
+
+
+void RenderSystem::LoadResourceGroup (const std::string& resGroupName)
+{
+	try {
+		Ogre::ResourceGroupManager::getSingletonPtr ()->loadResourceGroup (resGroupName);
+	} catch (const Ogre::ItemIdentityException& iie) {
+		ERR_LOG (std::cerr, iie.what ());
+	}
+}
+
+
+void RenderSystem::UnloadResourceGroup (const std::string& resGroupName)
+{
+	try {
+		Ogre::ResourceGroupManager::getSingletonPtr ()->unloadResourceGroup (resGroupName);
+	} catch (const Ogre::ItemIdentityException& iie) {
+		ERR_LOG (std::cerr, iie.what());
+	}
+}
+
+
+void RenderSystem::SetActiveViewport ()
+{
+	m_pOgrePlatform->getRenderManagerPtr ()->setActiveViewport (0);
 }
 
 

@@ -2,7 +2,6 @@
 #include "PhysicsComponent.h"
 
 
-
 // using anonymous namespace to force internal linkage
 // so its content will be accessible for only one translation unit (created from this source file)
 namespace {
@@ -47,7 +46,14 @@ PhysicsSystem::PhysicsSystem ()
 }
 
 
-bool PhysicsSystem::init ()
+PhysicsSystem& PhysicsSystem::GetInstance ()
+{
+	std::call_once (s_onceFlag, [] () { s_pInstance.reset (new PhysicsSystem); });
+	return *s_pInstance.get ();
+}
+
+
+void PhysicsSystem::Init ()
 {
 	m_pCollisionConfig = new btDefaultCollisionConfiguration;
 	m_pDispatcher = new btCollisionDispatcher (m_pCollisionConfig);
@@ -57,16 +63,14 @@ bool PhysicsSystem::init ()
 	m_pPhyWorld = new btDiscreteDynamicsWorld (m_pDispatcher, m_pOverlapPairCache, m_pConstraintSolver, m_pCollisionConfig);
 	m_pPhyWorld->setGravity (btVector3 (0.0f, -100.0f, 0.0f));
 	gContactProcessedCallback = CollisionCallback;
-
-	return true;
 }
 
 
-bool PhysicsSystem::update (float /*t*/, float dt)
+bool PhysicsSystem::Update (float /*t*/, float dt)
 {
 	if (m_pPhyWorld != nullptr) {
 		m_pPhyWorld->stepSimulation (dt);
-		
+
 		return true;
 	} else {
 		return false;
@@ -74,7 +78,7 @@ bool PhysicsSystem::update (float /*t*/, float dt)
 }
 
 
-void PhysicsSystem::destroy ()
+void PhysicsSystem::Destroy ()
 {
 	if (m_pPhyWorld != nullptr) {
 		delete m_pPhyWorld;

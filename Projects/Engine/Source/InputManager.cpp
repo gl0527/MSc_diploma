@@ -1,7 +1,6 @@
 #include "InputManager.h"
 
 #include <sstream>
-#include "Game.h"
 #include "RenderSystem.h"
 #include "OgreRenderWindow.h"
 
@@ -44,7 +43,7 @@ void InputManager::Init ()
         size_t windowHnd = 0;
         std::ostringstream windowHndStr;
 
-		m_pRenderWnd = Game::GetInstance ().GetRenderSystem ()->GetRenderWindow ();
+		m_pRenderWnd = RenderSystem::GetInstance ().GetRenderWindow ();
 		m_pRenderWnd->getCustomAttribute ("WINDOW", &windowHnd);
 
         windowHndStr << (unsigned int) windowHnd;

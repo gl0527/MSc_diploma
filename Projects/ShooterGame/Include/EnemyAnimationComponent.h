@@ -31,8 +31,6 @@ public:
 private:
 	using EnemyAnimation = FiniteStateMachine<State, char>;
 
-	bool								m_isDeleted;
-
 	const char* const					m_WalkAnimName;
 	const char* const					m_AttackAnimName;
 	const char* const					m_DeadAnimName;

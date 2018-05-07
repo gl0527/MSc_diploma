@@ -104,6 +104,8 @@ void ObjectManager::RemoveMarkedGameObjects ()
 {
 	for (const std::string& gameObjectName : m_removableGameObjectNames)
 		RemoveGameObject (gameObjectName);
+
+	m_removableGameObjectNames.clear ();
 }
 
 

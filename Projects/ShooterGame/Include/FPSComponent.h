@@ -26,7 +26,6 @@ public:
 	void		PostUpdate(float t, float dt) override;
 
 private:
-	RenderSystem* renderSys;
 	Ogre::RenderWindow* renderWnd;
 	Ogre::TextAreaOverlayElement* text;
 };

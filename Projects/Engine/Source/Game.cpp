@@ -16,8 +16,6 @@ Game* Game::s_pInstance = nullptr;
 
 Game::Game (const char* title)
 	: m_state (State::UnInited),
-	m_pRenderSystem (new RenderSystem (title)),
-	m_pPhysicsSystem (new PhysicsSystem),
 	m_pTimer (new Ticker)
 {
 }
@@ -34,11 +32,11 @@ Game& Game::GetInstance ()
 void Game::DeleteInstance ()
 {
 	if (s_pInstance) {
-		delete s_pInstance;
-		s_pInstance = nullptr;
 		ObjectManager::GetInstance ().DeleteInstance ();
 		InputManager::GetInstance ().DeleteInstance ();
 		AudioManager::GetInstance ().DeleteInstance ();
+		delete s_pInstance;
+		s_pInstance = nullptr;
 	}
 }
 
@@ -53,14 +51,9 @@ bool Game::Init ()
 {
 	srand (time (nullptr));
 	
-	if (!m_pRenderSystem->init ())
-		return false;
-
+	RenderSystem::GetInstance ().Init ();
 	InputManager::GetInstance ().Init ();
-	
-	if (!m_pPhysicsSystem->init ())
-		return false;
-
+	PhysicsSystem::GetInstance ().Init ();
 	AudioManager::GetInstance ().Init ();
 
 	if (!XML::XMLParser::GetInstance ().Init ())
@@ -86,11 +79,10 @@ void Game::Start ()
 			m_pTimer->Pause ();
 	}
 
-	m_pRenderSystem->Start ();
+	RenderSystem::GetInstance ().Start ();
 	ObjectManager::GetInstance ().Start ();
 
 	m_state = State::Running;
-
 	MainLoop ();
 }
 
@@ -133,14 +125,13 @@ bool Game::Update (float t, float dt)
 	AudioManager::GetInstance ().Update ();
 	ObjectManager::GetInstance ().PreUpdate (t, dt);
 
-	if (!m_pPhysicsSystem->update (t, dt))
+	if (!PhysicsSystem::GetInstance ().Update (t, dt))
 		return false;
 
 	ObjectManager::GetInstance ().Update (t, dt);
 	ObjectManager::GetInstance ().PostUpdate (t, dt);
 
-	if (!m_pRenderSystem->update (t, dt))
-		return false;
+	RenderSystem::GetInstance ().Update (t, dt);
 
 	ObjectManager::GetInstance ().RemoveMarkedGameObjects ();
 
@@ -160,8 +151,8 @@ void Game::Destroy ()
 	ObjectManager::GetInstance ().Destroy ();
 	InputManager::GetInstance ().Destroy ();
 	AudioManager::GetInstance ().Destroy ();
-	m_pPhysicsSystem->destroy ();
-	m_pRenderSystem->destroy ();
+	PhysicsSystem::GetInstance ().Destroy ();
+	RenderSystem::GetInstance ().Destroy ();
 }
 
 }	// namespace Engine

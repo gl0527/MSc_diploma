@@ -40,7 +40,7 @@ void ManagerComponent::PreUpdate (float t, float dt)
 
 	static unsigned int counter = 0;
 
-	if (fmod (intPart, 50.0) < 0.01f && fractPart > 0.98) {
+	if (fmod (intPart, 30.0) < 0.01f && fractPart > 0.98) {
 		CreatePacMan (counter);
 		CreateGhost (counter);
 		++counter;

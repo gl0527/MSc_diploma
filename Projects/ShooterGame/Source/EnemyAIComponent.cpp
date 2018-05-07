@@ -48,6 +48,8 @@ void EnemyAIComponent::Start ()
 		return;
 	}
 
+	m_pOwnerPhysics->onCollision += std::bind (&EnemyAIComponent::OnCollisionWithPlayer, this, std::placeholders::_1);
+
 	if (auto ownerData = m_owner->GetFirstComponentByType<PlayerDataComponent> ().lock ())
 		m_ownerData = ownerData;
 
@@ -126,25 +128,43 @@ void EnemyAIComponent::Move (float distance, bool follow)
 
 void EnemyAIComponent::OnSearch (float /*t*/, float /*dt*/)
 {
-	Move (20.0f, true);
+	Move (10.0f, true);
 }
 
 
 void EnemyAIComponent::OnAttack (float /*t*/, float /*dt*/)
 {
-	Move (18.0f, true);
+	Move (4.0f, true);
 }
 
 
 void EnemyAIComponent::OnRunAway (float /*t*/, float /*dt*/)
 {
-	Move (20.0f, false);
+	Move (10.0f, false);
 }
 
 
 void EnemyAIComponent::OnDead (float /*t*/, float /*dt*/)
 {
 
+}
+
+
+void EnemyAIComponent::OnCollisionWithPlayer (PhysicsComponent* other)
+{
+	static unsigned int counter = 0;
+
+	if (counter % 30 == 0) {
+		GameObject* otherOwner = other->GetOwner ();
+
+		if (!otherOwner->HasTag ("player"))
+			return;
+
+		if (auto otherPlayerData = otherOwner->GetFirstComponentByType<PlayerDataComponent> ().lock ())
+			otherPlayerData->DecreaseHealtPoint (1);
+
+		++counter;
+	}
 }
 
 

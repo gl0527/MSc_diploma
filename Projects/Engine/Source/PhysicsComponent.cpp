@@ -1,6 +1,5 @@
 #include "PhysicsComponent.h"
 #include "GameObject.h"
-#include "Game.h"
 #include "PhysicsSystem.h"
 #include "TransformComponent.h"
 
@@ -33,7 +32,7 @@ PhysicsComponent::PhysicsComponent (const std::string& name, float m)
 	m_isTrigger (false),
 	m_pRigidBody (nullptr),
 	m_pCompoundShape (new btCompoundShape),
-	m_pWorld (Game::GetInstance ().GetPhysicsSystem ()->GetWorldPtr ()),
+	m_pWorld (PhysicsSystem::GetInstance ().GetWorldPtr ()),
 	m_pPhyMaterial (nullptr)
 {
 	if (m_mass < 1e-4) {

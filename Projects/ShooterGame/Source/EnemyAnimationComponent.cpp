@@ -9,7 +9,6 @@
 
 EnemyAnimationComponent::EnemyAnimationComponent (const std::string& name, const char* walkAnimName, const char* attackAnimName, const char* deadAnimName):
 	AnimationComponent (name),
-	m_isDeleted (false),
 	m_WalkAnimName (walkAnimName),
 	m_AttackAnimName (attackAnimName),
 	m_DeadAnimName (deadAnimName),
@@ -62,17 +61,13 @@ void EnemyAnimationComponent::PostUpdate (float t, float dt)
 	else
 		m_animationGraph.Process (m_ownerAI->GetState () == EnemyAIComponent::State::Attack ? 'a' : 'w');
 
-	if (!m_isDeleted)
-		m_animationGraph.Update (t, dt);
+	m_animationGraph.Update (t, dt);
 }
 
 
 void EnemyAnimationComponent::OnDead (float t, float dt)
 {
 	Step (m_DeadAnimName, dt);
-
-	if (!m_isDeleted && GetProgression (m_DeadAnimName) > 0.99f) {
-		m_isDeleted = true;
+	if (HasEnded (m_DeadAnimName))
 		ObjectManager::GetInstance ().MarkGameObjectForDelete (m_owner->GetName ());
-	}
 }

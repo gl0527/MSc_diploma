@@ -1,6 +1,5 @@
 #include "CameraComponent.h"
 #include "GameObject.h"
-#include "Game.h"
 #include "RenderSystem.h"
 #include "OgreRenderWindow.h"
 #include "OgreSceneManager.h"
@@ -24,7 +23,7 @@ CameraComponent::CameraComponent (const std::string& name, int zDepth)
 	m_zOrder (zDepth),
 	m_pCamera (nullptr),
 	m_pViewport (nullptr),
-	m_pRenderWnd (Game::GetInstance ().GetRenderSystem ()->GetRenderWindow ()),
+	m_pRenderWnd (RenderSystem::GetInstance ().GetRenderWindow ()),
 	m_pRenderTex (nullptr)
 {
 }
@@ -55,7 +54,7 @@ void CameraComponent::PostInit (GameObject* obj)
 
 	CreateNode ();
 
-	Game::GetInstance ().GetRenderSystem ()->SetActiveViewport ();
+	RenderSystem::GetInstance ().SetActiveViewport ();
 }
 
 

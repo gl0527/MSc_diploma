@@ -1,6 +1,5 @@
 #include "RenderComponent.h"
 #include "GameObject.h"
-#include "Game.h"
 #include "RenderSystem.h"
 #include "TransformComponent.h"
 #include "OgreSceneManager.h"
@@ -11,10 +10,10 @@ namespace Engine {
 
 RenderComponent::RenderComponent (const std::string& name)
 	: Component (name),
-	m_pParentNode (Game::GetInstance ().GetRenderSystem ()->GetRootNode ()),
+	m_pParentNode (RenderSystem::GetInstance ().GetRootNode ()),
 	m_pCurrentNode (nullptr),
 	m_pObject (nullptr),
-	m_pSceneManager (Game::GetInstance ().GetRenderSystem ()->GetSceneManager ())
+	m_pSceneManager (RenderSystem::GetInstance ().GetSceneManager ())
 {
 }
 

@@ -3,6 +3,7 @@
 #include "GameObject.h"
 #include "ObjectManager.h"
 #include "PhysicsComponent.h"
+#include "CameraComponent.h"
 #include "XML/XMLParser.h"
 
 #include "DynamicMovementProcessor.h"
@@ -30,6 +31,17 @@ static void GLOBAL_FUNC_NAME (MyGUI::Widget* _sender)
 		AudioManager::GetInstance ().Disable ();
 	else
 		AudioManager::GetInstance ().Enable ();
+
+	/*auto& game = Game::GetInstance ();
+	auto& renderSys = RenderSystem::GetInstance ();
+	auto& xmlParser = XML::XMLParser::GetInstance ();
+	auto& objectMgr = ObjectManager::GetInstance ();*/
+}
+
+
+static void OnQuit (MyGUI::Widget* _sender)
+{
+	Game::GetInstance ().Destroy ();
 }
 
 
@@ -40,32 +52,40 @@ int main(int argc, char** argv)
 #endif
 
 	auto& game = Game::GetInstance();
-	auto renderSys = game.GetRenderSystem ();
+	auto& renderSys = RenderSystem::GetInstance ();
 	auto& xmlParser = XML::XMLParser::GetInstance ();
 	auto& objectMgr = ObjectManager::GetInstance ();
 	
 	if (!game.Init ())
 		return -1;
 
+	// TODO a GUI-hoz kene egy kamera, persze nem az XML-bol
+	//if (auto cam = objectMgr.CreateGameObject ("camera").lock ()) {
+	//	std::shared_ptr<CameraComponent> pCamComp (new CameraComponent ("cam", 0));
+	//	cam->AddComponent (pCamComp);
+	//}
+
+	renderSys.LoadGUILayout ("EditPanel.layout");
+	renderSys.LoadGUILayout ("MainPanel.layout");
+	auto button = renderSys.GetWidget<MyGUI::Button> ("New");
+	auto quitButton = renderSys.GetWidget<MyGUI::Button> ("Quit");
+	button->eventMouseButtonClick = MyGUI::newDelegate (GLOBAL_FUNC_NAME);
+	quitButton->eventMouseButtonClick = MyGUI::newDelegate (OnQuit);
+
 	new DynamicMovementProcessor;
 
 	AudioManager::GetInstance ().SetResourceLocation ("media\\level01-arrival\\sound\\");
 
-	renderSys->CreatePlaneMeshXZ ("ground", 0, 100, 100);
+	renderSys.CreatePlaneMeshXZ ("ground", 0, 100, 100);
 
 	if (!xmlParser.LoadXMLFromFile ("media\\level01-arrival\\map\\ShooterGame.xml"))
 		return -1;
-
-	renderSys->LoadGUILayout ("EditPanel.layout");
-	renderSys->LoadGUILayout ("MainPanel.layout");
-	auto button = renderSys->GetWidget<MyGUI::Button> ("New");
-	button->eventMouseButtonClick = MyGUI::newDelegate (GLOBAL_FUNC_NAME);
 
 	if (auto exp = objectMgr.GetGameObjectByName ("explosive").lock ()) {
 		if (auto explosivePhysx = exp->GetFirstComponentByType<PhysicsComponent> ().lock ()) {
 			explosivePhysx->onTriggerEnter += [&] (PhysicsComponent* otherPhyComp) {
 				static bool particleEnabled = true;
-				
+
 				if (otherPhyComp != nullptr) {
 					if (auto explosiveParticle = exp->GetFirstComponentByType<ParticleComponent> ().lock ()) {
 						explosiveParticle->SetEnabled (particleEnabled);
@@ -78,6 +98,8 @@ int main(int argc, char** argv)
 	}
 
 	if (auto soldierGO = objectMgr.GetGameObjectByName ("gijoe").lock ()) {
+		soldierGO->AddTag ("player");
+
 		std::shared_ptr<SoldierAnimationComponent> soldierAnimComp (new SoldierAnimationComponent ("soldierAnimComp"));
 		soldierGO->AddComponent (soldierAnimComp);
 

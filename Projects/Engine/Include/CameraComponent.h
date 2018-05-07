@@ -39,7 +39,7 @@ public:
 		Ogre::Vector3 lookat;
 		float renderDist;
 	};
-
+	
 					CameraComponent (const std::string& name, int zDepth);
 					CameraComponent (const Descriptor& desc);
 	virtual			~CameraComponent ();

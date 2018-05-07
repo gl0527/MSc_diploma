@@ -1,7 +1,5 @@
 #include "XML/EnvironmentDataProcessor.h"
 #include "XML/XMLParser.h"
-#include <iostream>
-#include "Game.h"
 #include "RenderSystem.h"
 #include "OgreSceneManager.h"
 #include "OgreColourValue.h"
@@ -12,7 +10,7 @@ namespace XML {
 
 bool EnvironmentDataProcessor::ProcessXMLTag (TiXmlElement* elem)
 {
-	Ogre::SceneManager* sceneMgr = Game::GetInstance ().GetRenderSystem ()->GetSceneManager ();
+	Ogre::SceneManager* sceneMgr = RenderSystem::GetInstance ().GetSceneManager ();
 
 	foreach_child (elem)
 	{

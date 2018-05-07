@@ -1,6 +1,5 @@
 #include "LightComponent.h"
 #include "GameObject.h"
-#include "Game.h"
 #include "RenderSystem.h"
 #include "OgreSceneManager.h"
 #include "TransformComponent.h"
@@ -35,7 +34,7 @@ LightComponent::LightComponent (const Descriptor& desc)
 
 LightComponent::LightComponent (const std::string& name, const Ogre::Light::LightTypes& t)
 	: Component (name),
-	m_pSceneMgr (Game::GetInstance ().GetRenderSystem ()->GetSceneManager ()),
+	m_pSceneMgr (RenderSystem::GetInstance ().GetSceneManager ()),
 	m_pLight (nullptr),
 	m_type (t)
 {

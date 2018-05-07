@@ -12,8 +12,6 @@ namespace Engine {
 
 // ----------------------------- forward declaration -----------------------------
 
-class RenderSystem;
-class PhysicsSystem;
 class AudioSystem;
 class Ticker;
 
@@ -31,10 +29,6 @@ public:
 	void						Pause ();
 	DLL_EXPORT void				Destroy ();
 
-	// TODO ezeket nem lenne szabad hasznalni, helyettuk wrapper fuggvenyek
-	DLL_EXPORT RenderSystem*	GetRenderSystem ()	const { return m_pRenderSystem; }
-	DLL_EXPORT PhysicsSystem*	GetPhysicsSystem () const { return m_pPhysicsSystem; }
-
 private:
 	enum class State : unsigned char
 	{
@@ -48,9 +42,6 @@ private:
 	static Game*	s_pInstance;
 
 	volatile State	m_state;
-
-	RenderSystem*	m_pRenderSystem;
-	PhysicsSystem*	m_pPhysicsSystem;
 	Ticker*			m_pTimer;
 
 
