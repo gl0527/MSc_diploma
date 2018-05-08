@@ -10,6 +10,7 @@
 #include "PlayerDataComponent.h"
 #include "ObjectManager.h"
 #include "ManagerComponent.h"
+#include "WeaponComponent.h"
 
 
 namespace {
@@ -33,6 +34,10 @@ SoldierAnimationComponent::SoldierAnimationComponent (const std::string& name):
 	m_upperBodyAnimation (UpperBodyState::Idle),
 	m_lowerBodyAnimation (LowerBodyState::Idle),
 	m_ownerData (nullptr),
+	m_managerComp (nullptr),
+	m_weapon (nullptr),
+	m_weaponComp (nullptr),
+	m_pOwnerAudio (nullptr),
 	m_isInShootState (false),
 	m_hasWeapon (false),
 	m_isDead (false)
@@ -89,6 +94,14 @@ void SoldierAnimationComponent::Start ()
 	}
 
 	if (m_managerComp == nullptr) {
+		m_owner->RemoveComponent (m_name);
+		return;
+	}
+
+	if (auto owneraudio = m_owner->GetFirstComponentByType<AudioSourceComponent> ().lock ())
+		m_pOwnerAudio = owneraudio;
+
+	if (m_pOwnerAudio == nullptr) {
 		m_owner->RemoveComponent (m_name);
 		return;
 	}
@@ -172,15 +185,27 @@ void SoldierAnimationComponent::OnUpperBodyRun (float t, float dt)
 
 void SoldierAnimationComponent::OnUpperBodyShoot (float t, float dt)
 {
-	Step ("up_shoot", dt);
-	static unsigned int counter = 0;
-	if (fabs (GetTimePositionInSeconds ("up_shoot") - 0.8f) < 0.01f) {
-		if (auto weapon = m_owner->GetChild ("weapon")) {
-			m_managerComp->CreateBullet (counter++, weapon->Transform ()->GetGlobalPosition (), weapon->Transform ()->GetGlobalFacing ());
-			if (auto weaponAudio = weapon->GetFirstComponentByType<AudioSourceComponent> ().lock ())
-				weaponAudio->Play ();
+	m_weapon = m_owner->GetChild ("weapon");
+	if (m_weapon == nullptr)
+		return;
+	
+	if (m_weaponComp = m_weapon->GetFirstComponentByType<WeaponComponent> ().lock ()) {
+		if (!m_weaponComp->HasAmmo ()) {
+			m_isInShootState = false;
+			return;
 		}
 	}
+	
+	Step ("up_shoot", dt);
+	static unsigned int counter = 0;
+
+	if (fabs (GetTimePositionInSeconds ("up_shoot") - 0.8f) < 0.01f) {
+		m_weaponComp->DecreaseAmmoByOne ();
+		m_managerComp->CreateBullet (counter++, m_weapon->Transform ()->GetGlobalPosition (), m_weapon->Transform ()->GetGlobalFacing ());
+		if (auto weaponAudio = m_weapon->GetFirstComponentByType<AudioSourceComponent> ().lock ())
+			weaponAudio->Play ("Single rifle shot.wav");
+	}
+
 	if (HasEnded ("up_shoot"))
 		m_isInShootState = false;
 }
@@ -208,9 +233,8 @@ void SoldierAnimationComponent::OnDeath (float t, float dt)
 {
 	Step ("death", dt);
 	static bool isDeathSoundPlayed = false;
-	auto soldierAudio = m_owner->GetFirstComponentByType<AudioSourceComponent> ().lock ();
-	if (!isDeathSoundPlayed && soldierAudio != nullptr) {
-		soldierAudio->Play ();
+	if (!isDeathSoundPlayed) {
+		m_pOwnerAudio->Play ();
 		isDeathSoundPlayed = true;
 	}
 }

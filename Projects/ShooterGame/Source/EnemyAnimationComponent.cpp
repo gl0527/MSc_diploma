@@ -5,6 +5,7 @@
 #include "OgreSkeletonInstance.h"
 #include "EnemyAIComponent.h"
 #include "ObjectManager.h"
+#include "AudioSourceComponent.h"
 
 
 EnemyAnimationComponent::EnemyAnimationComponent (const std::string& name, const char* walkAnimName, const char* attackAnimName, const char* deadAnimName):
@@ -13,7 +14,8 @@ EnemyAnimationComponent::EnemyAnimationComponent (const std::string& name, const
 	m_AttackAnimName (attackAnimName),
 	m_DeadAnimName (deadAnimName),
 	m_animationGraph (State::Walk),
-	m_ownerAI (nullptr)
+	m_ownerAI (nullptr),
+	m_ownerAudio (nullptr)
 {
 	m_animationGraph.AddTransitions ({
 		{State::Walk, State::Attack, 'a', [this] { Transition (m_WalkAnimName, 0.0f, m_AttackAnimName, 1.0f, true); }},
@@ -34,6 +36,15 @@ void EnemyAnimationComponent::Start ()
 		m_ownerAI = ownerAI;
 
 	if (m_ownerAI == nullptr) {
+		m_owner->RemoveComponent (m_name);
+
+		return;
+	}
+
+	if (auto ownerAudio = m_owner->GetFirstComponentByType<AudioSourceComponent> ().lock ())
+		m_ownerAudio = ownerAudio;
+	
+	if (m_ownerAudio == nullptr) {
 		m_owner->RemoveComponent (m_name);
 
 		return;
@@ -68,6 +79,12 @@ void EnemyAnimationComponent::PostUpdate (float t, float dt)
 void EnemyAnimationComponent::OnDead (float t, float dt)
 {
 	Step (m_DeadAnimName, dt);
+	
+	if (GetProgression (m_DeadAnimName) < 0.1f) {
+		if (m_ownerAudio != nullptr)
+			m_ownerAudio->Play ();
+	}
+
 	if (HasEnded (m_DeadAnimName))
 		ObjectManager::GetInstance ().MarkGameObjectForDelete (m_owner->GetName ());
 }

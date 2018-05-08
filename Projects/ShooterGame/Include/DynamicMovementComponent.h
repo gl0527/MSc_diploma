@@ -30,11 +30,13 @@ public:
 	void			SetTurnSpeed (float turnSpeed);
 
 private:
-	float								m_moveSpeed;
-	float								m_turnSpeed;
-	std::shared_ptr<PhysicsComponent>	m_pOwnerPhysics;
+	float									m_moveSpeed;
+	float									m_turnSpeed;
+	std::shared_ptr<PhysicsComponent>		m_pOwnerPhysics;
+
 
 	void			OnCollisionWithWeapon (PhysicsComponent* other);
+	void			OnCollisionWithTable (PhysicsComponent* other);
 };
 
 #endif	// #ifndef DYNAMIC_MOVEMENT_COMPONENT_H

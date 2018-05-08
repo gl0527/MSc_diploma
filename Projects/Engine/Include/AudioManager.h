@@ -47,6 +47,7 @@ public:
 	void								Destroy ();
 
 	void								AddAudioSourceComponent (const std::shared_ptr<AudioSourceComponent>& pAudioSourceComp);
+	void								RemoveAudioSourceComponent (const std::shared_ptr<AudioSourceComponent>& pAudioSourceComp);
 
 	void								GetBuffer (const std::string& bufferName, unsigned int* outBufferID);
 	bool								IsInitialized () const;

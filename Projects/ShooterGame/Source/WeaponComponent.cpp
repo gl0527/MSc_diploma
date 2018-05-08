@@ -8,7 +8,9 @@
 
 
 WeaponComponent::WeaponComponent (const std::string& name)
-	: Component (name)
+	: Component (name),
+	m_FullAmmo (15),
+	m_ammo (2)
 {
 }
 
@@ -26,4 +28,29 @@ void WeaponComponent::PreUpdate (float t, float dt)
 			}
 		}
 	}
+}
+
+
+unsigned char WeaponComponent::GetAmmo () const
+{
+	return m_ammo;
+}
+
+
+void WeaponComponent::DecreaseAmmoByOne ()
+{
+	if (m_ammo > 0)
+		--m_ammo;
+}
+
+
+void WeaponComponent::SetAmmoToFull ()
+{
+	m_ammo = m_FullAmmo;
+}
+
+
+bool WeaponComponent::HasAmmo () const
+{
+	return m_ammo > 0;
 }

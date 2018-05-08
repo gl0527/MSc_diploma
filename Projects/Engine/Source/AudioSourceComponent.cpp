@@ -82,6 +82,8 @@ void AudioSourceComponent::PostUpdate (float /*t*/, float /*dt*/)
 void AudioSourceComponent::Destroy ()
 {
 	Stop ();
+	std::shared_ptr<AudioSourceComponent> spFromThis = std::dynamic_pointer_cast<AudioSourceComponent> (m_owner->GetComponent (m_name).lock ());
+	m_audioManager.RemoveAudioSourceComponent (spFromThis);
 }
 
 
@@ -89,11 +91,12 @@ void AudioSourceComponent::AddBuffer (const std::string& bufferName)
 {
 	unsigned int bufferID;
 	m_audioManager.GetBuffer (bufferName, &bufferID);
-	m_bindedBufferIDs.push_back (bufferID);
+	m_bindedBufferIDs[bufferName] = bufferID;
+	m_bindedBufferNames.push_back (bufferName);
 }
 
 
-void AudioSourceComponent::Play ()
+void AudioSourceComponent::Play (std::string bufferName)
 {
 	if (m_sourceID == 0)
 		return;
@@ -103,17 +106,27 @@ void AudioSourceComponent::Play ()
 		m_audioManager.IsPlaying (m_sourceID))
 		return;
 
-	if (m_isBufferRandomlySelected) {
-		size_t bufIdx = rand () % m_bindedBufferIDs.size ();
-		AL_SAFE_CALL (alSourcei (m_sourceID, AL_BUFFER, m_bindedBufferIDs[bufIdx]), "Unable to bind buffer to OpenAL source.");
+	if (bufferName != "") {
+		auto it = m_bindedBufferIDs.find (bufferName);
+		if (it != m_bindedBufferIDs.end ())
+			AL_SAFE_CALL (alSourcei (m_sourceID, AL_BUFFER, m_bindedBufferIDs[bufferName]), "Unable to bind buffer to OpenAL source.");
 	} else {
-		AL_SAFE_CALL (alSourcei (m_sourceID, AL_BUFFER, m_bindedBufferIDs[m_currentBufferIndex % m_bindedBufferIDs.size ()]), "Unable to bind buffer to OpenAL source.");
-		++m_currentBufferIndex;
-	}
+		std::string chosenBuffer;
 
-	if (m_type == SoundEffect) {
-		float speedRandomFactor = 0.4f * static_cast<float> (rand ()) / RAND_MAX + 0.8f;
-		AL_SAFE_CALL (alSourcef (m_sourceID, AL_PITCH, m_speed * speedRandomFactor), "Unable to set pitch of OpenAL source.");
+		if (m_isBufferRandomlySelected) {
+			size_t bufIdx = rand () % m_bindedBufferNames.size ();
+			chosenBuffer = m_bindedBufferNames[bufIdx];
+			AL_SAFE_CALL (alSourcei (m_sourceID, AL_BUFFER, m_bindedBufferIDs[chosenBuffer]), "Unable to bind buffer to OpenAL source.");
+		} else {
+			chosenBuffer = m_bindedBufferNames[m_currentBufferIndex % m_bindedBufferNames.size ()];
+			AL_SAFE_CALL (alSourcei (m_sourceID, AL_BUFFER, m_bindedBufferIDs[chosenBuffer]), "Unable to bind buffer to OpenAL source.");
+			++m_currentBufferIndex;
+		}
+
+		if (m_type == SoundEffect) {
+			float speedRandomFactor = 0.4f * static_cast<float> (rand ()) / RAND_MAX + 0.8f;
+			AL_SAFE_CALL (alSourcef (m_sourceID, AL_PITCH, m_speed * speedRandomFactor), "Unable to set pitch of OpenAL source.");
+		}
 	}
 
 	Continue ();

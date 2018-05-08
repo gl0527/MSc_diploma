@@ -26,9 +26,6 @@ EnemyAIComponent::EnemyAIComponent (const std::string& name):
 
 	m_enemyStateMachine.AddStateFunction (State::RunAway,
 		std::bind (&EnemyAIComponent::OnRunAway, this, std::placeholders::_1, std::placeholders::_2));
-
-	m_enemyStateMachine.AddStateFunction (State::Dead,
-		std::bind (&EnemyAIComponent::OnDead, this, std::placeholders::_1, std::placeholders::_2));
 }
 
 
@@ -62,8 +59,8 @@ void EnemyAIComponent::Start ()
 
 void EnemyAIComponent::PreUpdate (float t, float dt)
 {
-	Ogre::Vector3 targetWorldPos = m_targetObj->Transform ()->GetGlobalPosition ();
-	Ogre::Vector3 ownerWorldPos = m_owner->Transform ()->GetGlobalPosition ();
+	const Ogre::Vector3& targetWorldPos = GetTargetPosition ();
+	const Ogre::Vector3& ownerWorldPos = GetOwnerPosition ();
 	
 	if (m_ownerData->GetHealthPoint () < 1)
 		m_enemyStateMachine.SetState (State::Dead);
@@ -99,20 +96,20 @@ Ogre::Vector3 EnemyAIComponent::GetOwnerFacing () const
 
 void EnemyAIComponent::Move (float distance, bool follow)
 {
-	Ogre::Vector3 targetWorldPos = GetTargetPosition ();
-	Ogre::Vector3 ownerWorldPos = GetOwnerPosition ();
-	Ogre::Vector3 ownerWorldFacing = GetOwnerFacing ();
+	const Ogre::Vector3& targetWorldPos = GetTargetPosition ();
+	const Ogre::Vector3& ownerWorldPos = GetOwnerPosition ();
+	Ogre::Vector3& ownerWorldFacing = GetOwnerFacing ();
 
 	if (targetWorldPos.distance (ownerWorldPos) > distance) {
-		Ogre::Vector3 direction (follow ? targetWorldPos - ownerWorldPos : ownerWorldPos - targetWorldPos);
+		Ogre::Vector3 directionIn3D = follow ? targetWorldPos - ownerWorldPos : ownerWorldPos - targetWorldPos;
+		Ogre::Vector3 direction = Ogre::Vector3 (directionIn3D.x, targetWorldPos.y, directionIn3D.z);
+		
 		direction.normalise ();
 		ownerWorldFacing.normalise ();
 
-		Ogre::Real cosTurnAngle (ownerWorldFacing.dotProduct (direction));
-		Ogre::Real turnAngle = Ogre::Math::ACos (cosTurnAngle).valueRadians ();
-
+		Ogre::Real turnAngle = Ogre::Math::ACos (ownerWorldFacing.dotProduct (direction)).valueRadians ();
 		char sign = 1;
-		if (turnAngle > 1.1 * Ogre::Math::PI) {
+		if (turnAngle > Ogre::Math::PI) {
 			turnAngle = 2 * Ogre::Math::PI - turnAngle;
 			sign = -1;
 		}
@@ -144,12 +141,6 @@ void EnemyAIComponent::OnRunAway (float /*t*/, float /*dt*/)
 }
 
 
-void EnemyAIComponent::OnDead (float /*t*/, float /*dt*/)
-{
-
-}
-
-
 void EnemyAIComponent::OnCollisionWithPlayer (PhysicsComponent* other)
 {
 	static unsigned int counter = 0;
@@ -162,9 +153,9 @@ void EnemyAIComponent::OnCollisionWithPlayer (PhysicsComponent* other)
 
 		if (auto otherPlayerData = otherOwner->GetFirstComponentByType<PlayerDataComponent> ().lock ())
 			otherPlayerData->DecreaseHealtPoint (1);
-
-		++counter;
 	}
+
+	++counter;
 }
 
 

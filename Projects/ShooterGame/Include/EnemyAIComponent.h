@@ -59,7 +59,6 @@ private:
 	void OnSearch (float t, float dt);
 	void OnAttack (float t, float dt);
 	void OnRunAway (float t, float dt);
-	void OnDead (float t, float dt);
 
 	void OnCollisionWithPlayer (PhysicsComponent* other);
 };

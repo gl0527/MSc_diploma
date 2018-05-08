@@ -6,21 +6,31 @@
 #include "PhysicsComponent.h"
 #include "SoldierAnimationComponent.h"
 #include "MeshComponent.h"
+#include "WeaponComponent.h"
+#include "AudioSourceComponent.h"
 
 
 DynamicMovementComponent::DynamicMovementComponent (const std::string& name)
 	:Component (name),
 	m_moveSpeed (0.0f),
 	m_turnSpeed (0.0f),
-	m_pOwnerPhysics (std::shared_ptr<PhysicsComponent> (nullptr))
+	m_pOwnerPhysics (nullptr)
 {
 }
 
 
 void DynamicMovementComponent::Start ()
 {
-	m_pOwnerPhysics = m_owner->GetFirstComponentByType<PhysicsComponent> ().lock ();
+	if (auto ownerPhysics = m_owner->GetFirstComponentByType<PhysicsComponent> ().lock ())
+		m_pOwnerPhysics = ownerPhysics;
+
+	if (m_pOwnerPhysics == nullptr) {
+		m_owner->RemoveComponent (m_name);
+		return;
+	}
+
 	m_pOwnerPhysics->onCollision += std::bind (&DynamicMovementComponent::OnCollisionWithWeapon, this, std::placeholders::_1);
+	m_pOwnerPhysics->onCollision += std::bind (&DynamicMovementComponent::OnCollisionWithTable, this, std::placeholders::_1);
 }
 
 
@@ -78,5 +88,21 @@ void DynamicMovementComponent::OnCollisionWithWeapon (PhysicsComponent* other)
 		otherOwner->SetParent (m_owner->GetName ());
 		if (auto anim = m_owner->GetFirstComponentByType<SoldierAnimationComponent> ().lock ())
 			anim->HasWeapon (true);
+	}
+}
+
+
+void DynamicMovementComponent::OnCollisionWithTable (PhysicsComponent* other)
+{
+	GameObject* otherOwner = other->GetOwner ();
+
+	if (otherOwner->GetName () == "doboz") {
+		if (auto weapon = m_owner->GetChild ("weapon")) {
+			if (auto weaponComp = weapon->GetFirstComponentByType<WeaponComponent> ().lock ())
+				weaponComp->SetAmmoToFull ();
+
+			if (auto weaponAudio = weapon->GetFirstComponentByType<AudioSourceComponent> ().lock ())
+				weaponAudio->Play ("i-dont-think-so-2.wav");
+		}
 	}
 }

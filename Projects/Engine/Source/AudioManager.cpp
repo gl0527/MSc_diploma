@@ -36,7 +36,7 @@ void AudioManager::Init ()
 	if (!alutInitWithoutContext (nullptr, nullptr))
 		ERR_THROW (std::runtime_error, "Could not initialize alut!");
 
-	m_pAudioDevice = alcOpenDevice (nullptr);
+	m_pAudioDevice = alcOpenDevice(nullptr);
 	if (m_pAudioDevice == nullptr)
 		ERR_THROW (std::runtime_error, "Could not create audio device!");
 
@@ -86,8 +86,13 @@ void AudioManager::Update ()
 
 			if (audio1->GetType () == audio2->GetType ()) {
 				if (audio1->GetType () == AudioSourceComponent::SoundEffect) {
-					float audio1DistFromListener = audio1->GetOwner ()->Transform ()->GetGlobalPosition ().distance (listenerPos);
-					float audio2DistFromListener = audio2->GetOwner ()->Transform ()->GetGlobalPosition ().distance (listenerPos);
+					float audio1DistFromListener = 0.0f, audio2DistFromListener = 0.0f;
+					
+					if (audio1->GetOwner () != nullptr)
+						audio1DistFromListener = audio1->GetOwner ()->Transform ()->GetGlobalPosition ().distance (listenerPos);
+
+					if (audio2->GetOwner () != nullptr)
+						audio2DistFromListener = audio2->GetOwner ()->Transform ()->GetGlobalPosition ().distance (listenerPos);
 
 					return audio1DistFromListener < audio2DistFromListener;
 				} else {
@@ -133,6 +138,17 @@ void AudioManager::Destroy ()
 void AudioManager::AddAudioSourceComponent (const std::shared_ptr<AudioSourceComponent>& pAudioSourceComp)
 {
 	m_audioSourceComponents.push_back (pAudioSourceComp);
+}
+
+
+void AudioManager::RemoveAudioSourceComponent (const std::shared_ptr<AudioSourceComponent>& pAudioSourceComp)
+{
+	for (auto it = m_audioSourceComponents.begin (), itEnd = m_audioSourceComponents.end (); it != itEnd; ++it) {
+		if (*it == pAudioSourceComp) {
+			m_audioSourceComponents.erase (it);
+			return;
+		}
+	}
 }
 
 

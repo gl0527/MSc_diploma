@@ -6,7 +6,7 @@
 // ---------------------------------- includes ----------------------------------
 
 #include "Component.h"
-#include <vector>
+#include <map>
 #include "AudioManager.h"
 
 
@@ -48,7 +48,7 @@ public:
 
 	DLL_EXPORT void		AddBuffer (const std::string& bufferName);
 	
-	DLL_EXPORT void		Play ();
+	DLL_EXPORT void		Play (std::string bufferName = "");
 	void				Pause ();
 	void				Stop ();
 	void				Continue ();
@@ -68,17 +68,18 @@ public:
 	void				ApplyDescriptor (const Descriptor& desc);
 
 private:
-	float						m_volume;
-	float						m_speed;
-	bool						m_isLooping;
-	float						m_maxDistWithFullGain;
-	float						m_minDistWithZeroGain;
-	bool						m_isBufferRandomlySelected;
-	size_t						m_currentBufferIndex;
-	unsigned int				m_sourceID;
-	std::vector<unsigned int>	m_bindedBufferIDs;
-	AudioType					m_type;
-	AudioManager&				m_audioManager;
+	float								m_volume;
+	float								m_speed;
+	bool								m_isLooping;
+	float								m_maxDistWithFullGain;
+	float								m_minDistWithZeroGain;
+	bool								m_isBufferRandomlySelected;
+	size_t								m_currentBufferIndex;
+	unsigned int						m_sourceID;
+	std::map<std::string, unsigned int>	m_bindedBufferIDs;
+	std::vector<std::string>			m_bindedBufferNames;
+	AudioType							m_type;
+	AudioManager&						m_audioManager;
 
 
 	void				PostInit (GameObject* object) override;

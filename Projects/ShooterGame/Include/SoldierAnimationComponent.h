@@ -13,8 +13,16 @@ using namespace Engine;
 
 // ----------------------------- forward declaration -----------------------------
 
+namespace Engine {
+
+class GameObject;
+class AudioSourceComponent;
+
+}
+
 class PlayerDataComponent;
 class ManagerComponent;
+class WeaponComponent;
 
 // ====================== class SoldierAnimationComponent =======================
 
@@ -40,6 +48,9 @@ private:
 	LowerBodyAnimation							m_lowerBodyAnimation;
 	std::shared_ptr<PlayerDataComponent>		m_ownerData;
 	std::shared_ptr<ManagerComponent>			m_managerComp;
+	std::shared_ptr<GameObject>					m_weapon;
+	std::shared_ptr<WeaponComponent>			m_weaponComp;
+	std::shared_ptr<AudioSourceComponent>		m_pOwnerAudio;
 	bool										m_isInShootState;
 	bool										m_hasWeapon;
 	bool										m_isDead;

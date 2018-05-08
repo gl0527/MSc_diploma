@@ -16,6 +16,12 @@ using namespace Engine;
 
 class EnemyAIComponent;
 
+namespace Engine {
+
+class AudioSourceComponent;
+
+}	// namespace Engine
+
 // ======================= class EnemyAnimationComponent ========================
 
 class EnemyAnimationComponent : public AnimationComponent
@@ -31,11 +37,12 @@ public:
 private:
 	using EnemyAnimation = FiniteStateMachine<State, char>;
 
-	const char* const					m_WalkAnimName;
-	const char* const					m_AttackAnimName;
-	const char* const					m_DeadAnimName;
-	EnemyAnimation						m_animationGraph;
-	std::shared_ptr<EnemyAIComponent>	m_ownerAI;
+	const char* const						m_WalkAnimName;
+	const char* const						m_AttackAnimName;
+	const char* const						m_DeadAnimName;
+	EnemyAnimation							m_animationGraph;
+	std::shared_ptr<EnemyAIComponent>		m_ownerAI;
+	std::shared_ptr<AudioSourceComponent>	m_ownerAudio;
 
 	void	OnDead (float t, float dt);
 };
