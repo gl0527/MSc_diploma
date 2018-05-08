@@ -24,7 +24,6 @@ public:
 	void			SetAmmoToFull ();
 	bool			HasAmmo () const;
 
-
 private:
 	const unsigned char m_FullAmmo;
 	unsigned char		m_ammo;

@@ -1,5 +1,6 @@
 #include "PhysicsSystem.h"
 #include "PhysicsComponent.h"
+#include "OgreVector3.h"
 
 
 // using anonymous namespace to force internal linkage
@@ -109,11 +110,27 @@ btDiscreteDynamicsWorld* PhysicsSystem::GetWorldPtr () const
 }
 
 
-btCollisionWorld::ClosestRayResultCallback PhysicsSystem::RayTest (const btVector3& from, const btVector3& to) const
+btCollisionWorld::ClosestRayResultCallback PhysicsSystem::FirstHitRayCasting (const btVector3& from, const btVector3& to) const
 {
 	btCollisionWorld::ClosestRayResultCallback ray (from, to);
+	
 	if (m_pPhyWorld != nullptr)
 		m_pPhyWorld->rayTest (from, to, ray);
+	
+	return ray;
+}
+
+
+btCollisionWorld::ClosestRayResultCallback PhysicsSystem::FirstHitRayCasting (const Ogre::Vector3& from, const Ogre::Vector3& to) const
+{
+	btVector3 rayStart{ from.x, from.y, from.z };
+	btVector3 rayEnd{ to.x, to.y, to.z };
+
+	btCollisionWorld::ClosestRayResultCallback ray (rayStart, rayEnd);
+
+	if (m_pPhyWorld != nullptr)
+		m_pPhyWorld->rayTest (rayStart, rayEnd, ray);
+
 	return ray;
 }
 

@@ -64,6 +64,8 @@ private:
 	void	OnDeath (float t, float dt);
 
 	void	TransitionToDeath ();
+
+	void	RaycastingfromWeapon ();
 };
 
 #endif	//#ifndef SOLDIER_ANIMATION_COMPONENT_H

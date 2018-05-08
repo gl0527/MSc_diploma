@@ -10,7 +10,7 @@
 WeaponComponent::WeaponComponent (const std::string& name)
 	: Component (name),
 	m_FullAmmo (15),
-	m_ammo (2)
+	m_ammo (10)
 {
 }
 
