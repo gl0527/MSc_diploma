@@ -1,13 +1,11 @@
 #include "DynamicMovementComponent.h"
+#include "TransformComponent.h"
 #include "GameObject.h"
 #include "Game.h"
-#include "TransformComponent.h"
 #include "InputManager.h"
 #include "PhysicsComponent.h"
 #include "SoldierAnimationComponent.h"
-#include "MeshComponent.h"
 #include "WeaponComponent.h"
-#include "AudioSourceComponent.h"
 
 
 DynamicMovementComponent::DynamicMovementComponent (const std::string& name)
@@ -100,9 +98,6 @@ void DynamicMovementComponent::OnCollisionWithTable (PhysicsComponent* other)
 		if (auto weapon = m_owner->GetChild ("weapon")) {
 			if (auto weaponComp = weapon->GetFirstComponentByType<WeaponComponent> ().lock ())
 				weaponComp->SetAmmoToFull ();
-
-			if (auto weaponAudio = weapon->GetFirstComponentByType<AudioSourceComponent> ().lock ())
-				weaponAudio->Play ("i-dont-think-so-2.wav");
 		}
 	}
 }

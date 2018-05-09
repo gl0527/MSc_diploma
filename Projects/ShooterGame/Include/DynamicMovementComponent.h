@@ -23,8 +23,8 @@ class DynamicMovementComponent : public Component
 public:
 	explicit		DynamicMovementComponent(const std::string& name);
 	
-	virtual void	Start() override;
-	virtual void	PreUpdate(float t, float dt) override;
+	void			Start() override;
+	void			PreUpdate(float t, float dt) override;
 
 	void			SetMoveSpeed(float moveSpeed);
 	void			SetTurnSpeed (float turnSpeed);

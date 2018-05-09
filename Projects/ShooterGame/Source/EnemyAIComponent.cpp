@@ -98,7 +98,7 @@ void EnemyAIComponent::Move (float distance, bool follow)
 {
 	const Ogre::Vector3& targetWorldPos = GetTargetPosition ();
 	const Ogre::Vector3& ownerWorldPos = GetOwnerPosition ();
-	Ogre::Vector3& ownerWorldFacing = GetOwnerFacing ();
+	Ogre::Vector3 ownerWorldFacing = GetOwnerFacing ();
 
 	if (targetWorldPos.distance (ownerWorldPos) > distance) {
 		Ogre::Vector3 directionIn3D = follow ? targetWorldPos - ownerWorldPos : ownerWorldPos - targetWorldPos;

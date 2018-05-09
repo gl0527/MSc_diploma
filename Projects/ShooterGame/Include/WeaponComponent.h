@@ -10,6 +10,12 @@
 
 using namespace Engine;
 
+namespace Engine {
+
+class AudioSourceComponent;
+
+}	// namespace Engine
+
 // =========================== class WeaponComponent ============================
 
 class WeaponComponent : public Component
@@ -17,16 +23,19 @@ class WeaponComponent : public Component
 public:
 	explicit		WeaponComponent (const std::string& name);
 
+	void			Start () override;
 	void			PreUpdate (float t, float dt) override;
 
 	unsigned char	GetAmmo () const;
-	void			DecreaseAmmoByOne ();
 	void			SetAmmoToFull ();
 	bool			HasAmmo () const;
 
+	void			Shoot ();
+
 private:
-	const unsigned char m_FullAmmo;
-	unsigned char		m_ammo;
+	const unsigned char						m_FullAmmo;
+	unsigned char							m_ammo;
+	std::shared_ptr<AudioSourceComponent>	m_pOwnerAudio;
 };
 
 #endif	// #ifndef WEAPON_COMPONENT_H

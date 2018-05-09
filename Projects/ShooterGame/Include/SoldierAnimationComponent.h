@@ -21,7 +21,6 @@ class AudioSourceComponent;
 }
 
 class PlayerDataComponent;
-class ManagerComponent;
 class WeaponComponent;
 
 // ====================== class SoldierAnimationComponent =======================
@@ -47,7 +46,6 @@ private:
 	UpperBodyAnimation							m_upperBodyAnimation;
 	LowerBodyAnimation							m_lowerBodyAnimation;
 	std::shared_ptr<PlayerDataComponent>		m_ownerData;
-	std::shared_ptr<ManagerComponent>			m_managerComp;
 	std::shared_ptr<GameObject>					m_weapon;
 	std::shared_ptr<WeaponComponent>			m_weaponComp;
 	std::shared_ptr<AudioSourceComponent>		m_pOwnerAudio;
@@ -64,8 +62,6 @@ private:
 	void	OnDeath (float t, float dt);
 
 	void	TransitionToDeath ();
-
-	void	RaycastingfromWeapon ();
 };
 
 #endif	//#ifndef SOLDIER_ANIMATION_COMPONENT_H

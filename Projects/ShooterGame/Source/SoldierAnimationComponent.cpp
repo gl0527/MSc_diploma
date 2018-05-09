@@ -2,17 +2,12 @@
 #include "InputManager.h"
 #include "MeshComponent.h"
 #include "GameObject.h"
-#include "TransformComponent.h"
 #include "OgreSkeleton.h"
 #include "OgreSkeletonInstance.h"
 #include "OgreEntity.h"
 #include "AudioSourceComponent.h"
 #include "PlayerDataComponent.h"
-#include "ObjectManager.h"
-#include "ManagerComponent.h"
 #include "WeaponComponent.h"
-#include "PhysicsSystem.h"
-#include "PhysicsComponent.h"
 
 
 namespace {
@@ -36,7 +31,6 @@ SoldierAnimationComponent::SoldierAnimationComponent (const std::string& name):
 	m_upperBodyAnimation (UpperBodyState::Idle),
 	m_lowerBodyAnimation (LowerBodyState::Idle),
 	m_ownerData (nullptr),
-	m_managerComp (nullptr),
 	m_weapon (nullptr),
 	m_weaponComp (nullptr),
 	m_pOwnerAudio (nullptr),
@@ -87,15 +81,6 @@ void SoldierAnimationComponent::Start ()
 {
 	m_ownerData = m_owner->GetFirstComponentByType<PlayerDataComponent> ().lock ();
 	if (m_ownerData == nullptr) {
-		m_owner->RemoveComponent (m_name);
-		return;
-	}
-
-	if (auto managerObj = ObjectManager::GetInstance ().GetGameObjectByName ("manager").lock ()) {
-		m_managerComp = managerObj->GetFirstComponentByType<ManagerComponent> ().lock ();
-	}
-
-	if (m_managerComp == nullptr) {
 		m_owner->RemoveComponent (m_name);
 		return;
 	}
@@ -199,15 +184,9 @@ void SoldierAnimationComponent::OnUpperBodyShoot (float t, float dt)
 	}
 	
 	Step ("up_shoot", dt);
-	static unsigned int counter = 0;
 
-	if (fabs (GetTimePositionInSeconds ("up_shoot") - 0.7f) < 0.01f) {
-		m_weaponComp->DecreaseAmmoByOne ();
-		//m_managerComp->CreateBullet (counter++, m_weapon->Transform ()->GetGlobalPosition (), m_weapon->Transform ()->GetGlobalFacing ());
-		RaycastingfromWeapon ();
-		if (auto weaponAudio = m_weapon->GetFirstComponentByType<AudioSourceComponent> ().lock ())
-			weaponAudio->Play ("Single rifle shot.wav");
-	}
+	if (fabs (GetTimePositionInSeconds ("up_shoot") - 0.7f) < 0.01f)
+		m_weaponComp->Shoot ();
 
 	if (HasEnded ("up_shoot"))
 		m_isInShootState = false;
@@ -239,24 +218,5 @@ void SoldierAnimationComponent::OnDeath (float t, float dt)
 	if (!isDeathSoundPlayed) {
 		m_pOwnerAudio->Play ();
 		isDeathSoundPlayed = true;
-	}
-}
-
-
-void SoldierAnimationComponent::RaycastingfromWeapon ()
-{
-	Ogre::Vector3 rayStart = m_weapon->Transform ()->GetGlobalPosition () + m_weapon->Transform ()->GetGlobalFacing () * 5.0f;
-	Ogre::Vector3 rayEnd = m_weapon->Transform ()->GetGlobalPosition () + m_weapon->Transform ()->GetGlobalFacing () * 1000.0f;
-
-	auto ray = PhysicsSystem::GetInstance ().FirstHitRayCasting (rayStart, rayEnd);
-
-	if (ray.hasHit ()) {
-		PhysicsComponent* hitPhysics = reinterpret_cast<PhysicsComponent*> (ray.m_collisionObject->getUserPointer ());
-		GameObject* hitObject = hitPhysics->GetOwner ();
-
-		if (hitObject->HasTag ("enemy")) {
-			if (auto hitData = hitObject->GetFirstComponentByType<PlayerDataComponent> ().lock ())
-				hitData->DecreaseHealtPoint (1);
-		}
 	}
 }

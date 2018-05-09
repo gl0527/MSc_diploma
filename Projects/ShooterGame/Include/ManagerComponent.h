@@ -19,12 +19,6 @@ class GameObjectCreator;
 }	// namespace Prefab
 }	// namespace Engine
 
-namespace Ogre {
-
-class Vector3;
-
-}	// namespace Ogre
-
 // ============================ class ManagerComponent ===========================
 
 class ManagerComponent : public Component
@@ -34,8 +28,6 @@ public:
 
 	void		Start () override;
 	void		PreUpdate (float t, float dt) override;
-
-	void		CreateBullet (unsigned int counter, const Ogre::Vector3& weaponWorldPos, const Ogre::Vector3& weaponWorldDir);
 
 private:
 	std::shared_ptr<Prefab::GameObjectCreator> m_pPacManPrefab;

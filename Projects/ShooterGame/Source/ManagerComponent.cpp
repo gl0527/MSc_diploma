@@ -6,8 +6,6 @@
 #include "PlayerDataComponent.h"
 #include "EnemyAIComponent.h"
 #include "EnemyAnimationComponent.h"
-#include "BulletComponent.h"
-#include "PhysicsComponent.h"
 
 
 ManagerComponent::ManagerComponent (const std::string& name) :
@@ -96,24 +94,3 @@ void ManagerComponent::CreateGhost (unsigned int counter)
 	ghost->Start ();
 }
 
-
-void ManagerComponent::CreateBullet (unsigned int counter, const Ogre::Vector3& weaponWorldPos, const Ogre::Vector3& weaponWorldDir)
-{
-	std::string objectName ("bullet" + std::to_string (counter));
-	m_pBulletPrefab->Instantiate (objectName);
-	auto bullet = ObjectManager::GetInstance ().GetGameObjectByName (objectName).lock ();
-
-	std::shared_ptr<TransformComponent> pBulletTransform (new TransformComponent ("bulletTransform" + std::to_string (counter)));
-	bullet->AddTransformComponent (pBulletTransform);
-	pBulletTransform->SetGlobalPosition (weaponWorldPos + weaponWorldDir * 15.0f);
-	pBulletTransform->SetGlobalScale (Ogre::Vector3 (0.5f, 0.5f, 0.5f));
-
-	std::shared_ptr<BulletComponent> pBulletComp (new BulletComponent ("bulletPhysics" + std::to_string (counter)));
-	bullet->AddComponent (pBulletComp);
-
-	bullet->Start ();
-
-	if (auto bulletPhysics = bullet->GetFirstComponentByType<PhysicsComponent> ().lock ()) {
-		bulletPhysics->AddForce (1000.0f * weaponWorldDir.x, 1000.0f * weaponWorldDir.y, 1000.0f * weaponWorldDir.z);
-	}
-}
