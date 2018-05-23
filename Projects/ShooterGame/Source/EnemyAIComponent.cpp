@@ -62,11 +62,11 @@ void EnemyAIComponent::PreUpdate (float t, float dt)
 	const Ogre::Vector3& targetWorldPos = GetTargetPosition ();
 	const Ogre::Vector3& ownerWorldPos = GetOwnerPosition ();
 	
-	if (m_ownerData->GetHealthPoint () < 1)
+	if (m_ownerData->GetHealthPoint () < 1) {
 		m_enemyStateMachine.SetState (State::Dead);
-	else if (m_ownerData->GetHealthPoint () < 2)
+	} else if (m_ownerData->GetHealthPoint () < 2) {
 		m_enemyStateMachine.Process ('r');
-	else if (targetWorldPos.distance (ownerWorldPos) < 30.0f) {
+	} else if (targetWorldPos.distance (ownerWorldPos) < 30.0f) {
 		m_enemyStateMachine.Process ('a');
 	} else {
 		m_enemyStateMachine.Process ('s');

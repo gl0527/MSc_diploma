@@ -36,7 +36,7 @@ void main()
 	
 	float lightDist = length (lightPosition.xyz - worldPos.xyz);
 	float attenuation = 1.0 / (lightAttenuation.y + lightAttenuation.z * lightDist + lightAttenuation.w * lightDist * lightDist);
-			 
+	
 	vec4 attenuatedDiffuseLightColor = diffuseLightColor * attenuation;
 	vec4 attenuatedSpecularLightColor = specularLightColor * attenuation;
 	

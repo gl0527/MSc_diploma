@@ -23,7 +23,8 @@ class AnimState : public IState
 public:
 	using SPtr = std::shared_ptr<AnimState>;
 
-	explicit							AnimState (const std::string& name) : IState (name) {}
+	explicit DLL_EXPORT 				AnimState (const std::string& name);
+	virtual	DLL_EXPORT 					~AnimState ();
 
 	DLL_EXPORT void						Enter (Stateable* stateable) override final;
 	DLL_EXPORT void						Execute (Stateable* stateable, float t, float dt) override final;
@@ -36,7 +37,7 @@ public:
 	DLL_EXPORT void						EnableAll ();
 
 protected:
-	using AnimMap = std::map <std::string, std::shared_ptr<Ogre::AnimationState>>;
+	using AnimMap = std::map<std::string, std::shared_ptr<Ogre::AnimationState>>;
 
 	AnimMap m_animMap;
 

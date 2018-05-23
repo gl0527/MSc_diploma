@@ -49,6 +49,10 @@ bool Game::IsExist ()
 
 bool Game::Init ()
 {
+#ifndef __cplusplus
+#error C++ compiler required!
+#endif
+
 	srand (time (nullptr));
 	
 	RenderSystem::GetInstance ().Init ();
@@ -87,6 +91,11 @@ void Game::Start ()
 }
 
 
+void Game::Continue ()
+{
+	m_state = State::Running;
+}
+
 void Game::Pause ()
 {
 	switch (m_state) {
@@ -103,39 +112,29 @@ void Game::Pause ()
 
 void Game::MainLoop ()
 {
-	while (m_pTimer) {
+	while (m_pTimer != nullptr) {
+		float t = 0.0f, dt = 0.0f;
+
+		m_pTimer->Tick ();
+		m_pTimer->UptimeInSec (&t);
+		m_pTimer->LastFrameDurationInSec (&dt);
+
+		InputManager::GetInstance ().Capture ();
+
 		if (m_state == State::Running) {
-			m_pTimer->Tick ();
-			
-			float t, dt;
+			AudioManager::GetInstance ().Update ();
+			ObjectManager::GetInstance ().PreUpdate (t, dt);
 
-			m_pTimer->UptimeInSec (&t);
-			m_pTimer->LastFrameDurationInSec (&dt);
-
-			if (!Update (t, dt))
+			if (!PhysicsSystem::GetInstance ().Update (t, dt))
 				Destroy ();
+
+			ObjectManager::GetInstance ().Update (t, dt);
+			ObjectManager::GetInstance ().PostUpdate (t, dt);
 		}
+		
+		RenderSystem::GetInstance ().Update (t, dt);
+		ObjectManager::GetInstance ().RemoveMarkedGameObjects ();
 	}
-}
-
-
-bool Game::Update (float t, float dt)
-{
-	InputManager::GetInstance ().Capture ();
-	AudioManager::GetInstance ().Update ();
-	ObjectManager::GetInstance ().PreUpdate (t, dt);
-
-	if (!PhysicsSystem::GetInstance ().Update (t, dt))
-		return false;
-
-	ObjectManager::GetInstance ().Update (t, dt);
-	ObjectManager::GetInstance ().PostUpdate (t, dt);
-
-	RenderSystem::GetInstance ().Update (t, dt);
-
-	ObjectManager::GetInstance ().RemoveMarkedGameObjects ();
-
-	return true;
 }
 
 
@@ -153,6 +152,14 @@ void Game::Destroy ()
 	AudioManager::GetInstance ().Destroy ();
 	PhysicsSystem::GetInstance ().Destroy ();
 	RenderSystem::GetInstance ().Destroy ();
+
+	m_state = State::Destroyed;
+}
+
+
+Game::State Game::GetState () const
+{
+	return m_state;
 }
 
 }	// namespace Engine

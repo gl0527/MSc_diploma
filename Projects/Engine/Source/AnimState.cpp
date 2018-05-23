@@ -5,6 +5,16 @@
 
 namespace Engine {
 
+AnimState::AnimState (const std::string& name) :IState (name)
+{
+}
+
+
+AnimState::~AnimState ()
+{
+}
+
+
 void AnimState::Enable (const std::string& animName)
 {
 	if (auto animation = GetAnimState (animName).lock ()) {

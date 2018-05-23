@@ -4,21 +4,32 @@
 #include "Game.h"
 #include "InputManager.h"
 #include "PhysicsComponent.h"
-#include "SoldierAnimationComponent.h"
+#include "PlayerDataComponent.h"
 #include "WeaponComponent.h"
+#include "AudioManager.h"
+#include "PlayerDataComponent.h"
 
 
 DynamicMovementComponent::DynamicMovementComponent (const std::string& name)
 	:Component (name),
 	m_moveSpeed (0.0f),
 	m_turnSpeed (0.0f),
-	m_pOwnerPhysics (nullptr)
+	m_pOwnerPhysics (nullptr)//,
+	//m_pOwnerData (nullptr)
 {
 }
 
 
 void DynamicMovementComponent::Start ()
 {
+	/*if (auto ownerData = m_owner->GetFirstComponentByType<PlayerDataComponent> ().lock ())
+		m_pOwnerData = ownerData;
+
+	if (m_pOwnerData == nullptr) {
+		m_owner->RemoveComponent (m_name);
+		return;
+	}*/
+	
 	if (auto ownerPhysics = m_owner->GetFirstComponentByType<PhysicsComponent> ().lock ())
 		m_pOwnerPhysics = ownerPhysics;
 
@@ -34,13 +45,19 @@ void DynamicMovementComponent::Start ()
 
 void DynamicMovementComponent::PreUpdate (float t, float dt)
 {
+	/*if (m_pOwnerData->IsDead ()) {
+		m_owner->RemoveComponent (m_name);
+		return;
+	}*/
+	
 	Ogre::Vector3 dForce = Ogre::Vector3::ZERO;
 	float dTorque = 0.0f;
 
 	const InputManager& inputManager = InputManager::GetInstance ();
 
 	if (inputManager.IsKeyDown (OIS::KC_ESCAPE)) {
-		Game::GetInstance ().Destroy ();
+		AudioManager::GetInstance ().Disable ();
+		Game::GetInstance ().Pause ();
 		return;
 	}
 	if (inputManager.IsKeyDown (OIS::KC_W))
@@ -84,8 +101,8 @@ void DynamicMovementComponent::OnCollisionWithWeapon (PhysicsComponent* other)
 		collided = true;
 		other->SetTypeToKinematic ();
 		otherOwner->SetParent (m_owner->GetName ());
-		if (auto anim = m_owner->GetFirstComponentByType<SoldierAnimationComponent> ().lock ())
-			anim->HasWeapon (true);
+		if (auto ownerData = m_owner->GetFirstComponentByType<PlayerDataComponent> ().lock ())
+			ownerData->SetWeapon (true);
 	}
 }
 
@@ -94,7 +111,7 @@ void DynamicMovementComponent::OnCollisionWithTable (PhysicsComponent* other)
 {
 	GameObject* otherOwner = other->GetOwner ();
 
-	if (otherOwner->GetName () == "doboz") {
+	if (otherOwner->HasTag ("ammo")) {
 		if (auto weapon = m_owner->GetChild ("weapon")) {
 			if (auto weaponComp = weapon->GetFirstComponentByType<WeaponComponent> ().lock ())
 				weaponComp->SetAmmoToFull ();

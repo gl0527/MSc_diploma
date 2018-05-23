@@ -11,9 +11,10 @@
 #include "AudioSourceComponent.h"
 
 
-WeaponComponent::WeaponComponent (const std::string& name)
+WeaponComponent::WeaponComponent (const std::string& name, unsigned char damage, unsigned char fullAmmo)
 	: Component (name),
-	m_FullAmmo (15),
+	m_damage (damage),
+	m_FullAmmo (fullAmmo),
 	m_ammo (10),
 	m_pOwnerAudio (nullptr)
 {
@@ -85,7 +86,7 @@ void WeaponComponent::Shoot ()
 
 		if (hitObject->HasTag ("enemy")) {
 			if (auto hitData = hitObject->GetFirstComponentByType<PlayerDataComponent> ().lock ())
-				hitData->DecreaseHealtPoint (1);
+				hitData->DecreaseHealtPoint (m_damage);
 		}
 	}
 

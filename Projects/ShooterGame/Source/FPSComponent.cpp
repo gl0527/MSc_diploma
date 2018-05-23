@@ -33,8 +33,11 @@ FPSComponent::FPSComponent (const std::string& name)
 
 void FPSComponent::PostUpdate (float t, float dt)
 {
-	float fps = renderWnd->getLastFPS ();
+	float currFPS = RenderSystem::GetInstance ().GetCurrentFPS ();
+	float avgFPS = RenderSystem::GetInstance ().GetAverageFPS ();
 	size_t triCount = renderWnd->getTriangleCount ();
-	text->setCaption (Ogre::String ("Frames/sec: ") + Ogre::StringConverter::toString (fps) + "\n"
+
+	text->setCaption (Ogre::String ("Current FPS: ") + Ogre::StringConverter::toString (currFPS) + "\n"
+		+ Ogre::String ("Average FPS: ") + Ogre::StringConverter::toString (avgFPS) + "\n"
 		+ Ogre::String ("Triangles: ") + Ogre::StringConverter::toString (triCount));
 }

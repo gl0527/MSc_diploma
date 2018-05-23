@@ -15,6 +15,7 @@ using namespace Engine;
 // ----------------------------- forward declaration -----------------------------
 
 class EnemyAIComponent;
+class ManagerComponent;
 
 namespace Engine {
 
@@ -43,6 +44,7 @@ private:
 	EnemyAnimation							m_animationGraph;
 	std::shared_ptr<EnemyAIComponent>		m_ownerAI;
 	std::shared_ptr<AudioSourceComponent>	m_ownerAudio;
+	std::shared_ptr<ManagerComponent>		m_managerComp;
 
 	void	OnDead (float t, float dt);
 };

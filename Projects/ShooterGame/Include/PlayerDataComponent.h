@@ -26,9 +26,13 @@ public:
 	void			DecreaseHealtPoint (unsigned char amount);
 	void			IncreaseKills (unsigned char amount);
 
+	void			SetWeapon (bool hasWeapon);
+	bool			HasWeapon () const;
+
 private:
-	unsigned char m_healthPoint;
-	unsigned char m_kills;
+	unsigned char	m_healthPoint;
+	unsigned char	m_kills;
+	bool			m_hasWeapon;
 };
 
 #endif	// #ifndef PLAYER_DATA_COMPONENT_H

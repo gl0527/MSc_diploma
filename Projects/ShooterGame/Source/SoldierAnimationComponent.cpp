@@ -34,9 +34,7 @@ SoldierAnimationComponent::SoldierAnimationComponent (const std::string& name):
 	m_weapon (nullptr),
 	m_weaponComp (nullptr),
 	m_pOwnerAudio (nullptr),
-	m_isInShootState (false),
-	m_hasWeapon (false),
-	m_isDead (false)
+	m_isInShootState (false)
 {
 	m_upperBodyAnimation.AddTransitions ({
 		{UpperBodyState::Idle,			UpperBodyState::Run,		'r', [this] { Transition ("up_stand", 0.0f, "up_run", 1.0f, true); }},
@@ -111,11 +109,10 @@ void SoldierAnimationComponent::Start ()
 
 void SoldierAnimationComponent::PostUpdate (float t, float dt)
 {
-	if (m_ownerData->IsDead ()) {
-		m_isDead = true;
+	if (m_ownerData->IsDead ())
 		m_lowerBodyAnimation.Process ('d');
-	}
-	if (m_hasWeapon) {
+
+	if (m_ownerData->HasWeapon ()) {
 		if ((m_isInShootState || InputManager::GetInstance ().IsLeftMouseButtonDown ())) {
 			m_isInShootState = true;
 			m_upperBodyAnimation.Process ('s');
@@ -129,18 +126,6 @@ void SoldierAnimationComponent::PostUpdate (float t, float dt)
 
 	m_upperBodyAnimation.Update (t, !m_isInShootState && IsRunningBackwards () ? -dt : dt);
 	m_lowerBodyAnimation.Update (t, IsRunningBackwards () ? -dt : dt);
-}
-
-
-void SoldierAnimationComponent::HasWeapon (bool hasWeapon)
-{
-	m_hasWeapon = hasWeapon;
-}
-
-
-bool SoldierAnimationComponent::IsDead () const
-{
-	return m_isDead;
 }
 
 
@@ -185,11 +170,16 @@ void SoldierAnimationComponent::OnUpperBodyShoot (float t, float dt)
 	
 	Step ("up_shoot", dt);
 
-	if (fabs (GetTimePositionInSeconds ("up_shoot") - 0.7f) < 0.01f)
+	static bool shotHappened = false;
+	if (!shotHappened && fabs (GetTimePositionInSeconds ("up_shoot") - 0.7f) < 0.1f) {
 		m_weaponComp->Shoot ();
+		shotHappened = true;
+	}
 
-	if (HasEnded ("up_shoot"))
+	if (HasEnded ("up_shoot")) {
 		m_isInShootState = false;
+		shotHappened = false;
+	}
 }
 
 

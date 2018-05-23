@@ -20,7 +20,9 @@ RenderSystem::RenderSystem (const char* wName, size_t w, size_t h)
 	m_pGUI (nullptr),
 	m_wndName (wName),
 	m_wndWidth (w),
-	m_wndHeight (h)
+	m_wndHeight (h),
+	m_currentFPS (0.0f),
+	m_averageFPS (0.0f)
 {
 }
 
@@ -96,12 +98,24 @@ void RenderSystem::Start ()
 
 void RenderSystem::Update (float t, float dt)
 {
+	static float sumFPS = 0.0f;
+	static unsigned int count = 0;
+	static float lastT = 0.0f;
+	
 	if (m_pRenderWnd->isClosed ()) {
 		m_pOgreRoot->shutdown ();
 		return;
 	}
 
 	Ogre::WindowEventUtilities::messagePump ();
+
+	if (t - lastT > 0.99f) {
+		lastT = t;
+		m_currentFPS = 1 / dt;
+		sumFPS += m_currentFPS;
+		++count;
+		m_averageFPS = sumFPS / count;
+	}
 
 	if (!m_pOgreRoot->renderOneFrame ()) {
 		m_pOgreRoot->shutdown ();
@@ -259,6 +273,18 @@ Ogre::RenderWindow* RenderSystem::GetRenderWindow () const
 }
 
 
+float RenderSystem::GetCurrentFPS () const
+{
+	return m_currentFPS;
+}
+
+
+float RenderSystem::GetAverageFPS () const
+{
+	return m_averageFPS;
+}
+
+
 Ogre::OverlayElement* RenderSystem::GetOverlayElement (const char* elementName) const
 {
 	return m_pOverlayMgr->getOverlayElement (elementName);
@@ -289,9 +315,9 @@ Ogre::Overlay* RenderSystem::CreateOverlay (const char* name)
 }
 
 
-void RenderSystem::LoadGUILayout (const std::string& layoutFileName)
+MyGUI::VectorWidgetPtr RenderSystem::LoadGUILayout (const std::string& layoutFileName)
 {
-	MyGUI::LayoutManager::getInstance().loadLayout (layoutFileName);
+	return MyGUI::LayoutManager::getInstance().loadLayout (layoutFileName);
 }
 
 }	// namespace Engine

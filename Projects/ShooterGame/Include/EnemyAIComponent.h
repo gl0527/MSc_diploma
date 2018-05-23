@@ -46,7 +46,7 @@ private:
 	using EnemyStateMachine = FiniteStateMachine<State, char>;
 	
 	EnemyStateMachine						m_enemyStateMachine;
-	std::shared_ptr<Engine::GameObject>		m_targetObj;
+	std::shared_ptr<GameObject>				m_targetObj;
 	std::shared_ptr<PhysicsComponent>		m_pOwnerPhysics;
 	std::shared_ptr<PlayerDataComponent>	m_ownerData;
 

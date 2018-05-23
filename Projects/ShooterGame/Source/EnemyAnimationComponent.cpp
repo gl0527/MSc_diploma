@@ -6,6 +6,7 @@
 #include "EnemyAIComponent.h"
 #include "ObjectManager.h"
 #include "AudioSourceComponent.h"
+#include "ManagerComponent.h"
 
 
 EnemyAnimationComponent::EnemyAnimationComponent (const std::string& name, const char* walkAnimName, const char* attackAnimName, const char* deadAnimName):
@@ -15,7 +16,8 @@ EnemyAnimationComponent::EnemyAnimationComponent (const std::string& name, const
 	m_DeadAnimName (deadAnimName),
 	m_animationGraph (State::Walk),
 	m_ownerAI (nullptr),
-	m_ownerAudio (nullptr)
+	m_ownerAudio (nullptr),
+	m_managerComp (nullptr)
 {
 	m_animationGraph.AddTransitions ({
 		{State::Walk, State::Attack, 'a', [this] { Transition (m_WalkAnimName, 0.0f, m_AttackAnimName, 1.0f, true); }},
@@ -49,6 +51,15 @@ void EnemyAnimationComponent::Start ()
 
 		return;
 	}
+
+	if (auto manager = ObjectManager::GetInstance ().GetGameObjectByName ("manager").lock ()) {
+		if (auto managerComp = manager->GetFirstComponentByType<ManagerComponent> ().lock ()) {
+			m_managerComp = managerComp;
+		}
+	}
+
+	if (m_managerComp == nullptr)
+		m_owner->RemoveComponent (m_name);
 
 	if (auto ownerMesh = m_owner->GetFirstComponentByType<MeshComponent> ().lock ()) {
 		m_ownerEntity = ownerMesh->GetEntity ();
@@ -85,6 +96,9 @@ void EnemyAnimationComponent::OnDead (float t, float dt)
 			m_ownerAudio->Play ();
 	}
 
-	if (HasEnded (m_DeadAnimName))
+	if (HasEnded (m_DeadAnimName)) {
+		if (m_managerComp != nullptr)
+			m_managerComp->IncreaseKills ();
 		ObjectManager::GetInstance ().MarkGameObjectForDelete (m_owner->GetName ());
+	}
 }

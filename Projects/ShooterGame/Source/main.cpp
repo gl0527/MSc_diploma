@@ -2,8 +2,6 @@
 #include "Game.h"
 #include "GameObject.h"
 #include "ObjectManager.h"
-#include "PhysicsComponent.h"
-#include "CameraComponent.h"
 #include "XML/XMLParser.h"
 
 #include "DynamicMovementProcessor.h"
@@ -11,91 +9,31 @@
 #include "WeaponComponent.h"
 #include "SoldierAnimationComponent.h"
 #include "AudioManager.h"
-#include "ParticleComponent.h"
 #include "PlayerDataComponent.h"
-#include "EnemyAIComponent.h"
-#include "EnemyAnimationComponent.h"
 #include "ManagerComponent.h"
-
-#include "OgreSceneManager.h"
-#include "MyGUI_Widget.h"
-#include "MyGUI_Button.h"
+#include "GUIComponent.h"
+#include "HUDComponent.h"
 
 
 using namespace Engine;
 
 
-static void GLOBAL_FUNC_NAME (MyGUI::Widget* _sender)
+int main (int argc, char** argv)
 {
-	if (AudioManager::GetInstance ().IsEnabled ())
-		AudioManager::GetInstance ().Disable ();
-	else
-		AudioManager::GetInstance ().Enable ();
-
-	/*auto& game = Game::GetInstance ();
-	auto& renderSys = RenderSystem::GetInstance ();
-	auto& xmlParser = XML::XMLParser::GetInstance ();
-	auto& objectMgr = ObjectManager::GetInstance ();*/
-}
-
-
-static void OnQuit (MyGUI::Widget* _sender)
-{
-	Game::GetInstance ().Destroy ();
-}
-
-
-int main(int argc, char** argv)
-{
-#ifndef __cplusplus
-#error C++ compiler required
-#endif
-
-	auto& game = Game::GetInstance();
+	auto& game = Game::GetInstance ();
 	auto& renderSys = RenderSystem::GetInstance ();
 	auto& xmlParser = XML::XMLParser::GetInstance ();
 	auto& objectMgr = ObjectManager::GetInstance ();
-	
+
 	if (!game.Init ())
 		return -1;
-
-	// TODO a GUI-hoz kene egy kamera, persze nem az XML-bol
-	//if (auto cam = objectMgr.CreateGameObject ("camera").lock ()) {
-	//	std::shared_ptr<CameraComponent> pCamComp (new CameraComponent ("cam", 0));
-	//	cam->AddComponent (pCamComp);
-	//}
-
-	renderSys.LoadGUILayout ("EditPanel.layout");
-	renderSys.LoadGUILayout ("MainPanel.layout");
-	auto button = renderSys.GetWidget<MyGUI::Button> ("New");
-	auto quitButton = renderSys.GetWidget<MyGUI::Button> ("Quit");
-	button->eventMouseButtonClick = MyGUI::newDelegate (GLOBAL_FUNC_NAME);
-	quitButton->eventMouseButtonClick = MyGUI::newDelegate (OnQuit);
 
 	new DynamicMovementProcessor;
 
 	AudioManager::GetInstance ().SetResourceLocation ("media\\level01-arrival\\sound\\");
 
-	renderSys.CreatePlaneMeshXZ ("ground", 0, 100, 100);
-
 	if (!xmlParser.LoadXMLFromFile ("media\\level01-arrival\\map\\ShooterGame.xml"))
 		return -1;
-
-	if (auto exp = objectMgr.GetGameObjectByName ("explosive").lock ()) {
-		if (auto explosivePhysx = exp->GetFirstComponentByType<PhysicsComponent> ().lock ()) {
-			explosivePhysx->onTriggerEnter += [&] (PhysicsComponent* otherPhyComp) {
-				static bool particleEnabled = true;
-
-				if (otherPhyComp != nullptr) {
-					if (auto explosiveParticle = exp->GetFirstComponentByType<ParticleComponent> ().lock ()) {
-						explosiveParticle->SetEnabled (particleEnabled);
-					}
-					otherPhyComp->AddForce (2'000, 4'000, -8'000);
-				}
-				particleEnabled = !particleEnabled;
-			};
-		}
-	}
 
 	if (auto soldierGO = objectMgr.GetGameObjectByName ("gijoe").lock ()) {
 		soldierGO->AddTag ("player");
@@ -108,35 +46,21 @@ int main(int argc, char** argv)
 	}
 
 	if (auto weapon = objectMgr.GetGameObjectByName ("weapon").lock ()) {
-		std::shared_ptr<WeaponComponent> weaponComp (new WeaponComponent ("soldierWeapon"));
+		std::shared_ptr<WeaponComponent> weaponComp (new WeaponComponent ("soldierWeapon", 1, 30));
 		weapon->AddComponent (weaponComp);
 	}
 
-	if (auto pacman = objectMgr.GetGameObjectByName ("pacman").lock ()) {
-		std::shared_ptr<PlayerDataComponent> pacmanData (new PlayerDataComponent ("pacmanData", 3));
-		pacman->AddComponent (pacmanData);
-
-		std::shared_ptr<EnemyAIComponent> pacmanAI (new EnemyAIComponent ("pacmanAI"));
-		pacman->AddComponent (pacmanAI);
-
-		std::shared_ptr<EnemyAnimationComponent> pacmanAnim (new EnemyAnimationComponent ("pacmanAnim", "walk", "go", "death"));
-		pacman->AddComponent (pacmanAnim);
-	}
-
-	if (auto ghost = objectMgr.GetGameObjectByName ("ghost").lock ()) {
-		std::shared_ptr<PlayerDataComponent> ghostData (new PlayerDataComponent ("ghostData", 3));
-		ghost->AddComponent (ghostData);
-
-		std::shared_ptr<EnemyAIComponent> ghostAI (new EnemyAIComponent ("ghostAI"));
-		ghost->AddComponent (ghostAI);
-
-		std::shared_ptr<EnemyAnimationComponent> ghostAnim (new EnemyAnimationComponent ("ghostAnim", "walk", "freeze", "death"));
-		ghost->AddComponent (ghostAnim);
+	if (auto gui = objectMgr.GetGameObjectByName ("gui").lock ()) {
+		std::shared_ptr<GUIComponent> guiComp (new GUIComponent ("GUIComponent"));
+		gui->AddComponent (guiComp);
 	}
 
 	if (auto manager = objectMgr.GetGameObjectByName ("manager").lock ()) {
-		std::shared_ptr<ManagerComponent> managerComp (new ManagerComponent ("managerComp"));
+		std::shared_ptr<ManagerComponent> managerComp (new ManagerComponent ("managerComp", 30));
 		manager->AddComponent (managerComp);
+
+		std::shared_ptr<HUDComponent> hudComponent (new HUDComponent ("managerHUD"));
+		manager->AddComponent (hudComponent);
 	}
 
 	if (auto frames = objectMgr.CreateGameObject ("fps").lock ()) {
@@ -147,6 +71,12 @@ int main(int argc, char** argv)
 	if (auto gijoecam = objectMgr.GetGameObjectByName ("gijoecamera").lock ()) {
 		AudioManager::GetInstance ().SetListener ("gijoecamera");
 	}
+
+	if (auto box = objectMgr.GetGameObjectByName ("doboz1").lock ())
+		box->AddTag ("ammo");
+
+	if (auto box = objectMgr.GetGameObjectByName ("doboz2").lock ())
+		box->AddTag ("ammo");
 
 	game.Start ();
 	game.DeleteInstance ();

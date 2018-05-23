@@ -21,7 +21,7 @@ class AudioSourceComponent;
 class WeaponComponent : public Component
 {
 public:
-	explicit		WeaponComponent (const std::string& name);
+	explicit		WeaponComponent (const std::string& name, unsigned char damage, unsigned char fullAmmo);
 
 	void			Start () override;
 	void			PreUpdate (float t, float dt) override;
@@ -33,6 +33,7 @@ public:
 	void			Shoot ();
 
 private:
+	const unsigned char						m_damage;
 	const unsigned char						m_FullAmmo;
 	unsigned char							m_ammo;
 	std::shared_ptr<AudioSourceComponent>	m_pOwnerAudio;

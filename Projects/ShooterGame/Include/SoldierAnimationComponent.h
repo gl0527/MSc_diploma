@@ -36,22 +36,17 @@ public:
 	void		Start () override;
 	void		PostUpdate (float t, float dt) override;
 
-	void		HasWeapon (bool hasWeapon);
-	bool		IsDead () const;
-
 private:
 	using UpperBodyAnimation = FiniteStateMachine<UpperBodyState, char>;
 	using LowerBodyAnimation = FiniteStateMachine<LowerBodyState, char>;
 
-	UpperBodyAnimation							m_upperBodyAnimation;
-	LowerBodyAnimation							m_lowerBodyAnimation;
-	std::shared_ptr<PlayerDataComponent>		m_ownerData;
-	std::shared_ptr<GameObject>					m_weapon;
-	std::shared_ptr<WeaponComponent>			m_weaponComp;
-	std::shared_ptr<AudioSourceComponent>		m_pOwnerAudio;
-	bool										m_isInShootState;
-	bool										m_hasWeapon;
-	bool										m_isDead;
+	UpperBodyAnimation						m_upperBodyAnimation;
+	LowerBodyAnimation						m_lowerBodyAnimation;
+	std::shared_ptr<PlayerDataComponent>	m_ownerData;
+	std::shared_ptr<GameObject>				m_weapon;
+	std::shared_ptr<WeaponComponent>		m_weaponComp;
+	std::shared_ptr<AudioSourceComponent>	m_pOwnerAudio;
+	bool									m_isInShootState;
 
 	void	OnUpperBodyIdle (float t, float dt);
 	void	OnUpperBodyRun (float t, float dt);

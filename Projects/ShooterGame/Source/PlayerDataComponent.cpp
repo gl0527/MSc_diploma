@@ -4,7 +4,8 @@
 PlayerDataComponent::PlayerDataComponent (const std::string& name, unsigned char healtPoint):
 	Component (name),
 	m_healthPoint (healtPoint),
-	m_kills (0)
+	m_kills (0),
+	m_hasWeapon (false)
 {
 }
 
@@ -51,4 +52,16 @@ void PlayerDataComponent::DecreaseHealtPoint (unsigned char amount)
 void PlayerDataComponent::IncreaseKills (unsigned char amount)
 {
 	m_kills += amount;
+}
+
+
+void PlayerDataComponent::SetWeapon (bool hasWeapon)
+{
+	m_hasWeapon = hasWeapon;
+}
+
+
+bool PlayerDataComponent::HasWeapon () const
+{
+	return m_hasWeapon == true;
 }

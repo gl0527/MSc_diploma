@@ -14,6 +14,8 @@ class PhysicsComponent;
 
 }	// namespace Engine
 
+//class PlayerDataComponent;
+
 using namespace Engine;
 
 // ======================= class DynamicMovementComponent =======================
@@ -30,9 +32,10 @@ public:
 	void			SetTurnSpeed (float turnSpeed);
 
 private:
-	float								m_moveSpeed;
-	float								m_turnSpeed;
-	std::shared_ptr<PhysicsComponent>	m_pOwnerPhysics;
+	float									m_moveSpeed;
+	float									m_turnSpeed;
+	std::shared_ptr<PhysicsComponent>		m_pOwnerPhysics;
+	//std::shared_ptr<PlayerDataComponent>	m_pOwnerData;
 
 
 	void			OnCollisionWithWeapon (PhysicsComponent* other);
