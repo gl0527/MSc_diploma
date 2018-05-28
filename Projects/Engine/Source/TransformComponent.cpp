@@ -191,13 +191,10 @@ void TransformComponent::UpdateLocalTransform ()
 
 void TransformComponent::UpdateGlobalTransformForChildren ()
 {
-	const auto& children = m_owner->GetChildren ();
+	auto children = m_owner->GetChildren ();
 
-	for (const auto& weakChild : children) {
-		if (auto child = weakChild.lock ()) {
-			child->Transform ()->UpdateGlobalTransform ();
-		}
-	}
+	for (const auto& child : children)
+		child->Transform ()->UpdateGlobalTransform ();
 }
 
 }	// namespace Engine

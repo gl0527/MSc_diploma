@@ -19,7 +19,7 @@ GameObject::GameObject (const std::string& id)
 void GameObject::AddComponent (const Component::SPtr& comp, bool replaceOld/* = true*/)
 {
 	auto it = m_components.begin (), itEnd = m_components.end ();
-	
+
 	for (; it != itEnd; ++it) {
 		if ((*it)->GetTypeName () == comp->GetTypeName ())
 			break;
@@ -61,8 +61,7 @@ void GameObject::RemoveComponent (const std::string& compName)
 {
 	for (auto it = m_components.begin (); it != m_components.end (); ++it) {
 		if ((*it)->GetName () == compName) {
-			(*it)->Destroy ();
-			m_components.erase (it);
+			(*it)->MarkForRemove ();
 			break;
 		}
 	}
@@ -74,19 +73,19 @@ void GameObject::RemoveComponent (size_t index)
 	if (index > m_components.size () - 1)
 		return;
 
-	m_components.erase (m_components.begin () + index);
+	m_components[index]->MarkForRemove ();
 }
 
 
-void GameObject::RemoveComponent (const Component::SPtr& comp)
+void GameObject::RemoveMarkedComponents ()
 {
-	m_components.erase (std::remove (m_components.begin (), m_components.end (), comp), m_components.end ());
-}
+	for (auto comp : m_components) {
+		if (comp->IsRemovable ())
+			comp->Destroy ();
+	}
 
-
-void GameObject::RemoveComponent ()
-{
-	m_components.clear ();
+	m_components.erase (std::remove_if (m_components.begin (), m_components.end (), [] (const std::shared_ptr<Component>& comp) {
+			return comp->IsRemovable ();}), m_components.end ());
 }
 
 
@@ -110,24 +109,20 @@ void GameObject::RemoveTag ()
 
 void GameObject::AddChild (const std::string& childName)
 {
-	if (const auto& child = ObjectManager::GetInstance ().GetGameObjectByName (childName).lock ()) {
-		m_children.push_back (child);
+	if (m_children.find (childName) == m_children.end ()) {
+		if (const auto& child = ObjectManager::GetInstance ().GetGameObjectByName (childName).lock ()) {
+			m_children[childName] = child;
+		}
 	}
 }
 
 
 void GameObject::RemoveChild (const std::string& childName)
 {
-	auto predicate = [&childName] (WPtr elem) -> bool {
-		if (auto child = elem.lock ()) {
-			if (child->GetName () == childName) {
-				child->Destroy ();
-				return true;
-			}
-		}
-		return false;
-	};
-	m_children.erase (std::remove_if (m_children.begin (), m_children.end (), predicate), m_children.end ());
+	if (m_children.find (childName) != m_children.end ()) {
+		m_children[childName]->Destroy ();
+		m_children.erase (childName);
+	}
 }
 
 
@@ -184,7 +179,7 @@ const std::string& GameObject::GetName () const
 
 TransformComponent* GameObject::Transform () const
 {
-	return reinterpret_cast<TransformComponent*> (m_components[0].get ());
+	return dynamic_cast<TransformComponent*> (m_components[0].get ());
 }
 
 
@@ -206,26 +201,32 @@ GameObject::WPtr GameObject::GetParent () const
 std::vector<std::string> GameObject::GetChildrenNames () const
 {
 	std::vector<std::string> childrenNames;
-	for (auto child = m_children.begin (), end = m_children.end (); child != end; ++child) {
-		childrenNames.push_back (child->lock ()->GetName ());
-	}
+	childrenNames.reserve (m_children.size ());
+
+	for (auto it = m_children.begin (), itEnd = m_children.end (); it != itEnd; ++it)
+		childrenNames.push_back (it->first);
+	
 	return childrenNames;
 }
 
 
-const std::vector<GameObject::WPtr> GameObject::GetChildren () const
+std::vector<GameObject::SPtr> GameObject::GetChildren () const
 {
-	return m_children;
+	std::vector<GameObject::SPtr> children;
+	children.reserve (m_children.size ());
+
+	for (auto it = m_children.begin (), itEnd = m_children.end (); it != itEnd; ++it)
+		children.push_back (it->second);
+
+	return children;
 }
 
 
 GameObject::SPtr GameObject::GetChild (const std::string& name)
 {
-	for (auto& child : m_children) {
-		if (auto childSptr = child.lock ())
-			if (childSptr->GetName () == name)
-				return childSptr;
-	}
+	if (m_children.find (name) != m_children.end ())
+		return m_children[name];
+
 	return nullptr;
 }
 
@@ -247,7 +248,7 @@ void GameObject::SetParent (const std::string& parentName)
 	if (auto ancestor = ObjectManager::GetInstance ().GetGameObjectByName (parentName).lock ()) {
 		m_pParent = ancestor;
 		ancestor->AddChild (m_Name);
-		Transform()->SetParentTransform ();
+		Transform ()->SetParentTransform ();
 		if (auto mesh = GetFirstComponentByType<MeshComponent> ().lock ()) {
 			mesh->MoveNode ();
 		}
@@ -273,7 +274,7 @@ bool GameObject::IsDestroyed () const
 
 GameObject::~GameObject ()
 {
-	RemoveComponent ();
+	m_components.clear ();
 	RemoveTag ();
 	RemoveChildren ();
 }

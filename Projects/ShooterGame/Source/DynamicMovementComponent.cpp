@@ -14,22 +14,22 @@ DynamicMovementComponent::DynamicMovementComponent (const std::string& name)
 	:Component (name),
 	m_moveSpeed (0.0f),
 	m_turnSpeed (0.0f),
-	m_pOwnerPhysics (nullptr)//,
-	//m_pOwnerData (nullptr)
+	m_pOwnerPhysics (nullptr),
+	m_pOwnerData (nullptr)
 {
 }
 
 
 void DynamicMovementComponent::Start ()
 {
-	/*if (auto ownerData = m_owner->GetFirstComponentByType<PlayerDataComponent> ().lock ())
+	if (auto ownerData = m_owner->GetFirstComponentByType<PlayerDataComponent> ().lock ())
 		m_pOwnerData = ownerData;
 
 	if (m_pOwnerData == nullptr) {
 		m_owner->RemoveComponent (m_name);
 		return;
-	}*/
-	
+	}
+
 	if (auto ownerPhysics = m_owner->GetFirstComponentByType<PhysicsComponent> ().lock ())
 		m_pOwnerPhysics = ownerPhysics;
 
@@ -45,13 +45,12 @@ void DynamicMovementComponent::Start ()
 
 void DynamicMovementComponent::PreUpdate (float t, float dt)
 {
-	/*if (m_pOwnerData->IsDead ()) {
+	if (m_pOwnerData->IsDead ()) {
 		m_owner->RemoveComponent (m_name);
 		return;
-	}*/
+	}
 	
 	Ogre::Vector3 dForce = Ogre::Vector3::ZERO;
-	float dTorque = 0.0f;
 
 	const InputManager& inputManager = InputManager::GetInstance ();
 
@@ -66,8 +65,8 @@ void DynamicMovementComponent::PreUpdate (float t, float dt)
 		dForce += Ogre::Vector3 (0.0f, 0.0f, -1.0f);
 
 	int mouseXRel;
-	if (inputManager.GetRelativeMouseX (&mouseXRel))
-		dTorque -= mouseXRel;
+	if (!inputManager.GetRelativeMouseX (&mouseXRel))
+		return;
 
 	dForce.normalise ();
 	dForce = m_owner->Transform ()->GetGlobalRotation () * dForce;
@@ -76,7 +75,7 @@ void DynamicMovementComponent::PreUpdate (float t, float dt)
 	m_pOwnerPhysics->SetLinearVelocity (0.0f, 0.0f, 0.0f);
 	m_pOwnerPhysics->SetAngularVelocity (0.0f, 0.0f, 0.0f);
 	m_pOwnerPhysics->AddForce (m_moveSpeed * dForce.x, m_moveSpeed * dForce.y, m_moveSpeed * dForce.z);
-	m_pOwnerPhysics->AddTorque (0.0f, m_turnSpeed * dTorque, 0.0f);
+	m_pOwnerPhysics->AddTorque (0.0f, -m_turnSpeed * mouseXRel, 0.0f);
 }
 
 

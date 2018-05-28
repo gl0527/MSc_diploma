@@ -1,19 +1,14 @@
 cmake_minimum_required (VERSION 3.6.2 FATAL_ERROR)
 project (MSC_diploma)
 
-if(NOT CMAKE_DEBUG_POSTFIX)
-  set(CMAKE_DEBUG_POSTFIX _d)
+if (NOT CMAKE_DEBUG_POSTFIX)
+	set(CMAKE_DEBUG_POSTFIX _d)
 endif()
 
 if (MSVC)
-	set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /MP /W4 /EHc")
+	set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /MP /W4 /sdl /EHc")
 	set (CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /O2")
 endif ()
-
-set_property (GLOBAL PROPERTY DEBUG_CONFIGURATIONS "Debug")
-
-add_definitions (-DEXPMODULE)
-add_definitions (-D_WINDLL)
 
 set (BOOST_INCLUDE_DIR 				"" CACHE STRING "e:/dev/tools/OGRE-SDK-1.9.0-vc140-x86-12.03.2016/boost/")
 set (BOOST_LIBRARY_DIR 				"" CACHE STRING "e:/dev/tools/OGRE-SDK-1.9.0-vc140-x86-12.03.2016/boost/lib/")
@@ -64,8 +59,7 @@ set (DBLIBS
 	debug "BulletSoftBody_Debug.lib"
 	debug "LinearMath_Debug.lib"
 	debug "MyGUIEngine_d.lib"
-	debug "MyGUI.OgrePlatform_d.lib"
-	debug "freetyped.lib")
+	debug "MyGUI.OgrePlatform_d.lib")
 
 set (RELLIBS	
 	optimized "OgreMain.lib"
@@ -76,8 +70,7 @@ set (RELLIBS
 	optimized "BulletSoftBody.lib"
 	optimized "LinearMath.lib"
 	optimized "MyGUIEngine.lib"
-	optimized "MyGUI.OgrePlatform.lib"
-	optimized "freetype.lib")
+	optimized "MyGUI.OgrePlatform.lib")
 
 add_subdirectory (Engine)
 add_subdirectory (ShooterGame)

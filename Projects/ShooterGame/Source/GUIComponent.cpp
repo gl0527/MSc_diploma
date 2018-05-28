@@ -4,13 +4,14 @@
 #include "MyGUI_Button.h"
 #include "MyGUI_PointerManager.h"
 #include "AudioManager.h"
+#include "InputManager.h"
 
 
 namespace {
 
 void OnQuit (MyGUI::Widget* _sender, int left, int top, MyGUI::MouseButton mb)
 {
-	Game::GetInstance ().Destroy ();
+	Game::GetInstance ().MarkForDestroy ();
 }
 
 

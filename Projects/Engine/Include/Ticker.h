@@ -6,30 +6,28 @@
 // ---------------------------------- includes ----------------------------------
 
 #include "stdafx.h"
-
+#include "NonCopyable.h"
 
 namespace Engine {
 
 // ================================ class Ticker ================================
 
-class Ticker
+class Ticker : public NonCopyable
 {
 public:
-	explicit			Ticker (float limit = 0.0f);
+						Ticker ();
 
 	void				Tick ();
 	void				Reset ();
 	DLL_EXPORT void		Pause ();
 
-	DLL_EXPORT void		UptimeInSec (float* pOutSec) const;
-	void				UptimeInHourMinSec (unsigned long* pOutHour, unsigned long* pOutMin, unsigned long* pOutSec) const;
-	DLL_EXPORT void		LastFrameDurationInSec (float* pOutSec) const;
+	DLL_EXPORT float	GetUpTime () const;
+	DLL_EXPORT float	GetDeltaTime () const;
 
 private:
-	float m_lastFrameTimeInSec;
-	float m_uptimeInSec;
-	float m_lastFrameDurationInSec;
-	float m_limitInSec;
+	float m_prevTime;
+	float m_upTime;
+	float m_deltaTime;
 };
 
 }	// namespace Engine

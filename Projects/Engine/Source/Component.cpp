@@ -7,6 +7,7 @@ Component::Component (const std::string& ident, bool uniq/* = false*/)
 	: m_name (ident),
 	m_isUnique (uniq),
 	m_isEnabled (true),
+	m_isRemovable (false),
 	m_owner (nullptr)
 {
 }
@@ -84,6 +85,12 @@ void Component::Disable ()
 }
 
 
+bool Component::IsRemovable () const
+{
+	return m_isRemovable;
+}
+
+
 GameObject* Component::GetOwner () const
 {
 	return m_owner;
@@ -93,6 +100,12 @@ GameObject* Component::GetOwner () const
 std::string Component::GetTypeName () const
 {
 	return typeid (*this).name ();
+}
+
+
+void Component::MarkForRemove ()
+{
+	m_isRemovable = true;
 }
 
 }	// namespace Engine

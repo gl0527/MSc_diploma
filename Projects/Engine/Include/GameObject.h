@@ -9,6 +9,7 @@
 #include <string>
 #include <memory>
 #include <vector>
+#include <map>
 #include <unordered_set>
 
 
@@ -23,6 +24,9 @@ class TransformComponent;
 
 class GameObject
 {
+private:
+	using ComponentVector = std::vector<std::shared_ptr<Component>>;
+
 public:
 	using SPtr = std::shared_ptr<GameObject>;
 	using WPtr = std::weak_ptr<GameObject>;
@@ -36,8 +40,7 @@ public:
 	void							InsertComponent (size_t index, const std::shared_ptr<Component>& comp);
 	DLL_EXPORT	void				RemoveComponent (const std::string& compName);
 	DLL_EXPORT	void				RemoveComponent (size_t index);
-	void							RemoveComponent (const std::shared_ptr<Component>& comp);
-	void							RemoveComponent ();
+	DLL_EXPORT	void				RemoveMarkedComponents ();
 
 	DLL_EXPORT void					AddTag (const std::string& tag);
 	void							RemoveTag (const std::string& tag);
@@ -58,7 +61,7 @@ public:
 	std::weak_ptr<Component>		GetComponent (const std::string& cID) const;
 	DLL_EXPORT	WPtr				GetParent () const;
 	std::vector<std::string>		GetChildrenNames () const;
-	const std::vector<WPtr>			GetChildren () const;
+	std::vector<SPtr>				GetChildren () const;
 	DLL_EXPORT SPtr					GetChild (const std::string& name);
 
 	template<typename T>
@@ -71,12 +74,12 @@ public:
 	bool							IsDestroyed () const;
 
 private:
-	const std::string						m_Name;
-	bool									m_isDestroyed;
-	SPtr									m_pParent;
-	std::vector<WPtr>						m_children;
-	std::vector<std::shared_ptr<Component>>	m_components;
-	std::unordered_set<std::string>			m_tags;
+	const std::string				m_Name;
+	bool							m_isDestroyed;
+	SPtr							m_pParent;
+	std::map<std::string, SPtr>		m_children;
+	ComponentVector					m_components;
+	std::unordered_set<std::string>	m_tags;
 };
 
 

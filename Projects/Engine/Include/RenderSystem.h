@@ -27,7 +27,7 @@ class OverlayContainer;
 class OverlayManager;
 class Overlay;
 
-}
+}	// namespace Ogre
 
 namespace MyGUI {
 
@@ -117,7 +117,7 @@ private:
 template<typename T>
 inline T* RenderSystem::CreateOverlayElement (const char* typeName, const char* name)
 {
-	return reinterpret_cast<T*> (m_pOverlayMgr->createOverlayElement (typeName, name));
+	return dynamic_cast<T*> (m_pOverlayMgr->createOverlayElement (typeName, name));
 }
 
 

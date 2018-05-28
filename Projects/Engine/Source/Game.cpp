@@ -14,7 +14,7 @@ namespace Engine {
 Game* Game::s_pInstance = nullptr;
 
 
-Game::Game (const char* title)
+Game::Game ()
 	: m_state (State::UnInited),
 	m_pTimer (new Ticker)
 {
@@ -24,7 +24,7 @@ Game::Game (const char* title)
 Game& Game::GetInstance ()
 {
 	if (s_pInstance == nullptr)
-		s_pInstance = new Game ("Project lab Gurzo Lajos");
+		s_pInstance = new Game;
 	return *s_pInstance;
 }
 
@@ -106,19 +106,22 @@ void Game::Pause ()
 		case State::Running:
 			m_state = State::Stopped;
 			break;
+
+		default:
+			break;
 	}
 }
 
 
 void Game::MainLoop ()
 {
-	while (m_pTimer != nullptr) {
-		float t = 0.0f, dt = 0.0f;
-
+	while (m_state != State::Destroyed) {
 		m_pTimer->Tick ();
-		m_pTimer->UptimeInSec (&t);
-		m_pTimer->LastFrameDurationInSec (&dt);
 
+		float t = m_pTimer->GetUpTime ();
+		float dt = m_pTimer->GetDeltaTime ();
+
+		// Updating
 		InputManager::GetInstance ().Capture ();
 
 		if (m_state == State::Running) {
@@ -133,14 +136,20 @@ void Game::MainLoop ()
 		}
 		
 		RenderSystem::GetInstance ().Update (t, dt);
+
+		// Removing and destroying
+		ObjectManager::GetInstance ().RemoveMarkedComponents ();
 		ObjectManager::GetInstance ().RemoveMarkedGameObjects ();
+
+		if (m_state == State::Destroyable)
+			Destroy ();
 	}
 }
 
 
 void Game::Destroy ()
 {
-	if (m_pTimer) {
+	if (m_pTimer != nullptr) {
 		delete m_pTimer;
 		m_pTimer = nullptr;
 	}
@@ -154,6 +163,12 @@ void Game::Destroy ()
 	RenderSystem::GetInstance ().Destroy ();
 
 	m_state = State::Destroyed;
+}
+
+
+void Game::MarkForDestroy ()
+{
+	m_state = State::Destroyable;
 }
 
 

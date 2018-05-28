@@ -81,7 +81,7 @@ void WeaponComponent::Shoot ()
 	auto ray = PhysicsSystem::GetInstance ().FirstHitRayCasting (rayStart, rayEnd);
 
 	if (ray.hasHit ()) {
-		PhysicsComponent* hitPhysics = reinterpret_cast<PhysicsComponent*> (ray.m_collisionObject->getUserPointer ());
+		PhysicsComponent* hitPhysics = static_cast<PhysicsComponent*> (ray.m_collisionObject->getUserPointer ());
 		GameObject* hitObject = hitPhysics->GetOwner ();
 
 		if (hitObject->HasTag ("enemy")) {

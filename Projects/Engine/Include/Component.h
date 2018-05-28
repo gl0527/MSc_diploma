@@ -46,14 +46,18 @@ public:
 	bool							IsEnabled ()	const;
 	void							Enable ();
 	void							Disable ();
+	bool							IsRemovable ()	const;
 	DLL_EXPORT GameObject*			GetOwner ()		const;
 
 	DLL_EXPORT std::string			GetTypeName ()	const;
+
+	void							MarkForRemove ();
 
 protected:
 	const std::string	m_name;
 	const bool			m_isUnique;
 	volatile bool		m_isEnabled;
+	bool				m_isRemovable;
 	GameObject*			m_owner;
 };
 

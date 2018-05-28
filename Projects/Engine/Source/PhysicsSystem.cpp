@@ -9,11 +9,11 @@ namespace {
 
 bool CollisionCallback (btManifoldPoint& /*cp*/, void* body0, void* body1)
 {
-	btRigidBody* rigidbody0 = reinterpret_cast<btRigidBody*> (body0);
-	btRigidBody* rigidbody1 = reinterpret_cast<btRigidBody*> (body1);
+	btRigidBody* rigidbody0 = static_cast<btRigidBody*> (body0);
+	btRigidBody* rigidbody1 = static_cast<btRigidBody*> (body1);
 
-	Engine::PhysicsComponent* collider0 = reinterpret_cast<Engine::PhysicsComponent*> (rigidbody0->getUserPointer ());
-	Engine::PhysicsComponent* collider1 = reinterpret_cast<Engine::PhysicsComponent*> (rigidbody1->getUserPointer ());
+	Engine::PhysicsComponent* collider0 = static_cast<Engine::PhysicsComponent*> (rigidbody0->getUserPointer ());
+	Engine::PhysicsComponent* collider1 = static_cast<Engine::PhysicsComponent*> (rigidbody1->getUserPointer ());
 
 	if (collider0 && collider0->IsTrigger ()) { // az elso szereplo trigger volt
 		collider0->onTriggerEnter (collider1);

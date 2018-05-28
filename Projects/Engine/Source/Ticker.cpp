@@ -29,63 +29,50 @@ unsigned int timeGetTime ()
 
 namespace Engine {
 
-Ticker::Ticker (float limit /*= 0.0f*/) :
-	m_lastFrameTimeInSec (0.0f),
-	m_uptimeInSec (0.0f),
-	m_lastFrameDurationInSec (0.0f),
-	m_limitInSec (limit)
+Ticker::Ticker () :
+	m_prevTime (0.0f),
+	m_upTime (0.0f),
+	m_deltaTime (0.0f)
 {
 }
 
 
 void Ticker::Tick ()
 {
-	float currFrameTimeInSec = ::timeGetTime () * 0.001f;
+	float currTime = ::timeGetTime () * 0.001f;
 
-	if (m_lastFrameTimeInSec < 1.0e-4)
-		m_lastFrameTimeInSec = currFrameTimeInSec;
+	if (m_prevTime < 1.0e-4)
+		m_prevTime = currTime;
 
-	m_lastFrameDurationInSec = currFrameTimeInSec - m_lastFrameTimeInSec;
-	m_uptimeInSec += m_lastFrameDurationInSec;
-
-	if (m_limitInSec > 0.0f && m_uptimeInSec > m_limitInSec)
-		Reset ();
-
-	m_lastFrameTimeInSec = currFrameTimeInSec;
+	m_deltaTime = currTime - m_prevTime;
+	m_upTime += m_deltaTime;
+	m_prevTime = currTime;
 }
 
 
 void Ticker::Reset ()
 {
-	m_lastFrameTimeInSec = 0.0f;
-	m_uptimeInSec = 0.0f;
-	m_lastFrameDurationInSec = 0.0f;
+	m_prevTime = 0.0f;
+	m_upTime = 0.0f;
+	m_deltaTime = 0.0f;
 }
 
 
 void Ticker::Pause ()
 {
-	m_lastFrameTimeInSec = ::timeGetTime () * 0.001f;
+	m_prevTime = ::timeGetTime () * 0.001f;
 }
 
 
-void Ticker::UptimeInSec (float* pOutSec) const
+float Ticker::GetUpTime () const
 {
-	*pOutSec = m_uptimeInSec;
+	return m_upTime;
 }
 
 
-void Ticker::UptimeInHourMinSec (unsigned long* pOutHour, unsigned long* pOutMin, unsigned long* pOutSec) const
+float Ticker::GetDeltaTime () const
 {
-	*pOutHour = static_cast<unsigned long> (m_uptimeInSec) / 3600;
-	*pOutMin = (static_cast<unsigned long> (m_uptimeInSec) / 60) % 60;
-	*pOutSec = static_cast<unsigned long> (m_uptimeInSec) % 60;
-}
-
-
-void Ticker::LastFrameDurationInSec (float* pOutSec) const
-{
-	*pOutSec = m_lastFrameDurationInSec;
+	return m_deltaTime;
 }
 
 }	// namespace Engine

@@ -32,16 +32,24 @@ std::weak_ptr<GameObject> ObjectManager::CreateGameObject (const std::string& id
 }
 
 
+void ObjectManager::RemoveMarkedComponents ()
+{
+	for (auto it = m_gameObjectMap.begin (), itEnd = m_gameObjectMap.end (); it != itEnd; ++it) {
+		it->second->RemoveMarkedComponents ();
+	}
+}
+
+
 void ObjectManager::RemoveGameObject (const std::string& id)
 {
 	auto it = m_gameObjectMap.find (id);
 	if (it != m_gameObjectMap.end ()) {
 		// recursive call for the children
-		const auto& removableChildren = it->second->GetChildrenNames ();
+		auto removableChildren = it->second->GetChildrenNames ();
 		for (auto childIt = removableChildren.begin (); childIt != removableChildren.end (); ++childIt)
 			RemoveGameObject (*childIt);
 
-		// erasing of the current element
+		// erasing the current element
 		it->second->Destroy ();
 		m_gameObjectMap.erase (it);
 	}
@@ -102,7 +110,7 @@ void ObjectManager::PostUpdate (float t, float dt)
 
 void ObjectManager::RemoveMarkedGameObjects ()
 {
-	for (const std::string& gameObjectName : m_removableGameObjectNames)
+	for (const std::string gameObjectName : m_removableGameObjectNames)
 		RemoveGameObject (gameObjectName);
 
 	m_removableGameObjectNames.clear ();

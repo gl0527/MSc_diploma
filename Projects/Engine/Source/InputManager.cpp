@@ -226,18 +226,22 @@ void InputManager::RemoveAllListeners ()
 {
 	m_keyListeners.clear ();
 	m_mouseListeners.clear ();
+	m_pGUIAsKeyListener = nullptr;
+	m_pGUIAsMouseListener = nullptr;
 }
 
 
 void InputManager::RemoveAllKeyListeners ()
 {
 	m_keyListeners.clear ();
+	m_pGUIAsKeyListener = nullptr;
 }
 
 
 void InputManager::RemoveAllMouseListeners ()
 {
 	m_mouseListeners.clear ();
+	m_pGUIAsMouseListener = nullptr;
 }
 
 

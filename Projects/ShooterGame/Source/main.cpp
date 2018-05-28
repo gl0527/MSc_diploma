@@ -1,4 +1,3 @@
-// include from Engine
 #include "Game.h"
 #include "GameObject.h"
 #include "ObjectManager.h"
@@ -21,7 +20,6 @@ using namespace Engine;
 int main (int argc, char** argv)
 {
 	auto& game = Game::GetInstance ();
-	auto& renderSys = RenderSystem::GetInstance ();
 	auto& xmlParser = XML::XMLParser::GetInstance ();
 	auto& objectMgr = ObjectManager::GetInstance ();
 

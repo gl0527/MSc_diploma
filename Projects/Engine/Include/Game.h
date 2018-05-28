@@ -26,6 +26,7 @@ public:
 		Inited,
 		Running,
 		Stopped,
+		Destroyable,
 		Destroyed
 	};
 
@@ -33,11 +34,12 @@ public:
 	static DLL_EXPORT void		DeleteInstance ();
 	static bool					IsExist ();
 
+	DLL_EXPORT void				MarkForDestroy ();
+
 	DLL_EXPORT bool				Init ();
 	DLL_EXPORT void				Start ();
 	DLL_EXPORT void				Continue ();
 	DLL_EXPORT void				Pause ();
-	DLL_EXPORT void				Destroy ();
 
 	DLL_EXPORT State			GetState () const;
 
@@ -48,9 +50,10 @@ private:
 	Ticker*			m_pTimer;
 
 
-								Game (const char* title);
+								Game ();
 
 	void						MainLoop ();
+	void						Destroy ();
 };
 
 }	// namespace Engine

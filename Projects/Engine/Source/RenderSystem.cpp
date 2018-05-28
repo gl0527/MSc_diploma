@@ -101,7 +101,7 @@ void RenderSystem::Update (float t, float dt)
 	static float sumFPS = 0.0f;
 	static unsigned int count = 0;
 	static float lastT = 0.0f;
-	
+
 	if (m_pRenderWnd->isClosed ()) {
 		m_pOgreRoot->shutdown ();
 		return;
@@ -113,8 +113,7 @@ void RenderSystem::Update (float t, float dt)
 		lastT = t;
 		m_currentFPS = 1 / dt;
 		sumFPS += m_currentFPS;
-		++count;
-		m_averageFPS = sumFPS / count;
+		m_averageFPS = sumFPS / ++count;
 	}
 
 	if (!m_pOgreRoot->renderOneFrame ()) {
@@ -219,8 +218,8 @@ Ogre::MeshPtr RenderSystem::CreatePlaneMeshXZ (const char* planeMeshName, float 
 		planeMeshName,
 		Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME,
 		plane,
-		1,// x-size
-		1,// z-size
+		1.0f,// x-size
+		1.0f,// z-size
 		1,// x-segments
 		1,// z-segments
 		true,

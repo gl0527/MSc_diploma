@@ -41,6 +41,7 @@ public:
 	void									PreUpdate (float t, float dt);
 	void									Update (float t, float dt);
 	void									PostUpdate (float t, float dt);
+	void									RemoveMarkedComponents ();
 	void									RemoveMarkedGameObjects ();
 	void									Destroy ();
 
