@@ -1,7 +1,7 @@
+#pragma once
+
 #ifndef PREFAB_PROCESSOR_H
 #define PREFAB_PROCESSOR_H
-
-#pragma once
 
 // ---------------------------------- includes ----------------------------------
 

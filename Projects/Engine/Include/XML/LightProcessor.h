@@ -1,7 +1,7 @@
+#pragma once
+
 #ifndef LIGHT_PROCESSOR_H
 #define LIGHT_PROCESSOR_H
-
-#pragma once
 
 // ---------------------------------- includes ----------------------------------
 

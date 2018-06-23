@@ -1,7 +1,7 @@
+#pragma once
+
 #ifndef RENDER_COMPONENT_H
 #define RENDER_COMPONENT_H
-
-#pragma once
 
 // ---------------------------------- includes ----------------------------------
 

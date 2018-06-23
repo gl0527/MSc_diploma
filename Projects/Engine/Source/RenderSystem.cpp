@@ -109,16 +109,24 @@ void RenderSystem::Update (float t, float dt)
 
 	Ogre::WindowEventUtilities::messagePump ();
 
-	if (t - lastT > 0.99f) {
-		lastT = t;
-		m_currentFPS = 1 / dt;
-		sumFPS += m_currentFPS;
-		m_averageFPS = sumFPS / ++count;
-	}
+	if (m_pRenderWnd->isActive ()) {
+		if (t - lastT > 0.99f) {
+			lastT = t;
+			m_currentFPS = 1 / dt;
+			sumFPS += m_currentFPS;
+			m_averageFPS = sumFPS / ++count;
+		}
 
-	if (!m_pOgreRoot->renderOneFrame ()) {
-		m_pOgreRoot->shutdown ();
-		return;
+		if (!m_pOgreRoot->renderOneFrame ()) {
+			m_pOgreRoot->shutdown ();
+			return;
+		}
+	} else {
+#if OGRE_PLATFORM == OGRE_PLATFORM_WIN32
+		Sleep (1000);
+#else
+		sleep (1);
+#endif
 	}
 }
 

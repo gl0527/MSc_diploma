@@ -1,7 +1,7 @@
+#pragma once
+
 #ifndef GAME_OBJECT_H
 #define GAME_OBJECT_H
-
-#pragma once
 
 // ---------------------------------- includes ----------------------------------
 

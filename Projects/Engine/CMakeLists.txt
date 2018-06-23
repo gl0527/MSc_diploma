@@ -15,8 +15,8 @@ set_target_properties (${TARGET_NAME} PROPERTIES DEBUG_POSTFIX ${CMAKE_DEBUG_POS
 
 add_custom_command (TARGET ${TARGET_NAME} POST_BUILD
 					COMMAND ${CMAKE_COMMAND} -E copy
-					"${PROJECT_SOURCE_DIR}/../Bin/${TARGET_NAME}/$(Configuration)/${TARGET_NAME}$<$<CONFIG:Debug>:${CMAKE_DEBUG_POSTFIX}>.dll"
-					"${PROJECT_SOURCE_DIR}/../Bin/ShooterGame/$(Configuration)/${TARGET_NAME}$<$<CONFIG:Debug>:${CMAKE_DEBUG_POSTFIX}>.dll"
+					"${PROJECT_SOURCE_DIR}/../Bin/${TARGET_NAME}/$(Configuration)/${TARGET_NAME}$<$<CONFIG:Debug>:${CMAKE_DEBUG_POSTFIX}>.${DLIB}"
+					"${PROJECT_SOURCE_DIR}/../Bin/ShooterGame/$(Configuration)/${TARGET_NAME}$<$<CONFIG:Debug>:${CMAKE_DEBUG_POSTFIX}>.${DLIB}"
 					)
 
 target_link_libraries (${TARGET_NAME} ${LIBS} ${DBLIBS} ${RELLIBS})

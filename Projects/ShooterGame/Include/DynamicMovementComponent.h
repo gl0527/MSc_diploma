@@ -1,7 +1,7 @@
+#pragma once
+
 #ifndef DYNAMIC_MOVEMENT_COMPONENT_H
 #define DYNAMIC_MOVEMENT_COMPONENT_H
-
-#pragma once
 
 // ---------------------------------- includes ----------------------------------
 

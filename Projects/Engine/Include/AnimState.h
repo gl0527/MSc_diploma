@@ -1,7 +1,7 @@
+#pragma once
+
 #ifndef ANIM_STATE_H
 #define ANIM_STATE_H
-
-#pragma once
 
 // ---------------------------------- includes ----------------------------------
 

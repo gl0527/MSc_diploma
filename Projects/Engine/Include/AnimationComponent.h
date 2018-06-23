@@ -1,7 +1,7 @@
+#pragma once
+
 #ifndef	ANIMATION_COMPONENT_H
 #define ANIMATION_COMPONENT_H
-
-#pragma once
 
 // ---------------------------------- includes ----------------------------------
 

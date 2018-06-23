@@ -1,7 +1,7 @@
+#pragma once
+
 #ifndef SINGLETON_BASE_H
 #define SINGLETON_BASE_H
-
-#pragma once
 
 // ---------------------------------- includes ----------------------------------
 

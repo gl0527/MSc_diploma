@@ -1,7 +1,7 @@
+#pragma once
+
 #ifndef WEAPON_COMPONENT_H
 #define WEAPON_COMPONENT_H
-
-#pragma once
 
 // ---------------------------------- includes ----------------------------------
 

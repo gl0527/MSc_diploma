@@ -1,7 +1,7 @@
+#pragma once
+
 #ifndef ISTATE_H
 #define ISTATE_H
-
-#pragma once
 
 // ---------------------------------- includes ----------------------------------
 

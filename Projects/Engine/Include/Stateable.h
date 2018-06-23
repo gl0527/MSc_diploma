@@ -1,7 +1,7 @@
+#pragma once
+
 #ifndef STATEABLE_H
 #define STATEABLE_H
-
-#pragma once
 
 // ---------------------------------- includes ----------------------------------
 

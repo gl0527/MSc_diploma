@@ -1,7 +1,7 @@
+#pragma once
+
 #ifndef FINITE_STATE_MACHINE_H
 #define FINITE_STATE_MACHINE_H
-
-#pragma once
 
 // ---------------------------------- includes ----------------------------------
 

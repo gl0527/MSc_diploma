@@ -15,6 +15,6 @@ set_target_properties (${TARGET_NAME} PROPERTIES ARCHIVE_OUTPUT_DIRECTORY "${PRO
 set_target_properties (${TARGET_NAME} PROPERTIES DEBUG_POSTFIX ${CMAKE_DEBUG_POSTFIX})
 
 target_link_libraries (${TARGET_NAME} ${LIBS} ${DBLIBS} ${RELLIBS})
-target_link_libraries (${TARGET_NAME} "${PROJECT_SOURCE_DIR}/../Lib/Engine/$(Configuration)/Engine$<$<CONFIG:Debug>:${CMAKE_DEBUG_POSTFIX}>.lib")
+target_link_libraries (${TARGET_NAME} "${PROJECT_SOURCE_DIR}/../Lib/Engine/$(Configuration)/Engine$<$<CONFIG:Debug>:${CMAKE_DEBUG_POSTFIX}>.${SLIB}")
 
 add_dependencies(${TARGET_NAME} Engine)

@@ -1,7 +1,7 @@
+#pragma once
+
 #ifndef TICKER_H
 #define TICKER_H
-
-#pragma once
 
 // ---------------------------------- includes ----------------------------------
 

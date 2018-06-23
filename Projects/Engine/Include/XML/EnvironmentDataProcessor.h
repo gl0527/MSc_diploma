@@ -1,8 +1,7 @@
-#ifndef	ENVIRONMENT_DATA_PROCESSOR_H
-#define ENVIRONMENT_DATA_PROCESSOR_H
-
 #pragma once
 
+#ifndef	ENVIRONMENT_DATA_PROCESSOR_H
+#define ENVIRONMENT_DATA_PROCESSOR_H
 
 #include "TagProcessor.h"
 

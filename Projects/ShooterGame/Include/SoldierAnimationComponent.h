@@ -1,7 +1,7 @@
+#pragma once
+
 #ifndef SOLDIER_ANIMATION_COMPONENT_H
 #define	SOLDIER_ANIMATION_COMPONENT_H
-
-#pragma once
 
 // ---------------------------------- includes ----------------------------------
 

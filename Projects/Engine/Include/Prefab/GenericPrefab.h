@@ -1,7 +1,7 @@
+#pragma once
+
 #ifndef GENERIC_PREFAB_H
 #define GENERIC_PREFAB_H
-
-#pragma once
 
 // ---------------------------------- includes ----------------------------------
 

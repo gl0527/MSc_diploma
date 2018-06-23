@@ -1,7 +1,7 @@
+#pragma once
+
 #ifndef ENEMY_AI_COMPONENT_H
 #define ENEMY_AI_COMPONENT_H
-
-#pragma once
 
 // ---------------------------------- includes ----------------------------------
 

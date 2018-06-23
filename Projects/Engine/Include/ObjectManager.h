@@ -1,7 +1,7 @@
+#pragma once
+
 #ifndef OBJECT_MANAGER_H
 #define OBJECT_MANAGER_H
-
-#pragma once
 
 // ---------------------------------- includes ----------------------------------
 

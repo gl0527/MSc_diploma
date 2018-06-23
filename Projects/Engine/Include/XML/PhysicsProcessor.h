@@ -1,7 +1,7 @@
+#pragma once
+
 #ifndef PHYSICS_PROCESSOR_H
 #define PHYSICS_PROCESSOR_H
-
-#pragma once
 
 // ---------------------------------- includes ----------------------------------
 

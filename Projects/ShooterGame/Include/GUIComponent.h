@@ -1,7 +1,7 @@
+#pragma once
+
 #ifndef GUI_COMPONENT_H
 #define GUI_COMPONENT_H
-
-#pragma once
 
 #include "Component.h"
 #include "MyGUI_WidgetDefines.h"

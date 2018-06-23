@@ -1,7 +1,7 @@
+#pragma once
+
 #ifndef MESH_PROCESSOR_H
 #define MESH_PROCESSOR_H
-
-#pragma once
 
 // ---------------------------------- includes ----------------------------------
 

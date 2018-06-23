@@ -1,7 +1,7 @@
+#pragma once
+
 #ifndef TAG_PROCESSOR_H
 #define TAG_PROCESSOR_H
-
-#pragma once
 
 // ---------------------------------- includes ----------------------------------
 

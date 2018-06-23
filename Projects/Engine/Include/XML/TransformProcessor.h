@@ -1,7 +1,7 @@
+#pragma once
+
 #ifndef TRANSFORM_PROCESSOR_H
 #define TRANSFORM_PROCESSOR_H
-
-#pragma once
 
 // ---------------------------------- includes ----------------------------------
 

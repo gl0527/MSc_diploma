@@ -1,7 +1,7 @@
+#pragma once
+
 #ifndef HUD_COMPONENT_H
 #define HUD_COMPONENT_H
-
-#pragma once
 
 #include "Component.h"
 

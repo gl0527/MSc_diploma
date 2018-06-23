@@ -1,7 +1,7 @@
+#pragma once
+
 #ifndef PLAYER_DATA_COMPONENT_H
 #define PLAYER_DATA_COMPONENT_H
-
-#pragma once
 
 // ---------------------------------- includes ----------------------------------
 

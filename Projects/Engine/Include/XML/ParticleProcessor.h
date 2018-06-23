@@ -1,7 +1,7 @@
+#pragma once
+
 #ifndef PARTICLE_PROCESSOR_H
 #define PARTICLE_PROCESSOR_H
-
-#pragma once
 
 // ---------------------------------- includes ----------------------------------
 

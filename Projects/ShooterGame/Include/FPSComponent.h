@@ -1,7 +1,7 @@
+#pragma once
+
 #ifndef FPS_COMPONENT_H
 #define FPS_COMPONENT_H
-
-#pragma once
 
 // ---------------------------------- includes ----------------------------------
 

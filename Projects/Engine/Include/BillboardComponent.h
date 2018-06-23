@@ -1,7 +1,7 @@
+#pragma once
+
 #ifndef BILLBOARD_COMPONENT_H
 #define BILLBOARD_COMPONENT_H
-
-#pragma once
 
 // ---------------------------------- includes ----------------------------------
 

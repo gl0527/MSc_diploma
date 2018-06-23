@@ -1,7 +1,7 @@
+#pragma once
+
 #ifndef CAMERA_PROCESSOR_H
 #define CAMERA_PROCESSOR_H
-
-#pragma once
 
 // ---------------------------------- includes ----------------------------------
 

@@ -1,7 +1,7 @@
+#pragma once
+
 #ifndef MANAGER_COMPONENT_H
 #define MANAGER_COMPONENT_H
-
-#pragma once
 
 // ---------------------------------- includes ----------------------------------
 

@@ -1,8 +1,7 @@
-#ifndef IPREFAB_H
-#define IPREFAB_H
-
 #pragma once
 
+#ifndef IPREFAB_H
+#define IPREFAB_H
 
 namespace Engine {
 

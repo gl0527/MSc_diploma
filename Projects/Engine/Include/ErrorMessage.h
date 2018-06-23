@@ -1,7 +1,7 @@
+#pragma once
+
 #ifndef ERROR_MESSAGE_H
 #define ERROR_MESSAGE_H
-
-#pragma once
 
 #define WRAP(statements) do { statements } while (0)
 

@@ -1,7 +1,7 @@
+#pragma once
+
 #ifndef AUDIO_SOURCE_COMPONENT_H
 #define AUDIO_SOURCE_COMPONENT_H
-
-#pragma once
 
 // ---------------------------------- includes ----------------------------------
 
